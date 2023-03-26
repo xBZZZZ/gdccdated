@@ -355,12 +355,22 @@ ObjEditor.sort_comparitor=function(a,b){
 		function rimg(x,y,w,h){
 			return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
 		}
-		for(var arr=[
-			'objects',
+		for(var
+scalef='<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale $axis = 0 object impossible)</li><li>makes scale (32) meaningless</li></ul>',
+shearf='<ul>\
+<li>= 0 if doesn&apos;t exist</li>\
+<li>unit is degrees</li>\
+<li>side effect is <strong>multiplying</strong> scale $otheraxis ($sk) by <strong class="wp">cos(arctan(<var>shear $axis</var>))</strong><ul>\
+<li>same as <strong>dividing</strong> by <strong class="wp">hypot(<var>shear $axis</var>,1)</strong></li>\
+<li>same as <strong>dividing</strong> by <strong class="wp">sqrt(<var>shear $axis</var><sup>2</sup>+1)</strong></li>\
+</ul></li>\
+</ul><a href="https://www.desmos.com/calculator/2ka01di9va" rel="noreferrer" target="_blank">play with shear and scale on www.desmos.com</a>',
+xyf='block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>',
+arr=[	'objects',
 			['1','id','play level <a style="font-weight:bold;" href="https://gdbrowser.com/58079690" rel="noreferrer" target="_blank">58079690</a> for list of all ids'],
-			['2','x','block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>'],
-			['3','y','block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>'],
-			['6','rotate',img(0,344,400,278)],
+			['2','x',xyf],
+			['3','y',xyf],
+			['6','rotate','<ul class="linside"><li>= 0 if doesn&apos;t exist</li><li>unit is degrees</li></ul>'+img(0,344,400,278)],
 			['13','portal checkbox','0','no','1','yes',img(0,0,400,341)],
 			['25','z order'],
 			['31','encoded text','encoded without gzip'],
@@ -368,9 +378,11 @@ ObjEditor.sort_comparitor=function(a,b){
 			['54','orange teleporter y offset','<table class="tableborder"><thead><tr><th>0 (resets to 100 when level loaded in editor)</th><th>100 (default)</th></tr></thead><tbody><tr><td align="center">'+img(0,625,102,102)+'</td><td align="center">'+rimg(102,625,102,238)+'</td></tr></tbody></table>'],
 			['57','groups','groups are separated by &quot;.&quot;'],
 			['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;doesn&apos;t work with mirror, speed and dual portals'],
-			['128','scale x (2.2)','<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale x = 0 object impossible)</li><li>makes scale (32) meaningless</li></ul>'],
-			['129','scale y (2.2)','<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale y = 0 object impossible)</li><li>makes scale (32) meaningless</li></ul>'],
-			'start pos and level start',
+			['128','scale x (2.2)',sof(scalef,{'axis':'x'})],
+			['129','scale y (2.2)',sof(scalef,{'axis':'y'})],
+			['131','arctan(shear x) with side effect (2.2)',sof(shearf,{'axis':'x','otheraxis':'y','sk':'129'})],
+			['132','arctan(shear y) with side effect (2.2)',sof(shearf,{'axis':'y','otheraxis':'x','sk':'128'})],
+		'start pos and level start',
 			['kA2','game mode',
 				'0','square',
 				'1','ship',

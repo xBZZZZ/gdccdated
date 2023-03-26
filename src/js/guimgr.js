@@ -46,7 +46,7 @@ function handle_drag(e){
 	while(l>i)if(arr[i++].kind==='file'){
 		dt=dt.getBoundingClientRect();
 		var y=(dt.top+dt.bottom)>>1,x=(dt.left+dt.right)>>1,ly=e.clientY-y,lx=e.clientX-x;
-		drag_arrow.setAttribute('style','top:'+(y-2)+'px;left:'+x+'px;width:'+Math.sqrt(ly*ly+lx*lx)+'px;transform:rotate('+Math.atan2(ly,lx)+'rad);');
+		drag_arrow.setAttribute('style','top:'+(y-2)+'px;left:'+x+'px;width:'+Math.hypot(ly,lx)+'px;transform:rotate('+Math.atan2(ly,lx)+'rad);');
 		drag_cover.setAttribute('style','');
 		e.preventDefault();
 		return;
@@ -328,3 +328,11 @@ XSizer.prototype.get_prog=function(x){
 	if(prog!==prog)return '50%';
 	return prog.toFixed(0)+'%';
 };
+
+var sof_re=RegExp('\\$[_0-9A-Za-z]+','g');
+
+function sof(fmt,obj){
+	return fmt.replace(sof_re,function(v){
+		return obj[v.substring(1)];
+	});
+}

@@ -646,15 +646,15 @@ function search_test_querys(item,querys){
 }
 
 function push_rename_helper(){
-	var g=gui_div_with_html('display:flex;flex-direction:column;',
+	var g=gui_div_with_html('display:flex;flex-direction:column;',sof(
 '<input type="button" value="back"/>\
 <details>\
 <summary>help</summary>\
-syntax: <span class="w"><em>text</em>{<wbr/><em>increment=0;<wbr/>min='+Number.MIN_SAFE_INTEGER+';<wbr/>max='+Number.MAX_SAFE_INTEGER+'</em><wbr/>}</span>\
+syntax: <span class="w"><em>text</em>{<wbr/><em>increment=0;<wbr/>min=$MIN_SAFE_INTEGER;<wbr/>max=$MAX_SAFE_INTEGER</em><wbr/>}</span>\
 <ul style="margin:0;">\
 <li>&quot;{{&quot; is &quot;{&quot; escape</li>\
-<li>&quot;{}&quot; = &quot;{;;}&quot; = &quot;{;}&quot; = &quot;{0;'+Number.MIN_SAFE_INTEGER+';'+Number.MAX_SAFE_INTEGER+'}&quot;</li>\
-<li>&quot;{;2}&quot; = &quot;{0;2;'+Number.MAX_SAFE_INTEGER+'}&quot;</li>\
+<li>&quot;{}&quot; = &quot;{;;}&quot; = &quot;{;}&quot; = &quot;{0;$MIN_SAFE_INTEGER;$MAX_SAFE_INTEGER}&quot;</li>\
+<li>&quot;{;2}&quot; = &quot;{0;2;$MAX_SAFE_INTEGER}&quot;</li>\
 <li>&quot;{+69}&quot; = &quot;{69}&quot;</li>\
 </ul>\
 examples:\
@@ -667,12 +667,11 @@ examples:\
 </ul>\
 </details>\
 <textarea></textarea>\
-<input type="button" value="rename"/>');
+<input type="button" value="rename"/>',Number));
 	g.cc_dict=current_gui().cc_dict;
 	g.command_input=g.querySelector('textarea');
-	var inps=g.getElementsByTagName('input');
-	inps[0].addEventListener('click',pop_gui,onceel);
-	inps[1].addEventListener('click',rename_onclick,passiveel);
+	g.firstChild.addEventListener('click',pop_gui,onceel);
+	g.lastChild.addEventListener('click',rename_onclick,passiveel);
 	push_gui(g);
 }
 
