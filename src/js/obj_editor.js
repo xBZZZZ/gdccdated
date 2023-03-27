@@ -357,14 +357,6 @@ ObjEditor.sort_comparitor=function(a,b){
 		}
 		for(var
 scalef='<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale $axis = 0 object impossible)</li><li>makes scale (32) meaningless</li></ul>',
-shearf='<ul>\
-<li>= 0 if doesn&apos;t exist</li>\
-<li>unit is degrees</li>\
-<li>side effect is <strong>multiplying</strong> scale $otheraxis ($sk) by <strong class="wp">cos(arctan(<var>shear $axis</var>))</strong><ul>\
-<li>same as <strong>dividing</strong> by <strong class="wp">hypot(<var>shear $axis</var>,1)</strong></li>\
-<li>same as <strong>dividing</strong> by <strong class="wp">sqrt(<var>shear $axis</var><sup>2</sup>+1)</strong></li>\
-</ul></li>\
-</ul><a href="https://www.desmos.com/calculator/2ka01di9va" rel="noreferrer" target="_blank">play with shear and scale on www.desmos.com</a>',
 xyf='block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>',
 arr=[	'objects',
 			['1','id','play level <a style="font-weight:bold;" href="https://gdbrowser.com/58079690" rel="noreferrer" target="_blank">58079690</a> for list of all ids'],
@@ -380,8 +372,7 @@ arr=[	'objects',
 			['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;doesn&apos;t work with mirror, speed and dual portals'],
 			['128','scale x (2.2)',sof(scalef,{'axis':'x'})],
 			['129','scale y (2.2)',sof(scalef,{'axis':'y'})],
-			['131','arctan(shear x) with side effect (2.2)',sof(shearf,{'axis':'x','otheraxis':'y','sk':'129'})],
-			['132','arctan(shear y) with side effect (2.2)',sof(shearf,{'axis':'y','otheraxis':'x','sk':'128'})],
+			//131, 132 are related to skewing but I don't know exactly how they work
 		'start pos and level start',
 			['kA2','game mode',
 				'0','square',
