@@ -36,6 +36,13 @@ sid=${sid//#/%23}
 log "sid (url escaped): $sid"
 url+="&sid=$sid"
 
+log "downloading until server shell is ready"
+until wget2 | grep -zqF -- "$ "
+do [ "${PIPESTATUS[0]}" != 0 ] && err "download failed"
+log "server shell is not ready"
+done
+log "server shell is ready"
+
 log "uploading shell commands"
 response=$(wget2 --post-file=../upload_data --header=content-type:text/plain)
 printf '\e[1;32m[END]\e[22m server response: %s\e[39m\n' "$response" >&2

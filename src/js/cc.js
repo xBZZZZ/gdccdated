@@ -192,7 +192,6 @@ function cc_load_aes(file){
 		var fr=new FileReader();
 		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_aes_file_reader_onload,onceel);
-		//key from https://github.com/Wyliemaster/GD-Save-Decryptor/blob/main/saves.py
 		fr.readAsArrayBuffer(new Blob([file,'\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10'],binblobopts));
 	}catch(error){
 		say_error('FileReader',error);
@@ -207,6 +206,7 @@ try{
 if(!subtlecrypto||typeof subtlecrypto!=='object')subtlecrypto='disabled="" title="can&apos;t use window.crypto.subtle'+('https:'===location.protocol?'"':'&#10;&#10;try using https:"');
 
 function ensure_aeskey(callback,onerror){
+	//key from https://github.com/Wyliemaster/GD-Save-Decryptor/blob/main/saves.py
 	return aeskey?callback():subtlecrypto.importKey('raw',string_to_uint8array('ipu9TUv54yv]isFMh5@;t.5w34E2Ry@{').buffer,{'name':'AES-CBC'},false,['encrypt','decrypt']).then(function(k){
 		aeskey=k;
 		return callback();
