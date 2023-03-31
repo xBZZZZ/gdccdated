@@ -488,7 +488,7 @@ push_gui(gui_div_with_html(false,
 <hr/>\
 <input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
 <a class="btn thiccb" href="https://gdprogra.me/#/resources/client/gamesave" rel="noreferrer" target="_blank"><q cite="https://gdprogra.me/#/resources/client/gamesave">Client Gamesave Resource</q> on gdprogra.me</a>\
-<a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug on github.com</a>\
+<a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug or suggestion on github.com</a>\
 </div>'));
 current_gui().drop_file_input=current_gui().querySelector('input[type=file]');
 if(location.hash==='#ccarticle')push_ccatricle();
@@ -527,14 +527,14 @@ don&apos;t read entire file because there can be 1 or 2 bytes of garbage because
 </details>\
 <details open="" class="bigd">\
 <summary>other CC*.dat file tools</summary><strong>WARNING (doesn&apos;t apply to mac os saves):</strong> some of these sometimes don&apos;t work because they read entire file instead of just <strong class="wp">floor(<var>file size in bytes</var> / 4) * 4</strong> bytes<ul>\
-<li><a href="https://www.youtube.com/watch?v=OA4918DQxG0" rel="noreferrer" target="_blank">https://www.youtube.com/watch?v=OA4918DQxG0</a></li>\
-<li><a href="https://gdcolon.com/gdsave/" rel="noreferrer" target="_blank">https://gdcolon.com/gdsave/</a></li>\
-<li><a href="https://github.com/WEGFan/Geometry-Dash-Savefile-Editor" rel="noreferrer" target="_blank">https://github.com/WEGFan/Geometry-Dash-Savefile-Editor</a></li>\
-<li><a href="https://github.com/Wyliemaster/GD-Save-Tools" rel="noreferrer" target="_blank">https://github.com/Wyliemaster/GD-Save-Tools</a></li>\
-<li><a href="https://github.com/Wyliemaster/GD-Save-Decryptor" rel="noreferrer" target="_blank">https://github.com/Wyliemaster/GD-Save-Decryptor</a> (can decrypt mac os saves, doesn&apos;t remove padding when padding=16)</li>\
-<li><a href="https://github.com/GDColon/GD-Save-Decoder" rel="noreferrer" target="_blank">https://github.com/GDColon/GD-Save-Decoder</a></li>\
-<li><a href="https://geometry-dash.fandom.com/wiki/User:XBZZZZALT#backup_of_useful_stuff_from_Save_Files_page" rel="noreferrer" target="_blank">https://geometry-dash.fandom.com/wiki/User:XBZZZZALT#backup_of_useful_stuff_from_Save_Files_page</a></li>\
-<li><a href="https://gdprogra.me/#/topics/localfiles_encrypt_decrypt" rel="noreferrer" target="_blank">https://gdprogra.me/#/topics/localfiles_encrypt_decrypt</a></li>\
+<li>'+linkf('https://www.youtube.com/watch?v=OA4918DQxG0')+'</li>\
+<li>'+linkf('https://gdcolon.com/gdsave/')+'</li>\
+<li>'+linkf('https://github.com/WEGFan/Geometry-Dash-Savefile-Editor')+'</li>\
+<li>'+linkf('https://github.com/Wyliemaster/GD-Save-Tools')+'</li>\
+<li>'+linkf('https://github.com/Wyliemaster/GD-Save-Decryptor')+' (can decrypt mac os saves, doesn&apos;t remove padding when padding=16)</li>\
+<li>'+linkf('https://github.com/GDColon/GD-Save-Decoder')+'</li>\
+<li>'+linkf('https://geometry-dash.fandom.com/wiki/User:XBZZZZALT#backup_of_useful_stuff_from_Save_Files_page')+'</li>\
+<li>'+linkf('https://gdprogra.me/#/topics/localfiles_encrypt_decrypt')+'</li>\
 </ul></details>';
 	push_gui(g);
 	location.hash='#ccarticle';

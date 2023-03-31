@@ -336,3 +336,7 @@ function sof(fmt,obj){
 		return obj[v.substring(1)];
 	});
 }
+
+function linkf(url){
+	return '<a rel="noreferrer" target="_blank" href="'+url+'">'+url+'</a>';
+}
