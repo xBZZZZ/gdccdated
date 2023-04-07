@@ -355,8 +355,7 @@ ObjEditor.sort_comparitor=function(a,b){
 		function rimg(x,y,w,h){
 			return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
 		}
-		for(var
-scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
+		for(var scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 fwarn='<li>beware of <a style="font-weight:bold;" href="https://h-schmidt.net/FloatConverter/IEEE754.html" rel="noreferrer" target="_blank">float32</a> imprecision (69.000001 = 68.999999 = 69)!</li>',
 rotatef='<ul><li>= 0 if doesn&apos;t exist</li><li>makes rotate (6) meaningless if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 xyf='block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>',

@@ -15,8 +15,7 @@ mkdir out
 cd src
 cp -Rt ../out -- "${rootfiles[@]}"
 
-#generate index.html
-exec > ../out/index.xhtml
+{
 echo "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\
 <html xml:lang='en' lang='en' xmlns='http://www.w3.org/1999/xhtml'>\
 <head><!--"
@@ -44,7 +43,12 @@ echo "</style>\
 <div id='drag_cover' role='none' aria-hidden='true' style='display:none;'><div id='drag_arrow' role='none' aria-hidden='true'></div></div>\
 <script>'use strict'"';//<![CDATA['
 cd js
-grep -Evh -- "^('use strict';)?$" "${jsfiles[@]}" | sed -Ez 's/\t|\\\n|\n$//g'
+grep -Evh -- "^('use strict';)?$" "${jsfiles[@]}" | sed -Ez 's/\\\n//g
+s/http:\/\//http:\/\t\//g
+s/https:\/\//https:\/\t\//g
+s/\/\/[^\n]+\n//g
+s/[\t\n]//g'
 echo -n '//]]></script></body></html>'
+} > ../out/index.xhtml
 
 echo -e '\e[1;32mDONE\e[22;39m' >&2
