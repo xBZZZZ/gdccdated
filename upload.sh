@@ -25,7 +25,7 @@ base64 -w512 | while read b64chunk
 do b64chunk='42["input","W '"$b64chunk"'\r"]'
 echo -n "${#b64chunk}:$b64chunk"
 done
-upcmd "exec setsid dash -c 'find -maxdepth 1 -mindepth 1 -exec rm -Rf {} +;base64 -d /tmp/u|tar JxH ustar -f-;exec rm /tmp/u'</dev/null>&2"
+upcmd "exec setsid dash -c 'find -maxdepth 1 -mindepth 1 -exec rm -Rf {} +;base64 -d /tmp/u|tar Jx;exec rm /tmp/u'</dev/null>&2"
 } > ../upload_data
 rm nonsense.txt
 
