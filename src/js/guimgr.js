@@ -45,7 +45,7 @@ function handle_drag(e){
 	var arr=e.dataTransfer.items,l=arr.length,i=0;
 	while(l>i)if(arr[i++].kind==='file'){
 		dt=dt.getBoundingClientRect();
-		var y=(dt.top+dt.bottom)>>1,x=(dt.left+dt.right)>>1,ly=e.clientY-y,lx=e.clientX-x;
+		var y=(dt.top+dt.bottom)/2,x=(dt.left+dt.right)/2,ly=e.clientY-y,lx=e.clientX-x;
 		drag_arrow.setAttribute('style','top:'+(y-2)+'px;left:'+x+'px;width:'+Math.hypot(ly,lx)+'px;transform:rotate('+Math.atan2(ly,lx)+'rad);');
 		drag_cover.setAttribute('style','');
 		e.preventDefault();
