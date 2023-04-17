@@ -344,7 +344,7 @@ function string_to_uint8array(string){
 	return u;
 }
 
-var xml_escape_re=RegExp('[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[^ !#-%\\(-;=?-~]','g'),has_unicode_re=RegExp('[\\u0100-\\uFFFF]','');
+var xml_escape_re=RegExp('[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[^ !#-%(-;=?-~]','g'),has_unicode_re=RegExp('[\\u0100-\\uFFFF]','');
 
 function xml_escape_replacer(chr){
 	switch(chr){
