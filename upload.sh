@@ -21,7 +21,7 @@ cd ../upload_tmp
 #z to make 7zz store znonsense.txt last
 echo -n "$nonsense" > znonsense.txt
 7zz u a.tar znonsense.txt
-7zz a -m0=lzma2:x9:fb273:mc1024 a.xz a.tar
+7zz a -m0=lzma2:x9:fb273:mc1024 -mmt=off -ms=on a.xz a.tar
 
 log "generating shell commands for upload"
 {
