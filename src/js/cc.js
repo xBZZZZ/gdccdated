@@ -2,7 +2,7 @@
 
 var xmlblobopts={'endings':'native','type':'application/xml;charset=UTF-8'},binblobopts={'endings':'transparent','type':'application/octet-stream'};
 
-function cc_save_modal(buffers,name,blobopts){
+function save_modal(buffers,name,blobopts){
 	tbd_set_disabled(false);
 	var g=gui_div_with_html('display:flex;flex-direction:column;','<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back" onclick="window.URL.revokeObjectURL(current_gui().bloburl);pop_gui();"/>'),a=g.firstChild;
 	g.bloburl=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
@@ -10,7 +10,7 @@ function cc_save_modal(buffers,name,blobopts){
 	push_gui(g);
 }
 
-function cc_gui_push_loading_modal(file_name){
+function push_loading_modal(file_name){
 	var g=gui_div_with_html('display:flex;flex-direction:column;','<h2 style="white-space:pre-wrap;margin:0 0 5px;"><span class="loading"></span> loading</h2><input class="thiccb" type="button" value="reload" onclick="location.reload();"/>');
 	g.dataset.ccFileName=file_name;
 	g.error_tag=g.firstChild;
@@ -80,10 +80,10 @@ function load_cc_data(cc_data){
 	a.innerHTML=
 '<input class="thiccb" type="button" value="back"/>\
 <h2 style="margin:5px 0;">done</h2>\
-<input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor){push_gui(g.dict_editor);current_gui().dropb.selectedIndex=-1;}else{cc_gui_push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
+<input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor){push_gui(g.dict_editor);current_gui().dropb.selectedIndex=-1;}else{push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
 <input class="thiccb" type="button" value="save encrypted (windows and android)" '+(window.CompressionStream?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_gzip(g.cc_data,g.dataset.ccFileName);"':'title="your browser doesn&apos;t support CompressionStream" disabled=""')+'/>\
 <input class="thiccb" type="button" value="save encrypted (mac os) (slow)" '+(typeof subtlecrypto==='object'?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_aes(g.cc_data,g.dataset.ccFileName,this.nextSibling);"/><progress title="encrypting (mac os) (slow)" aria-label="encrypting (mac os) (slow)" max="64" value="0" style="display:none;"':subtlecrypto)+'/>\
-<input class="thiccb" type="button" value="save xml" onclick="var a=[],g=current_gui();tbd_set_disabled(true);try{cc_make_xml(a.push.bind(a),g.cc_data);cc_save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\
+<input class="thiccb" type="button" value="save xml" onclick="var a=[],g=current_gui();tbd_set_disabled(true);try{cc_make_xml(a.push.bind(a),g.cc_data);save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\
 <input class="thiccb" type="button" value="open copy in new tab"/>';
 	a=a.tbd=a.querySelectorAll('input:enabled');
 	a[0].addEventListener('click',pop_gui,onceel);
@@ -174,7 +174,7 @@ function cc_load_xml_file_reader_onload(){
 
 function cc_load_gzip(file){
 	try{
-		cc_gui_push_loading_modal(file.name);
+		push_loading_modal(file.name);
 		var fr=new FileReader();
 		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_gzip_file_reader_onload,onceel);
@@ -186,7 +186,7 @@ function cc_load_gzip(file){
 
 function cc_load_aes(file){
 	try{
-		cc_gui_push_loading_modal(file.name);
+		push_loading_modal(file.name);
 		if((fr=file.size)<16)throw Error('file size < 16');
 		if(fr%16)throw Error('file size not divisible by 16');
 		var fr=new FileReader();
@@ -290,7 +290,7 @@ function cc_save_aes(data,name,prog){
 					if(i===done){
 						o=1;
 						prog.setAttribute('style','display:none;');
-						cc_save_modal([data],name,binblobopts);
+						save_modal([data],name,binblobopts);
 					}else if(o<i)encrypt(this);
 				}
 			}catch(error){
@@ -321,7 +321,7 @@ function cc_save_aes(data,name,prog){
 
 function cc_load_xml(file){
 	try{
-		cc_gui_push_loading_modal(file.name);
+		push_loading_modal(file.name);
 		var fr=new FileReader();
 		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_xml_file_reader_onload,onceel);
@@ -456,7 +456,7 @@ function cc_save_gzip(cc_data,name){
 					out=btoa(out);
 					u=new Uint8Array(len=out.length);
 					while(len>i)u[i]=c2x[out.charCodeAt(i++)];
-					cc_save_modal([u.buffer],name,binblobopts);
+					save_modal([u.buffer],name,binblobopts);
 					return;
 				}
 				u=u.value;
@@ -484,7 +484,7 @@ push_gui(gui_div_with_html(false,
 <input class="thiccb" type="button" value="load xml" onclick="var f=current_gui().drop_file_input.files[0];if(f){set_loading(true);cc_load_xml(f);}else window.alert(&quot;no file&quot;);"/>\
 <hr/>\
 <input class="thiccb" type="button" value="open encoded string editor" onclick="string_editor(null,null,&quot;&quot;);"/>\
-<input class="thiccb" type="button" value="open empty dict editor" onclick="cc_gui_push_dict_editor([],&quot;fake root&quot;);"/>\
+<input class="thiccb" type="button" value="open empty dict editor" onclick="push_dict_editor([],&quot;fake root&quot;);"/>\
 <hr/>\
 <input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
 <a class="btn thiccb" href="https://gdprogra.me/#/resources/client/gamesave" rel="noreferrer" target="_blank"><q cite="https://gdprogra.me/#/resources/client/gamesave">Client Gamesave Resource</q> on gdprogra.me</a>\

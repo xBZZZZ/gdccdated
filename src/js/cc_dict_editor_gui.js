@@ -6,7 +6,7 @@ function short_json_str(s){
 	return s;
 }
 
-function cc_gui_dict_item_display_string(p){
+function dict_item_display_string(p){
 	var s=short_json_str(p.key)+' <'+p.type+'> ';
 	if(p.type==='d')return s+'(dict with '+p.value.length+' items)';
 	return s+short_json_str(p.value);
@@ -19,19 +19,19 @@ function dict_editor_add_lis(){
 		b=cre('input');
 		div=cre('div');
 		div.draggable=true;
-		div.ondragstart=cc_gui_dict_item_div_ondragstart;
-		div.ondragend=cc_gui_dict_item_div_ondragend;
-		div.ondragover=cc_gui_dict_item_div_ondragover;
-		div.ondragenter=cc_gui_dict_item_div_ondragenter;
-		div.ondragleave=cc_gui_dict_item_div_ondragleave;
-		div.ondrop=cc_gui_dict_item_div_ondrop;
+		div.ondragstart=dict_item_div_ondragstart;
+		div.ondragend=dict_item_div_ondragend;
+		div.ondragover=dict_item_div_ondragover;
+		div.ondragenter=dict_item_div_ondragenter;
+		div.ondragleave=dict_item_div_ondragleave;
+		div.ondrop=dict_item_div_ondrop;
 		div.setAttribute('role','listitem');
 		b.type='button';
 		b.cc_dict=d;
 		b.cc_dict_item=item;
-		b.value=cc_gui_dict_item_display_string(item);
-		b.onclick=cc_gui_dict_item_onclick;
-		b.oncontextmenu=cc_gui_dict_item_oncontextmenu;
+		b.value=dict_item_display_string(item);
+		b.onclick=dict_item_onclick;
+		b.oncontextmenu=dict_item_oncontextmenu;
 		div.appendChild(b);
 		frag.appendChild(div);
 	}
@@ -46,7 +46,7 @@ function dict_editor_update_inputs(){
 	var g=current_gui(),divs=g.items_list.childNodes,items=g.cc_dict,len=items.length,i=0,inp;
 	while(len>i){
 		inp=divs[i].firstChild;
-		inp.value=cc_gui_dict_item_display_string(inp.cc_dict_item=items[i++]);
+		inp.value=dict_item_display_string(inp.cc_dict_item=items[i++]);
 	}
 }
 
@@ -106,14 +106,14 @@ function dict_editor_do_menu(){
 	this.selectedIndex=-1;
 }
 
-function cc_gui_push_dict_editor(dict,root_name){
+function push_dict_editor(dict,root_name){
 	var g=gui_div_with_html(false,
 '<select class="dropb" title="menu" aria-label="menu">\
 <option value="pop_gui">exit dict editor</option>\
 <option value="dict_editor_add_d_item">add &lt;d&gt; item</option>\
 <option value="dict_editor_add_s_item">add &lt;s&gt; item</option>\
-<option value="cc_gui_dict_editor_recursive_find_structures_onclick">recursive find structures</option>\
-<option value="cc_gui_dict_editor_edit_as_structure_onclick">edit as structure</option>\
+<option value="dict_editor_recursive_find_structures_onclick">recursive find structures</option>\
+<option value="dict_editor_edit_as_structure_onclick">edit as structure</option>\
 <option value="push_xml_ie">XML (im|ex)port dict contects</option>\
 <option value="dict_editor_sort_keys">sort items by key</option>\
 <option value="push_search">recursive RegExp search</option>\
@@ -323,19 +323,19 @@ function dict_editor_add_path_link(dict,name){
 function dict_editor_add_item(item,index){
 	var g=current_gui(),b=cre('input'),d=cre('div'),dict=b.cc_dict=g.cc_dict,il=g.items_list;
 	d.draggable=true;
-	d.ondragstart=cc_gui_dict_item_div_ondragstart;
-	d.ondragend=cc_gui_dict_item_div_ondragend;
-	d.ondragover=cc_gui_dict_item_div_ondragover;
-	d.ondragenter=cc_gui_dict_item_div_ondragenter;
-	d.ondragleave=cc_gui_dict_item_div_ondragleave;
-	d.ondrop=cc_gui_dict_item_div_ondrop;
+	d.ondragstart=dict_item_div_ondragstart;
+	d.ondragend=dict_item_div_ondragend;
+	d.ondragover=dict_item_div_ondragover;
+	d.ondragenter=dict_item_div_ondragenter;
+	d.ondragleave=dict_item_div_ondragleave;
+	d.ondrop=dict_item_div_ondrop;
 	d.setAttribute('role','listitem');
 	d.dataset.itemDivAnim='';
 	b.cc_dict_item=item;
 	b.type='button';
-	b.value=cc_gui_dict_item_display_string(item);
-	b.onclick=cc_gui_dict_item_onclick;
-	b.oncontextmenu=cc_gui_dict_item_oncontextmenu;
+	b.value=dict_item_display_string(item);
+	b.onclick=dict_item_onclick;
+	b.oncontextmenu=dict_item_oncontextmenu;
 	d.appendChild(b);
 	if('number'===typeof index&&index<dict.length){
 		il.insertBefore(d,il.childNodes[index]);
@@ -355,14 +355,14 @@ function dict_editor_add_s_item(){
 	dict_editor_add_item({'key':'key','type':'s','value':'value'}).click();
 }
 
-function cc_gui_dict_item_oncontextmenu(event){
+function dict_item_oncontextmenu(event){
 	event.preventDefault();
 	if(current_gui().dataset.selectMode==='1')return;
 	var item=this.cc_dict_item;
 	if(item.type==='d')dict_editor_add_path_link(item.value,item.key).click();
 }
 
-function cc_gui_dict_item_div_ondragstart(dt){
+function dict_item_div_ondragstart(dt){
 	var g=current_gui();
 	g.dragging_item=this;
 	g.items_list.classList.add('dragging_item');
@@ -372,28 +372,28 @@ function cc_gui_dict_item_div_ondragstart(dt){
 	dt.effectAllowed='move';
 }
 
-function cc_gui_dict_item_div_ondragend(){
+function dict_item_div_ondragend(){
 	var g=current_gui();
 	g.dragging_item=null;
 	g.items_list.classList.remove('dragging_item');
 }
 
-function cc_gui_dict_item_div_ondragover(event){
+function dict_item_div_ondragover(event){
 	if(current_gui().dragging_item)event.preventDefault();
 }
 
-function cc_gui_dict_item_div_ondragenter(event){
+function dict_item_div_ondragenter(event){
 	if(current_gui().dragging_item){
 		event.preventDefault();
 		this.dataset.draggingOver='';
 	}
 }
 
-function cc_gui_dict_item_div_ondragleave(event){
+function dict_item_div_ondragleave(event){
 	delete this.dataset.draggingOver;
 }
 
-function cc_gui_dict_item_div_ondrop(event){
+function dict_item_div_ondrop(event){
 	var g=current_gui(),d=g.dragging_item;
 	if(d){
 		event.preventDefault();
@@ -406,7 +406,7 @@ function cc_gui_dict_item_div_ondrop(event){
 
 function open_value_in_dict_editor_onclick(){
 	var i=current_gui().edit_button.cc_dict_item;
-	cc_gui_item_editor_back_button_onclick();
+	item_editor_back_button_onclick();
 	dict_editor_add_path_link(i.value,i.key).click();
 }
 
@@ -430,7 +430,7 @@ function open_value_in_object_editor_onclick(){
 	}
 }
 
-function cc_gui_dict_item_onclick(){
+function dict_item_onclick(){
 	if(current_gui().dataset.selectMode==='1'){
 		if(this.dataset.stuckActive==null)this.dataset.stuckActive='';
 		else delete this.dataset.stuckActive;
@@ -440,8 +440,8 @@ function cc_gui_dict_item_onclick(){
 	var g=hopen('div'),f,item=this.cc_dict_item;
 	g.dataset.isModal='display:grid;grid-template-columns:auto auto;';
 	g.edit_button=this;
-		hbutton('back',cc_gui_item_editor_back_button_onclick);hclose();
-		hbutton('back (no write)',cc_gui_item_editor_back_no_write_button_onclick,onceel);hclose();
+		hbutton('back',item_editor_back_button_onclick);hclose();
+		hbutton('back (no write)',item_editor_back_no_write_button_onclick,onceel);hclose();
 		hopen('h2');
 		hstyle('line-height','32px');
 		hstyle('grid-column','1/3');
@@ -476,12 +476,12 @@ function cc_gui_dict_item_onclick(){
 				hbutton('open in object editor',open_value_in_object_editor_onclick);hclose();
 			hclose('fieldset');
 		}
-		hbutton('duplicate item',cc_gui_item_editor_duplicate);hclose();
-		hbutton('delete item',cc_gui_item_editor_delete_button_onclick);hclose();
+		hbutton('duplicate item',item_editor_duplicate);hclose();
+		hbutton('delete item',item_editor_delete_button_onclick);hclose();
 	push_gui(hclose('div'));
 }
 
-function cc_gui_item_editor_duplicate(){
+function item_editor_duplicate(){
 	var g=current_gui(),eb=g.edit_button,i=eb.cc_dict_item;
 	if(i.type==='d')i={'key':g.key_input.value,'type':'d','value':JSON.parse(JSON.stringify(i.value))};
 	else{
@@ -504,12 +504,12 @@ function cc_gui_item_editor_duplicate(){
 	(g.edit_button=do_under_current_gui(dict_editor_add_item,[i,(g.item_num_tn.nodeValue=2+eb.cc_dict.indexOf(eb.cc_dict_item))-1])).dataset.stuckActive='';
 }
 
-function cc_gui_item_editor_back_no_write_button_onclick(){
+function item_editor_back_no_write_button_onclick(){
 	delete current_gui().edit_button.dataset.stuckActive;
 	pop_gui();
 }
 
-function cc_gui_item_editor_back_button_onclick(){
+function item_editor_back_button_onclick(){
 	var g=current_gui(),b=g.edit_button,i=b.cc_dict_item;
 	if(i.type!=='d'){
 		var t=g.type_input.value;
@@ -529,12 +529,12 @@ function cc_gui_item_editor_back_button_onclick(){
 		i.value=g.value_input.value;
 	}
 	i.key=g.key_input.value;
-	b.value=cc_gui_dict_item_display_string(i);
+	b.value=dict_item_display_string(i);
 	delete b.dataset.stuckActive;
 	pop_gui();
 }
 
-function cc_gui_item_editor_delete_button_onclick(){
+function item_editor_delete_button_onclick(){
 	var g=current_gui(),b=g.edit_button,d=b.cc_dict,i=b.cc_dict_item;
 	if(!confirm('are you sure you want to delete '+g.item_num_tn.nodeValue+'. '+b.value+'?'))return;
 	d.splice(d.indexOf(i),1);
@@ -609,7 +609,7 @@ function search_result(){
 				}
 				inp=ol.appendChild(cre('li'));
 				inp.value=i;
-				inp.textContent=cc_gui_dict_item_display_string(item);
+				inp.textContent=dict_item_display_string(item);
 				++results_count;
 			}
 			if(item.type==='d'){

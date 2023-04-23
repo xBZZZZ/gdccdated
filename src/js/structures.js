@@ -12,7 +12,7 @@ function structure_finder_dict_onclick(){
 	t.click();
 }
 
-function cc_gui_dict_editor_recursive_find_structures_onclick(){
+function dict_editor_recursive_find_structures_onclick(){
 	var path=[],g=cre('div'),b;
 	g.dataset.isModal='';
 	b=g.appendChild(cre('input'));
@@ -59,7 +59,7 @@ function get_structure_name(s,d){
 	return s.get_name(d);
 }
 
-function cc_gui_dict_editor_edit_as_structure_onclick(){
+function dict_editor_edit_as_structure_onclick(){
 	var dict=current_gui().cc_dict,g=cre('div'),b=g.appendChild(cre('input'));
 	b.type='button';
 	b.value='back';
