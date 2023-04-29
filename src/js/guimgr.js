@@ -1,6 +1,6 @@
 'use strict';
 
-var body=document.querySelector('body'),drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],modal_style='margin:auto;overflow:auto;max-width:calc(100% - 20px);max-height:calc(100% - 20px);border:2px solid rgb(50,0,50);background-color:rgb(200,200,200);padding:8px;border-radius:8px;contain:content;',cre=document.createElementNS.bind(document,'http://www.w3.org/1999/xhtml'),passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
+var body=document.body,drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],modal_style='margin:auto;overflow:auto;max-width:calc(100% - 20px);max-height:calc(100% - 20px);border:2px solid rgb(50,0,50);background-color:rgb(200,200,200);padding:8px;border-radius:8px;contain:content;',cre=document.createElementNS.bind(document,'http://www.w3.org/1999/xhtml'),passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
 
 try{
 	cre('div').addEventListener('passivetest',null,Object.create(null,{
@@ -328,15 +328,3 @@ XSizer.prototype.get_prog=function(x){
 	if(prog!==prog)return '50%';
 	return prog.toFixed(0)+'%';
 };
-
-var sof_re=RegExp('\\$[_0-9A-Za-z]+','g');
-
-function sof(fmt,obj){
-	return fmt.replace(sof_re,function(v){
-		return obj[v.substring(1)];
-	});
-}
-
-function linkf(url){
-	return '<a rel="noreferrer" target="_blank" href="'+url+'">'+url+'</a>';
-}

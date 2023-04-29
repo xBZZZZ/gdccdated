@@ -447,6 +447,10 @@ details[open]>summary{
 .when{
 	color:rgb(255,0,0);
 }
+.git_commit{
+	margin:4px 0 0 auto;
+	font-size:12px;
+}
 a{
 	color:rgb(0,0,255);
 	text-decoration:underline;

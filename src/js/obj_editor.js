@@ -333,6 +333,18 @@ ObjEditor.sort_comparitor=function(a,b){
 	return 0>=(ax-bx||ay-by);
 };
 
+var sof_re=RegExp('\\$[_0-9A-Za-z]+','g');
+
+function sof(fmt,obj){
+	return fmt.replace(sof_re,function(v){
+		return obj[v.substring(1)];
+	});
+}
+
+function linkf(url){
+	return '<a rel="noreferrer" target="_blank" href="'+url+'">'+url+'</a>';
+}
+
 (function(){
 	var k2d={'__proto__':null},p=ObjEditor.prototype;
 	p.prop_display=function(prop){
