@@ -268,7 +268,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	(this.dialog_value_help_pre=cre('pre')).setAttribute('style','margin:0;white-space:pre-wrap;');
 	el.appendChild(this.dialog_value_help_fieldset=el2);
 	root.appendChild(el);
-	root.insertAdjacentHTML('beforeend','<a href="https://gdprogra.me/#/resources/client/level-components/level-object" rel="noreferrer" target="_blank" style="grid-column-start:1;grid-column-end:3;"><q cite="https://gdprogra.me/#/resources/client/level-components/level-object">Level Object</q> on gdprogra.me</a>');
+	root.insertAdjacentHTML('beforeend','<a href="https://gdprogra.me/#/resources/client/level-components/level-object" rel="noreferrer" target="_blank" style="grid-column-start:1;grid-column-end:3;margin-right:auto;"><q cite="https://gdprogra.me/#/resources/client/level-components/level-object">Level Object</q> on gdprogra.me</a>');
 	this.dialog=root;
 };
 
