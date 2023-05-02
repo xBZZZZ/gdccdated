@@ -1,8 +1,8 @@
 #!/bin/bash
 set -o errexit -o pipefail
 export LC_ALL=C
-function err { printf '\e[1;31m[ERR]\e[22m %s\e[39m\n' "$1" >&2;exit 1;}
-function log { printf '\e[1;35m[LOG]\e[22m %s\e[39m\n' "$1" >&2;}
+function err { printf '\e[1;31m[ERR]\e[22m %s\e[39m\n' "$1";exit 1;}
+function log { printf '\e[1;35m[LOG]\e[22m %s\e[39m\n' "$1";}
 function upcmd { local 'd=42["input","'"$1"'\r"]';echo -n "${#d}:$d";}
 
 d=$(dirname -- "$0")

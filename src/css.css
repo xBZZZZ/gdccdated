@@ -403,7 +403,7 @@ details[open]>summary{
 	background-color:rgb(50,0,50);
 }
 .helpimg,.helprimg:before{
-	background-image:url('./help.jpg');
+	background-image:url(help.jpg);
 	background-repeat:no-repeat;
 	contain:strict;
 }
