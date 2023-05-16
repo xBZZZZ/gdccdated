@@ -579,7 +579,7 @@ function push_search(){
 </tr>\
 </tbody>\
 </table>\
-<div style="height:200px;overflow:auto;resize:both;border:2px solid rgb(50,0,50);flex-shrink:0;background-color:rgb(200,200,200);contain:strict;">\
+<div style="height:200px;flex-shrink:0;" class="resizebox">\
 <ul style="white-space:pre;margin:2px 0;"></ul>\
 </div>');
 	g.tr_template=(g.tbody=g.querySelector('tbody')).firstChild.cloneNode(true);

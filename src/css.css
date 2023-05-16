@@ -501,6 +501,13 @@ hr{
 	padding:1px;
 	touch-action:manipulation;
 }
+.resizebox{
+	overflow:auto;
+	resize:both;
+	border:2px solid rgb(50,0,50);
+	background-color:rgb(200,200,200);
+	contain:strict;
+}
 a.thiccb{
 	padding:10px;
 	color:rgb(0,0,255);
