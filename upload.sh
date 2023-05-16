@@ -3,7 +3,6 @@ set -o errexit -o pipefail
 export LC_ALL=C
 function err { printf '\e[1;31m[ERR]\e[22m %s\e[39m\n' "$1";exit 1;}
 function log { printf '\e[1;35m[LOG]\e[22m %s\e[39m\n' "$1";}
-function upcmd { local 'd=42["input","'"$1"'\r"]';echo -n "${#d}:$d";}
 
 d=$(dirname -- "$0")
 cd -- "$d"
@@ -23,16 +22,9 @@ echo -n "$nonsense" > znonsense.txt
 7zz u a.tar znonsense.txt
 7zz a -m0=lzma2:x9:fb273:mc1024 -mmt=off -ms=on a.xz a.tar
 
-log "generating shell commands for upload"
-{
-upcmd "exec 2>/dev/null" #mute stderr so bash doesn't send everything back
-upcmd "unset HISTFILE;alias 'W=echo -n';exec>/tmp/u"
-base64 -w256 a.xz | while read b64chunk
-do b64chunk='42["input","W '"$b64chunk"'\r"]'
-echo -n "${#b64chunk}:$b64chunk"
-done
-upcmd "exec setsid dash -c 'find -maxdepth 1 -mindepth 1 -exec rm -Rf {} +;base64 -d /tmp/u|tar Jx;exec rm /tmp/u'</dev/null>&2"
-} > upload_data
+log "uploading to termbin.com"
+termbinurl=$(exec 3<>/dev/tcp/termbin.com/9999;base64 -w0 a.xz>&3;tr -d '\n\0'<&3)
+log "termbin url: $termbinurl"
 
 log "asking for console uuid"
 url="https://api.glitch.com/console/$(zenity --entry '--text=input console uuid from https://api.glitch.com/console/*/
@@ -57,7 +49,8 @@ done
 log "server shell is ready"
 
 log "uploading shell commands"
-response=$(wget2 --post-file=upload_data --header=content-type:text/plain)
+cmd='42["input","'"exec setsid dash -c 'find -maxdepth 1 -mindepth 1 -exec rm -Rf {} +;curl $termbinurl|base64 -d|tar Jx;exec sync'<>/dev/null 1>&0 2>&0"'\r"]'
+response=$(wget2 "--post-data=${#cmd}:$cmd" --header=content-type:text/plain)
 log "server response: $response"
 
 log "done, /znonsense.txt on server should contain: $nonsense"
