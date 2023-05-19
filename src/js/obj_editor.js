@@ -361,13 +361,11 @@ function linkf(url){
 		}
 	};
 	(function(){
-		function img(x,y,w,h){
+		for(var img=function(x,y,w,h){
 			return '<div style="background-position:'+-x+'px '+-y+'px;width:'+w+'px;height:'+h+'px;" role="img" class="helpimg"></div>';
-		}
-		function rimg(x,y,w,h){
+		},rimg=function(x,y,w,h){
 			return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
-		}
-		for(var scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
+		},scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 fwarn='<li>beware of <a style="font-weight:bold;" href="https://h-schmidt.net/FloatConverter/IEEE754.html" rel="noreferrer" target="_blank">float32</a> imprecision (69.000001 = 68.999999 = 69)!</li>',
 rotatef='<ul><li>= 0 if doesn&apos;t exist</li><li>makes rotate (6) meaningless if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 xyf='block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>',
@@ -406,8 +404,8 @@ arr=[	'objects',
 				'3','>>>',
 				'4','>>>>',
 				'<strong>invalid</strong> values are <strong style="color:cyan;" class="tstroke">&gt;</strong> but speed button in editor is not highlighted'],
-			['kA6','BG',rimg(400,0,525,204)],
-			['kA7','G',img(0,763,525,204)],
+			['kA6','BG','<strong>0</strong> is same as <strong>1</strong>'+rimg(400,0,525,204)],
+			['kA7','G','<strong>0</strong> is same as <strong>1</strong>'+img(0,763,525,204)],
 			['kA8','start dual','0','no','1','yes'],
 			['kA9','menu type','0','level','1','start pos','default is <strong>menu type=level&#9205;kA9,0</strong><hr/><strong>menu type=level&#9205;kA9,0</strong> is like gear button in editor&#10;<strong>menu type=start pos&#9205;kA9,1</strong> is like start pos edit object<hr/>first object in level having <strong>menu type=start pos&#9205;kA9,1</strong> will make:<ul><li>editor gear button open menu like start pos edit object</li><li>colors (kS38) don&apos;t work</li><li>lots of properties don&apos;t survive editor saving</li></ul>start pos having <strong>menu type=level&#9205;kA9,0</strong> will crash game when you click edit object'],
 			['kA11','start flipped gravity','0','no','1','yes'],
@@ -419,7 +417,7 @@ arr=[	'objects',
 			['kA22','platformer mode (2.2)','0','no','1','yes'],
 			['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
 			['kA24','start centered camera (2.2)','0','no','1','yes'],
-			//what is kA25 (2.2)? kA25,1 crashes GDW in level begin, no crash in start pos
+			['kA25','MG (2.2)','<strong>0</strong> and <strong>1</strong> are different middlegrounds (unlike BG (kA6) and G (kA7))'],
 			['kS38','colors',linkf('https://gdprogra.me/#/resources/client/level-components/color-string')],
 		'triggers',
 			['11','touch triggered','0','no','1','yes'],
