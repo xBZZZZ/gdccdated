@@ -462,7 +462,7 @@ function cc_save_gzip(cc_data,name){
 					out=btoa(out);
 					u=new Uint8Array(len=out.length);
 					while(len>i)u[i]=chr2xor[out.charCodeAt(i++)];
-					save_modal([u.buffer],name,binblobopts);
+					save_modal([u],name,binblobopts);
 					return;
 				}
 				u=u.value;
