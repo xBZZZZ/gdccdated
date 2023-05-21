@@ -102,7 +102,7 @@ function structure_onclick(){
 				'd':d,
 				'fs':stn.appendChild(cre('fieldset')),
 				'_reset_btn':cre('input'),
-				'changes':null,
+				'changes':null
 			});
 			ch._init();
 		}
@@ -397,9 +397,7 @@ var structures={
 							}catch(error){
 								say_error('object editor',error);
 							}
-						},function(error){
-							say_error('decode level data',error);
-						});
+						},say_error.bind(null,'decode level data'));
 					}
 				}
 			},
