@@ -61,7 +61,7 @@ drag_cover.addEventListener('drop',function(e){
 	if(!dt)return;
 	hide_drag_arrow();
 	var f=e.dataTransfer.files;
-	if(f.length===0)return;
+	if(!f.length)return;
 	e.preventDefault();
 	if(f.length===1)dt.files=f;
 	else alert('dropped too many files');
