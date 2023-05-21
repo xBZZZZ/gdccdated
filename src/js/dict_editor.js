@@ -278,7 +278,7 @@ function xml_ie_import(){
 }
 
 function xml_ie_export(){
-	var l=guis.length,g=guis[l-1],blob=g.last_blob_url;
+	var l=guis.length,g=guis[l-1],blob=g.last_blob_url,x;
 	if(blob){
 		URL.revokeObjectURL(blob);
 		g.last_blob_url='';
@@ -286,7 +286,10 @@ function xml_ie_export(){
 	g.status.innerHTML='<li>exporting</li>';
 	try{
 		blob=[];
-		cc_make_xml_push_dict_contents(blob.push.bind(blob),0,guis[l-2].cc_dict,false);
+		if((l=guis[l-2].cc_dict).length){
+			(x=new CcXmlMaker(blob.push.bind(blob),0)).d(l);
+			x.f();
+		}
 		l=cre('a');
 		l.href=g.last_blob_url=URL.createObjectURL(new Blob(blob,xmlblobopts));
 		l.rel='noreferrer';

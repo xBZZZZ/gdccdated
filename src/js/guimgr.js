@@ -82,6 +82,8 @@ function say_error(name,error){
 	else alert(name+error);
 }
 
+var cc_gzip_error=say_error.bind(null,'gzip');
+
 function gui_div_with_html(is_modal,html){
 	var div=cre('div');
 	div.innerHTML=html;

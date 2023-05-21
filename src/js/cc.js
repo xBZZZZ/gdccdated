@@ -1,7 +1,5 @@
 'use strict';
 
-var xmlblobopts={'endings':'native','type':'application/xml;charset=UTF-8'},binblobopts={'endings':'transparent','type':'application/octet-stream'};
-
 function save_modal(buffers,name,blobopts){
 	tbd_set_disabled(false);
 	var g=gui_div_with_html('display:flex;flex-direction:column;','<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back" onclick="window.URL.revokeObjectURL(current_gui().bloburl);pop_gui();"/>'),a=g.firstChild;
@@ -83,7 +81,7 @@ function load_cc_data(cc_data){
 <input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor){push_gui(g.dict_editor);current_gui().dropb.selectedIndex=-1;}else{push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
 <input class="thiccb" type="button" value="save encrypted (windows and android)" '+(window.CompressionStream?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_gzip(g.cc_data,g.dataset.ccFileName);"':'title="your browser doesn&apos;t support CompressionStream" disabled=""')+'/>\
 <input class="thiccb" type="button" value="save encrypted (mac os) (slow)" '+(typeof subtlecrypto==='object'?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_aes(g.cc_data,g.dataset.ccFileName,this.nextSibling);"/><progress title="encrypting (mac os) (slow)" aria-label="encrypting (mac os) (slow)" max="64" value="0" style="display:none;"':subtlecrypto)+'/>\
-<input class="thiccb" type="button" value="save xml" onclick="var a=[],g=current_gui();tbd_set_disabled(true);try{cc_make_xml(a.push.bind(a),g.cc_data);save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\
+<input class="thiccb" type="button" value="save xml" onclick="tbd_set_disabled(true);try{var a=[],m=new CcXmlMaker(a.push.bind(a),2),g=current_gui();m.r(g.cc_data);m.f();save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\
 <input class="thiccb" type="button" value="open copy in new tab"/>';
 	a=a.tbd=Array.prototype.slice.call(a.querySelectorAll('input:enabled'));
 	a[0].addEventListener('click',pop_gui,onceel);
@@ -118,12 +116,8 @@ function copy_to_new_tab(){
 	}
 }
 
-function cc_load_file_reader_onerror(){
+function file_reader_onerror(){
 	say_error('FileReader',this.error);
-}
-
-function cc_load_gzip_text_promise_error(error){
-	say_error('ungzip (text)',error);
 }
 
 var xor2chr,chr2xor;
@@ -142,15 +136,15 @@ var xor2chr,chr2xor;
 
 function cc_load_gzip_file_reader_onload(){
 	try{
-		var str,pos=0,ch=xor2chr,cc=this.result;
+		var str,pos=0,ch=String.fromCharCode,cc=this.result,len=cc.byteLength;
 		//force len to be mulple of 4 because sometimes there is junk at the end
-		var len=Math.floor(cc.byteLength/4)*4;
+		len-=len&3;
 		cc=new Uint8Array(cc,0,len);
-		while(len>pos)cc[pos]=ch[cc[pos++]];
+		while(len>pos)cc[pos]=xor2chr[cc[pos++]];
 		if(len>8192){
-			str=(ch=String.fromCharCode).apply(null,cc.subarray(0,pos=8192));
+			str=ch.apply(null,cc.subarray(0,pos=8192));
 			while(len>pos)str+=ch.apply(null,cc.subarray(pos,pos+=8192));
-		}else str=String.fromCharCode.apply(null,cc);
+		}else str=ch.apply(null,cc);
 		cc=cc.subarray(pos=0,(str=atob(str)).length);
 		while(len>pos)cc[pos]=str.charCodeAt(pos++);
 	}catch(error){
@@ -162,7 +156,7 @@ function cc_load_gzip_file_reader_onload(){
 		ch=str.writable.getWriter();
 		ch.write(cc);
 		ch.close();
-		new Response(str.readable).text().then(cc_load_xml_string,cc_load_gzip_text_promise_error);
+		new Response(str.readable).text().then(cc_load_xml_string,say_error.bind(null,'ungzip (text)'));
 	}catch(error){
 		say_error('ungzip',error);
 	}
@@ -176,7 +170,7 @@ function cc_load_gzip(file){
 	try{
 		push_loading_modal(file.name);
 		var fr=new FileReader();
-		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
+		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_gzip_file_reader_onload,onceel);
 		fr.readAsArrayBuffer(file);
 	}catch(error){
@@ -190,7 +184,7 @@ function cc_load_aes(file){
 		if((fr=file.size)<16)throw Error('file size < 16');
 		if(fr%16)throw Error('file size not divisible by 16');
 		var fr=new FileReader();
-		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
+		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_aes_file_reader_onload,onceel);
 		fr.readAsArrayBuffer(new Blob([file,'\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10\x10'],binblobopts));
 	}catch(error){
@@ -246,14 +240,10 @@ function cc_load_aes_file_reader_onload(){
 				'fatal':true,
 				'ignoreBOM':false
 			}).decode(decrypted.subarray(0,m)));
-		}).catch(cc_load_aes_onerror);
+		}).catch(say_error.bind(null,'AES-ECB 256 decrypt'));
 	}catch(error){
-		cc_load_aes_onerror(error);
+		say_error('AES-ECB 256 decrypt',error);
 	}
-}
-
-function cc_load_aes_onerror(error){
-	say_error('AES-ECB 256 decrypt',error);
 }
 
 function cc_save_aes(data,name,prog){
@@ -262,18 +252,22 @@ function cc_save_aes(data,name,prog){
 		say_error('AES-ECB 256 encrypt',error);
 	}
 	try{
-		var chunks=[],o=0,i,done=0,pdone=prog.value=0,sc=subtlecrypto,ak;
-		cc_make_xml(function(chunk){
+		var chunks=[],o=0,i,done=0,pdone=prog.value=0,x=new CcXmlMaker(function(chunk){
 			o+=chunk.length;
 			chunks.push(chunk);
-		},data);
-		i=chunks.length;
-		data=new Uint8Array(16*(1+Math.floor(o/16)));
-		data.fill(data.length-o,o);//padding
-		while(i)data.set(chunks[--i],o-=chunks[i].length);//data
+		},2);
+		x.r(data);
+		if(!o&&(data=x.a).length>=(i=x.i-(x.i&15)+16))data.fill(i-x.i,x.i,i);
+		else{
+			x.f();
+			i=chunks.length;
+			data=new Uint8Array(o-(o&15)+16);
+			data.fill(data.length-o,o);
+			while(i)data.set(chunks[--i],o-=chunks[i].length);
+			i=data.length;
+		}
+		data=new Int32Array(data.buffer,0,i/=4);
 		chunks={'iv':new ArrayBuffer(16),'name':'AES-CBC'};
-		data=new Int32Array(data.buffer);
-		i=data.length;
 		prog.setAttribute('style','width:100%;');
 		//javascript doesn't support AES-ECB
 		//so AES-CBC encrypt each 16 byte chunk individually
@@ -298,11 +292,10 @@ function cc_save_aes(data,name,prog){
 			}
 		}
 		function encrypt(oa){
-			sc.encrypt(chunks,ak,data.subarray(oa[1]=o,o+=4)).then(oa[0],onerror);
+			subtlecrypto.encrypt(chunks,aeskey,data.subarray(oa[1]=o,o+=4)).then(oa[0],onerror);
 		}
 		ensure_aeskey(function(){
 			try{
-				ak=aeskey;
 				var a,c=0;
 				while(c<8&&o<i){
 					++c;
@@ -323,18 +316,12 @@ function cc_load_xml(file){
 	try{
 		push_loading_modal(file.name);
 		var fr=new FileReader();
-		fr.addEventListener('error',cc_load_file_reader_onerror,onceel);
+		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_xml_file_reader_onload,onceel);
 		fr.readAsText(file);
 	}catch(error){
 		say_error('FileReader',error);
 	}
-}
-
-function write_string_to_uint8array(string,uint8array,offset){
-	var i=0,len=string.length;
-	while(len>i)uint8array[i+offset]=string.charCodeAt(i++);
-	return len+offset;
 }
 
 function string_to_uint8array(string){
@@ -344,7 +331,7 @@ function string_to_uint8array(string){
 	return u;
 }
 
-var xml_escape_re=RegExp('[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[^ !#-%(-;=?-~]','g'),has_unicode_re=RegExp('[\\u0100-\\uFFFF]','');
+var xmlblobopts={'type':'application/xml;charset=UTF-8'},binblobopts={'type':'application/octet-stream'},xml_escape_re=RegExp('[\\uD800-\\uDBFF][\\uDC00-\\uDFFF]|[^ !#-%(-;=?-~]','g'),has_unicode_re=RegExp('[\\u0100-\\uFFFF]','');
 
 function xml_escape_replacer(chr){
 	switch(chr){
@@ -361,92 +348,111 @@ function escape_xml(string){
 	return string.replace(xml_escape_re,xml_escape_replacer);
 }
 
-var xmlbuf1=string_to_uint8array('<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n<plist'),
-	xmlbuf2=string_to_uint8array('>\n\t<dict>\n'),
-	xmlbuf3=string_to_uint8array('\t</dict>\n</plist>');
+function CcXmlMaker(w,l){
+	this.w=w;
+	this.l=l;
+	this.i=0;
+	this.a=new Uint8Array(131072);
+}
 
-function cc_make_xml_push_dict_contents(write,indent,dict,endl){
-	var i=0,len=dict.length,item,u,k,v,t,offset,needn;
-	while(len>i){
-		item=dict[i];
-		needn=len>++i||endl;
-		k=escape_xml(item.key);
-		offset=indent;
-		t=item.type;
-		if(t==='d'){
-			u=new Uint8Array(indent*3+k.length+needn+16);
-			u.fill(9,0,indent);
-			u[offset++]=60;//<
-			u[offset++]=47;///
-			u[offset++]=100;//d
-			u[offset++]=62;//>
-			if(needn)u[offset++]=10;
-			t=offset;
-			//split here
-			u.fill(9,offset,offset+=indent);
-			u[offset++]=60;//<
-			u[offset++]=107;//k
-			u[offset++]=62;//>
-			offset=write_string_to_uint8array(k,u,offset);
-			u[offset++]=60;//<
-			u[offset++]=47;///
-			u[offset++]=107;//k
-			u[offset++]=62;//>
-			u[offset++]=10;//\n
-			u.fill(9,offset,offset+=indent);
-			u[offset++]=60;//<
-			u[offset++]=100;//d
-			u[offset++]=62;//>
-			u[offset++]=10;//\n
-			write(u.subarray(t,offset));
-			cc_make_xml_push_dict_contents(write,indent+1,item.value,true);
-			write(u.subarray(0,t));
-			continue;
-		}
-		v=escape_xml(item.value);
-		u=new Uint8Array((indent<<1)+15+k.length+v.length+needn);
-		u.fill(9,0,indent);
-		u[offset++]=60;//<
-		u[offset++]=107;//k
-		u[offset++]=62;//>
-		offset=write_string_to_uint8array(k,u,offset);
-		u[offset++]=60;//<
-		u[offset++]=47;///
-		u[offset++]=107;//k
-		u[offset++]=62;//>
-		u[offset++]=10;//\n
-		u.fill(9,offset,offset+=indent);
-		u[offset++]=60;//<
-		u[offset++]=t=t.charCodeAt(0);
-		u[offset++]=62;//>
-		offset=write_string_to_uint8array(v,u,offset);
-		u[offset++]=60;//<
-		u[offset++]=47;///
-		u[offset++]=t;
-		u[offset++]=62;//>
-		if(needn)u[offset]=10;//\n
-		write(u);
+CcXmlMaker.prototype.s=function(s){
+	var j=0,i=this.i,a=this.a,al=a.length,l=s.length;
+	if(al-i<=l){
+		while(al>i)a[i++]=s.charCodeAt(j++);
+		i=0;
+		this.w(a);
+		al=l-j;
+		this.a=a=new Uint8Array(al-(al&131071)+131072);
 	}
-}
+	while(l>j)a[i++]=s.charCodeAt(j++);
+	this.i=i;
+};
 
-function cc_make_xml(write,cc_data){
-	var plist='',attrs=cc_data.attrs,i=0,len=attrs.length;
-	while(len>i)plist+=' '+attrs[i++]+'=\''+escape_xml(attrs[i++])+'\'';
-	write(xmlbuf1);
-	write(string_to_uint8array(plist));
-	write(xmlbuf2);
-	cc_make_xml_push_dict_contents(write,2,cc_data.dict,true);
-	write(xmlbuf3);
-}
+CcXmlMaker.prototype.t=function(){
+	var i=this.i,l=this.l,a=this.a,s=a.length-i;
+	if(s<=l){
+		a.fill(9,i);
+		i=0;
+		l-=s;
+		this.w(a);
+		this.a=a=new Uint8Array(l-(l&131071)+131072);
+	}
+	a.fill(9,i,this.i=i+l);
+};
 
-function cc_gzip_promise_error(error){
-	say_error('gzip',error);
-}
+CcXmlMaker.prototype.c=function(c){
+	this.a[this.i]=c;
+	if(this.a.length>++this.i)return;
+	this.w(this.a);
+	this.a=new Uint8Array(131072);
+	this.i=0;
+};
+
+CcXmlMaker.prototype.d=function(dict){
+	//dict should not be empty
+	for(var i=0,l=dict.length,item,tc;;){
+		this.t();
+		item=dict[i];
+		if(item.key){
+			this.s('<k>');
+			this.s(escape_xml(item.key));
+			this.s('</k>\n');
+		}else this.s('<k/>\n');
+		this.t();
+		this.c(60);
+		this.c(tc=item.type.charCodeAt(0));
+		if(item.value.length){
+			this.c(62);
+			if('d'===item.type){
+				this.c(10);
+				++this.l;
+				this.d(item.value,true);
+				--this.l;
+				this.c(10);
+				this.t();
+				this.s('</d>');
+			}else{
+				this.s(escape_xml(item.value));
+				this.s('</');
+				this.c(tc);
+				this.c(62);
+			}
+		}else this.s('/>');
+		if(l===++i)return;
+		this.c(10);
+	}
+};
+
+CcXmlMaker.prototype.r=function(cc_data){
+	this.s('<?xml version=\'1.0\' encoding=\'UTF-8\' standalone=\'yes\'?>\n<plist');
+	var attrs=cc_data.attrs,i=0,l=attrs.length;
+	while(l>i){
+		this.c(32);
+		this.s(attrs[i++]);
+		if(attrs[i]){
+			this.s('=\'');
+			this.s(escape_xml(attrs[i]));
+			this.c(39);
+		}else this.s('=\'\'');
+		++i;
+	}
+	if(cc_data.dict.length){
+		this.s('>\n\t<dict>\n');
+		this.d(cc_data.dict);
+		this.s('\n\t</dict>\n</plist>');
+	}else this.s('>\n\t<dict/>\n</plist>');
+};
+
+CcXmlMaker.prototype.f=function(){
+	var i=this.i,a=this.a;
+	if(i)this.w(a.length>i?a.subarray(0,i):a);
+};
 
 function cc_save_gzip(cc_data,name){
 	try{
-		var c=new window.CompressionStream('gzip'),s=c.writable.getWriter(),out='',c2x=chr2xor,chr=String.fromCharCode;
-		cc_make_xml(s.write.bind(s),cc_data);
+		var c=new window.CompressionStream('gzip'),s=c.writable.getWriter(),out='',chr=String.fromCharCode,x=new CcXmlMaker(s.write.bind(s),2);
+		x.r(cc_data);
+		x.f();
 		s.close();
 		s=c.readable.getReader();
 		s.read().then(function ondata(u){
@@ -455,7 +461,7 @@ function cc_save_gzip(cc_data,name){
 				if(u.done){
 					out=btoa(out);
 					u=new Uint8Array(len=out.length);
-					while(len>i)u[i]=c2x[out.charCodeAt(i++)];
+					while(len>i)u[i]=chr2xor[out.charCodeAt(i++)];
 					save_modal([u.buffer],name,binblobopts);
 					return;
 				}
@@ -463,12 +469,12 @@ function cc_save_gzip(cc_data,name){
 				len=u.length;
 				if(len>8192)while(len>i)out+=chr.apply(null,u.subarray(i,i+=8192));
 				else out+=chr.apply(null,u);
-				s.read().then(ondata,cc_gzip_promise_error);
+				s.read().then(ondata,cc_gzip_error);
 			}catch(error){
 				say_error('base64 encode+xor 11',error);
 			}
-		},cc_gzip_promise_error);
+		},cc_gzip_error);
 	}catch(error){
-		say_error('gzip',error);
+		cc_gzip_error(error);
 	}
 }
