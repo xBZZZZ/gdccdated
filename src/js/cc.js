@@ -78,7 +78,7 @@ function load_cc_data(cc_data){
 	a.innerHTML=
 '<input class="thiccb" type="button" value="back"/>\
 <h2 style="margin:5px 0;">done</h2>\
-<input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor){push_gui(g.dict_editor);current_gui().dropb.selectedIndex=-1;}else{push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
+<input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor)push_gui(g.dict_editor);else{push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
 <input class="thiccb" type="button" value="save encrypted (windows and android)" '+(window.CompressionStream?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_gzip(g.cc_data,g.dataset.ccFileName);"':'title="your browser doesn&apos;t support CompressionStream" disabled=""')+'/>\
 <input class="thiccb" type="button" value="save encrypted (mac os) (slow)" '+(typeof subtlecrypto==='object'?'onclick="var g=current_gui();tbd_set_disabled(true);cc_save_aes(g.cc_data,g.dataset.ccFileName,this.nextSibling);"/><progress title="encrypting (mac os) (slow)" aria-label="encrypting (mac os) (slow)" max="64" value="0" style="display:none;"':subtlecrypto)+'/>\
 <input class="thiccb" type="button" value="save xml" onclick="tbd_set_disabled(true);try{var a=[],m=new CcXmlMaker(a.push.bind(a),2),g=current_gui();m.r(g.cc_data);m.f();save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\

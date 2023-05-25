@@ -78,8 +78,7 @@ function dict_editor_invert_selection(){
 }
 
 function dict_editor_delete_selected(){
-	var tbd=current_gui(),items_list=tbd.items_list,divs=items_list.childNodes,i=divs.length,div;
-	tbd=[];
+	var tbd=[],items_list=current_gui().items_list,divs=items_list.childNodes,i=divs.length,div;
 	while(i){
 		div=divs[--i];
 		if(div.firstChild.dataset.stuckActive!=null)tbd.push(div);
@@ -102,13 +101,15 @@ function dict_editor_update_from_dom(){
 }
 
 function dict_editor_do_menu(){
-	window[this.value]();
-	this.selectedIndex=-1;
+	var v=this.value;
+	this.selectedIndex=0;
+	if(v)window[v]();
 }
 
 function push_dict_editor(dict,root_name){
 	var g=gui_div_with_html(false,
 '<select class="dropb" title="menu" aria-label="menu">\
+<option value="">menu</option>\
 <option value="pop_gui">exit dict editor</option>\
 <option value="dict_editor_add_d_item">add &lt;d&gt; item</option>\
 <option value="dict_editor_add_s_item">add &lt;s&gt; item</option>\
@@ -136,7 +137,7 @@ function push_dict_editor(dict,root_name){
 	sopts[1].addEventListener('click',dict_editor_invert_selection,passiveel);
 	sopts[2].addEventListener('click',dict_editor_clear_selection,passiveel);
 	sopts[3].addEventListener('click',dict_editor_delete_selected,passiveel);
-	sopts=g.dropb=g.querySelector('.dropb');
+	(sopts=g.dropb=g.querySelector('.dropb')).selectedIndex=0;
 	sopts.addEventListener('change',dict_editor_do_menu,passiveel);
 	g.dataset.selectMode='0';
 	g.items_list=g.querySelector('.dict_items_list');
@@ -144,7 +145,6 @@ function push_dict_editor(dict,root_name){
 	g.do_before_hide=dict_editor_do_before_hide;
 	g.dragging_item=null;
 	push_gui(g);
-	sopts.selectedIndex=-1;
 	g=dict_editor_add_path_link(dict,root_name);
 	g.setAttribute('style','font-weight:bold;');
 	g.click();
