@@ -716,7 +716,7 @@ function string_editor(do_after,do_after2,start_text){
 	var g=cre('pre'),el=g.appendChild(cre('a'));
 	el.draggable=false;
 	g.dataset.isModal='line-height:20px;';
-	g.dataset.isStringEditor='';
+	g.dataset.guiType='stringeditor';
 	g.do_after=do_after;
 	g.do_after2=do_after2;
 	if(do_after){
@@ -790,34 +790,3 @@ function string_editor(do_after,do_after2,start_text){
 	g.appendChild(document.createTextNode('use in JS console:\n  sd - decoded (bottom value)\n  se - encoded (top value)'));
 	push_gui(g);
 }
-
-Object.defineProperties(window,{
-	'sd':{
-		'configurable':true,
-		'enumerable':true,
-		'get':function(){
-			var g=current_gui();
-			if(g.dataset.isStringEditor==null)throw Error('not string editor');
-			return g.decoded.value;
-		},
-		'set':function(val){
-			var g=current_gui();
-			if(g.dataset.isStringEditor==null)throw Error('not string editor');
-			g.decoded.value=val;
-		}
-	},
-	'se':{
-		'configurable':true,
-		'enumerable':true,
-		'get':function(){
-			var g=current_gui();
-			if(g.dataset.isStringEditor==null)throw Error('not string editor');
-			return g.encoded.value;
-		},
-		'set':function(val){
-			var g=current_gui();
-			if(g.dataset.isStringEditor==null)throw Error('not string editor');
-			g.encoded.value=val;
-		}
-	}
-});

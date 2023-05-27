@@ -228,6 +228,7 @@ ObjEditor.prototype.toggle_dialog_help=function(){
 ObjEditor.prototype.init_edit_dialog=function(){
 	var root=cre('div'),el=this.dialog_help_cb=cre('input'),el2=cre('label'),el3=cre('legend');
 	root.dataset.isModal='display:grid;grid-template-columns:auto auto;';
+	root.dataset.guiType='objeditordialog';
 	el.type='checkbox';
 	el.addEventListener('change',this.toggle_dialog_help.bind(this),passiveel);
 	el.setAttribute('style','margin:auto 0;width:18px;height:18px;');
@@ -257,7 +258,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	root.appendChild(el);
 	el=cre('fieldset');
 	el.className='objeditorfs';
-	el.innerHTML='<legend>value</legend>';
+	el.innerHTML='<legend title="use in JS console:&#10;  ovs - value as string&#10;  ov - value as number" style="cursor:help;">value</legend>';
 	el.appendChild(this.s_dialog_value=cre('select')).addEventListener('change',this.dialog_value_onchange.bind(this),passiveel);
 	el.appendChild(this.i_dialog_value=cre('textarea')).addEventListener('input',this.dialog_value_oninput.bind(this),passiveel);
 	el2=cre('input');
