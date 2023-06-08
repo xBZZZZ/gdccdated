@@ -40,8 +40,8 @@ function ObjEditor(string,write){
 </div>\
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	els=gui.getElementsByTagName('canvas');
-	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype);
-	this.s_props=new CSelect(els[1],Array.prototype,this.prop_display,this.default_prop);
+	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
+	this.s_props=new CSelect(els[1],Array.prototype,this.prop_display,this.default_prop,this.s_props_onchange.bind(this));
 	els=gui.handle_resize=this.drawifdeformed.bind(this);
 	gui.obj_editor=this;
 	new XSizer(this.s_objs.canv.parentNode.parentNode.parentNode,els);
@@ -88,8 +88,6 @@ ObjEditor.prototype.init_event_listeners=function(){
 	this.b_dup_obj.addEventListener('click',this.s_objs.dup.bind(this.s_objs),passiveel);
 	this.b_sort_objs.addEventListener('click',this.open_sort_objs_dialog.bind(this),passiveel);
 	this.b_add_obj.addEventListener('click',this.s_objs.add.bind(this.s_objs),passiveel);
-	this.s_objs.onchange=this.update_s_props.bind(this);
-	this.s_props.onchange=this.s_props.onswap=this.s_objs.draw.bind(this.s_objs);
 	this.b_up_prop.addEventListener('click',this.s_props.swapup.bind(this.s_props),passiveel);
 	this.b_down_prop.addEventListener('click',this.s_props.swapdown.bind(this.s_props),passiveel);
 	this.b_del_prop.addEventListener('click',this.s_props.del.bind(this.s_props),passiveel);
@@ -102,11 +100,16 @@ ObjEditor.prototype.add_prop=function(){
 	this.open_edit_dialog();
 };
 
-ObjEditor.prototype.update_s_props=function(){
-	var s=this.s_props;
-	s.sel=-1;
-	s.items=this.s_objs.getsitem()||Array.prototype;
-	s.draw();
+ObjEditor.prototype.s_objs_onchange=function(s){
+	if(s&1){
+		(s=this.s_props).sel=-1;
+		s.items=this.s_objs.getsitem()||Array.prototype;
+		s.draw();
+	}
+};
+
+ObjEditor.prototype.s_props_onchange=function(s){
+	if(s&2)this.s_objs.draw();
 };
 
 ObjEditor.prototype.parse_string=function(string){

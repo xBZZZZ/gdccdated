@@ -1,6 +1,13 @@
 'use strict';
 
-function CSelect(canvas,items,itemstr,itemdefualt){
+//console.assert(cs instanceof CSelect);
+//cs.onchange=function(flags){
+//console.assert(flags>0);
+//if(flags&1){/*selected other item*/}
+//if(flags&2){/*amount or order of items changed*/}
+//};
+
+function CSelect(canvas,items,itemstr,itemdefualt,onchange){
 	this.cont=(this.canv=canvas).getContext('2d',this.copts);
 	this.p=canvas.parentNode;
 	canvas.addEventListener('wheel',this,nonpassiveel);
@@ -15,8 +22,9 @@ function CSelect(canvas,items,itemstr,itemdefualt){
 	this.hasscrollbar=false;
 	this.items=items;
 	this.itemstr=itemstr;
-	this.scrollingpointerid=this.onchange=null;
  	this.itemdefualt=itemdefualt;
+	this.onchange=onchange;
+	this.scrollingpointerid=null;
 	if(!this.sel_grad){
 		CSelect.prototype.sel_grad=this.cont.createLinearGradient(0,0,0,this.itemheight);
 		this.sel_grad.addColorStop(0,'rgb(100,50,100)');
@@ -146,7 +154,7 @@ CSelect.prototype.handleEvent=function(event){
 			}
 			this.selinview();
 			this.draw();
-			if(this.onchange)this.onchange();
+			this.onchange(1);
 			return;
 		case 'pointerdown':
 			if(!this.hasscrollbar||event.offsetX<this.w-16){
@@ -154,7 +162,7 @@ CSelect.prototype.handleEvent=function(event){
 				if(t>=0&&t!==this.sel&&t<this.items.length){
 					this.sel=t;
 					this.draw();
-					if(this.onchange)this.onchange();
+					this.onchange(1);
 				}
 				return;
 			}
@@ -200,7 +208,7 @@ CSelect.prototype.swapup=function(){
 		this.items[this.sel]=t;
 		this.selinview();
 		this.draw();
-		if(this.onswap)this.onswap();
+		this.onchange(2);
 	}
 };
 
@@ -211,7 +219,7 @@ CSelect.prototype.swapdown=function(){
 		this.items[this.sel]=t;
 		this.selinview();
 		this.draw();
-		if(this.onswap)this.onswap();
+		this.onchange(2);
 	}
 };
 
@@ -222,7 +230,7 @@ CSelect.prototype.del=function(){
 		if(this.sel>l)this.sel=l;
 		this.selinview();
 		this.draw();
-		if(this.onchange)this.onchange();
+		this.onchange(3);
 	}
 };
 
@@ -231,7 +239,7 @@ CSelect.prototype.dup=function(){
 		this.items.splice(this.sel,0,JSON.parse(JSON.stringify(this.items[this.sel++])));
 		this.selinview();
 		this.draw();
-		if(this.onswap)this.onswap();
+		this.onchange(2);
 	}
 };
 
@@ -240,7 +248,7 @@ CSelect.prototype.add=function(){
 		this.items.splice(++this.sel,0,this.itemdefualt.slice());
 		this.selinview();
 		this.draw();
-		if(this.onchange)this.onchange();
+		this.onchange(3);
 	}
 };
 
