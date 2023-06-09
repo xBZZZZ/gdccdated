@@ -101,7 +101,7 @@ ObjEditor.prototype.add_prop=function(){
 };
 
 ObjEditor.prototype.s_objs_onchange=function(s){
-	if(s&1){
+	if(s&CSSEL){
 		(s=this.s_props).sel=-1;
 		s.items=this.s_objs.getsitem()||Array.prototype;
 		s.draw();
@@ -109,7 +109,7 @@ ObjEditor.prototype.s_objs_onchange=function(s){
 };
 
 ObjEditor.prototype.s_props_onchange=function(s){
-	if(s&2)this.s_objs.draw();
+	if(s&CSITEMS)this.s_objs.draw();
 };
 
 ObjEditor.prototype.parse_string=function(string){

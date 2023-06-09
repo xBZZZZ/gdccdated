@@ -28,6 +28,26 @@ else echo "warning: can't figure out last git commit"
 fi
 echo -e '\e[2A[x\n'
 
+lstart "generate out_tmp/js_sed_script"
+{
+sed -E 's-//.*$--
+/^$/d
+/^var [0-9A-Z_a-z]+=[^=;\]+;$/{
+s/^var ([^=]+)=([^;]+);$/s=\\b\1\\b=\2=g/
+t
+}
+s/^/invalid line in inlineables.js: /
+w/dev/stderr
+Q1' inlineables.js
+echo -n '
+s-\\\n--g
+s-http://-http:/\t/-g
+s-https://-https:/\t/-g
+s-//[^\n]*\n--g
+s-[\t\n]--g'
+} > ../../out_tmp/js_sed_script
+lend
+
 lstart "generate out_tmp/after_css"
 {
 echo "</style>\
@@ -37,11 +57,7 @@ echo "</style>\
 <div id='modals' role='none' style='display:none;'></div>\
 <div id='drag_cover' role='none' aria-hidden='true' style='display:none;'><div id='drag_arrow' role='none' aria-hidden='true'></div></div>\
 <script>'use strict'"';//<![CDATA['
-grep -Evh "^('use strict';)?$" "${jsfiles[@]}" | sed -Ez 's-\\\n--g
-s-http://-http:/\t/-g
-s-https://-https:/\t/-g
-s-//[^\n]*\n--g
-s-[\t\n]--g'
+grep -Evh "^('use strict';)?$" "${jsfiles[@]}" | sed -Ezf../../out_tmp/js_sed_script
 echo -n '//]]></script></body></html>'
 } > ../../out_tmp/after_css
 lend
