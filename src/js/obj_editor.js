@@ -351,131 +351,137 @@ function linkf(url){
 }
 
 ObjEditor.init_prop_display=function(){
-	var k2d={'__proto__':null};
-	ObjEditor.init_prop_display=Function.prototype;
-	ObjEditor.prop_display=function(prop){
-		var k=prop[0],v=prop[1],d=k2d[k];
-		switch(typeof d){
-			case 'object':
-				var vd=d[1][v];
-				if(typeof vd==='string')return d[0]+'='+vd+'\u23F5'+k+','+v;
-				return d[0]+'\u23F5'+k+','+v;
-			case 'string':
-				return d+'\u23F5'+k+','+v;
-			default:
-				return k+','+v;
-		}
-	};
-	(function(){
-		for(var img=function(x,y,w,h){
-			return '<div style="background-position:'+-x+'px '+-y+'px;width:'+w+'px;height:'+h+'px;" role="img" class="helpimg"></div>';
-		},rimg=function(x,y,w,h){
-			return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
-		},scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
+var k2d={'__proto__':null};
+ObjEditor.init_prop_display=Function.prototype;
+ObjEditor.prop_display=function(prop){
+	var k=prop[0],v=prop[1],d=k2d[k];
+	switch(typeof d){
+		case 'object':
+			var vd=d[1][v];
+			if(typeof vd==='string')return d[0]+'='+vd+'\u23F5'+k+','+v;
+			return d[0]+'\u23F5'+k+','+v;
+		case 'string':
+			return d+'\u23F5'+k+','+v;
+		default:
+			return k+','+v;
+	}
+};
+(function(){
+for(var img=function(x,y,w,h){
+	return '<div style="background-position:'+-x+'px '+-y+'px;width:'+w+'px;height:'+h+'px;" role="img" class="helpimg"></div>';
+},rimg=function(x,y,w,h){
+	return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
+},scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 fwarn='<li>beware of <a style="font-weight:bold;" href="https://h-schmidt.net/FloatConverter/IEEE754.html" rel="noreferrer" target="_blank">float32</a> imprecision (69.000001 = 68.999999 = 69)!</li>',
 rotatef='<ul><li>= 0 if doesn&apos;t exist</li><li>makes rotate (6) meaningless if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 xyf='block (id: 1, scale: 1) is <strong>30</strong>x<strong>30</strong>',
-arr=[	'objects',
-			['1','id','play level <a style="font-weight:bold;" href="https://gdbrowser.com/58079690" rel="noreferrer" target="_blank">58079690</a> for list of all ids'],
-			['2','x',xyf],
-			['3','y',xyf],
-			['6','rotate','<ul><li>= 0 if doesn&apos;t exist</li><li>unit is degrees</li><li><strong class="when">(2.2) </strong>ignored if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li></ul>'+img(0,431,400,278)],
-			['13','portal checkbox','0','no','1','yes',img(0,0,400,341)],
-			['25','z order'],
-			['31','encoded text','encoded without gzip'],
-			['32','scale','<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale = 0 object impossible)</li><li><strong class="when">(2.2) </strong>ignored if scale x (128) or scale y (129) exist</li></ul>'],
-			['54','orange teleporter y offset','<table class="tableborder"><thead><tr><th>0 (resets to 100 when level loaded in editor)</th><th>100 (default)</th></tr></thead><tbody><tr><td align="center">'+img(502,661,102,102)+'</td><td align="center">'+img(400,525,102,238)+'</td></tr></tbody></table>'],
-			['57','groups','groups are separated by &quot;.&quot;'],
-			['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;doesn&apos;t work with mirror, speed and dual portals'],
-			['128','scale x (2.2)',sof(scalef,{'a':'x','o':'y (129)'})],
-			['129','scale y (2.2)',sof(scalef,{'a':'y','o':'x (128)'})],
-			['131','rotate x (2.2)',rotatef],
-			['132','rotate y (2.2)',rotatef],
-		'start pos and level start',
-			['kA2','start gamemode',
-				'0','square',
-				'1','ship',
-				'2','ball',
-				'3','ufo',
-				'4','wave',
-				'5','robot',
-				'6','spider',
-				'7','swing copter (2.2)',
-				'<strong>invalid</strong> values are <strong>square</strong> but gamemode button in editor is not <strong style="color:cyan;" class="tstroke">cyan</strong>'],
-			['kA3','start mini','0','no','1','yes'],
-			['kA4','start speed',
-				'0','<',
-				'1','>',
-				'2','>>',
-				'3','>>>',
-				'4','>>>>',
-				'<strong>invalid</strong> values are <strong style="color:cyan;" class="tstroke">&gt;</strong> but speed button in editor is not highlighted'],
-			['kA6','BG','<strong>0</strong> is same as <strong>1</strong>'+rimg(400,0,525,204)],
-			['kA7','G','<strong>0</strong> is same as <strong>1</strong>'+img(0,763,525,204)],
-			['kA8','start dual','0','no','1','yes'],
-			['kA9','menu type','0','level','1','start pos','default is <strong>menu type=level&#9205;kA9,0</strong><hr/><strong>menu type=level&#9205;kA9,0</strong> is like gear button in editor&#10;<strong>menu type=start pos&#9205;kA9,1</strong> is like start pos edit object<hr/>first object in level having <strong>menu type=start pos&#9205;kA9,1</strong> will make:<ul><li>editor gear button open menu like start pos edit object</li><li>colors (kS38) don&apos;t work</li><li>lots of properties don&apos;t survive editor saving</li></ul>start pos having <strong>menu type=level&#9205;kA9,0</strong> will crash game when you click edit object'],
-			['kA11','start flipped gravity','0','no','1','yes'],
-			['kA14','music lines',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/guideline-string.md')],
-			['kA15','song fade in','0','no','1','yes'],
-			['kA16','song fade out','0','no','1','yes'],
-			['kA17','G/Line','<strong>0</strong> in data is <strong>1</strong> in editor&#10;<strong>1</strong> in data is <strong>1</strong> in editor&#10;<strong>2</strong> in data is <strong>2</strong> in editor'+img(421,936,137,66)],
-			['kA20','start reverse (2.2)','0','no','1','yes'],
-			['kA22','platformer mode (2.2)','0','no','1','yes'],
-			['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
-			['kA24','start centered camera (2.2)','0','no','1','yes'],
-			['kA25','MG (2.2)','<strong>0</strong> and <strong>1</strong> are different middlegrounds (unlike BG (kA6) and G (kA7))'],
-			['kS38','colors',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/color-string.md')],
-		'triggers',
-			['11','touch triggered','0','no','1','yes'],
-			['62','spawn triggered','0','no','1','yes'],
-			['87','multi trigger','0','no','1','yes'],
-			['30','easing',
-				'0','none',
-				'1','ease in out',
-				'2','ease in',
-				'3','ease out',
-				'4','elastic in out',
-				'5','elastic in',
-				'6','elastic out',
-				'7','bounce in out',
-				'8','bounce in',
-				'9','bounce out',
-				'10','exponential in out',
-				'11','exponential in',
-				'12','exponential out',
-				'13','sine in out',
-				'14','sine in',
-				'15','sine out',
-				'16','back in out',
-				'17','back in',
-				'18','back out',
-				'used in <strong>MOVE</strong> and <strong>ROTATE</strong> triggers'],
-			['85','easing rate',img(0,341,400,90)]
-		],l=arr.length,i=0,key_html='',de=function(chr){
-			switch(chr){
-				case '"':return '&amp;quot;';
-				case '\'':return '&amp;apos;';
-				case '<':return '&amp;lt;';
-				case '>':return '&amp;gt;';
-				case '&':return '&amp;amp;';
-				default:return '&amp;#'+chr.codePointAt(0)+';';
-			}
-		};l>i;){
-			var item=arr[i++];
-			if(typeof item==='string'){
-				key_html+='</optgroup><optgroup label="'+item+'">';
-				continue;
-			}
-			key_html+='<option';
-			if(item.length&1)key_html+=' data-valhelp="'+escape_xml(item.pop())+'"';
-			if(item.length>2){
-				key_html+=' data-valhtml="';
-				for(var vals={'__proto__':null},ii=2,il=item.length;il>ii;ii+=2)key_html+='&lt;option value=&quot;'+item[ii]+'&quot;&gt;'+item[ii]+'&amp;#9205;'+(vals[item[ii]]=item[1+ii]).replace(xml_escape_re,de)+'&lt;/option&gt;';
-				key_html+='"';
-				k2d[item[0]]=[item[1],vals];
-			}else k2d[item[0]]=item[1];
-			key_html+=' value="'+item[0]+'">'+item[0]+'&#9205;'+item[1]+'</option>';
-		}
-		ObjEditor.key_html=key_html.substring(11)+'</optgroup>';
-	})();
+colors=['0','default','1000','bg','1001','g1','1002','l','1003','3dl','1004','obj','1005','p1','1006','p2','1007','lbg','1009','g2','1010','black','1011','white','1012','lighter',
+	'<strong>0</strong> is default\n[<strong>1</strong>;<strong>999</strong>] display like number\n<strong>1012</strong> (<em>lighter</em>) as main color (21) crashes or freezes gd (demonstrated in level <a style="font-weight:bold;" href="https://gdbrowser.com/87647796" rel="noreferrer" target="_blank">87647796</a>)'],
+arr=['objects',
+	['1','id','play level <a style="font-weight:bold;" href="https://gdbrowser.com/58079690" rel="noreferrer" target="_blank">58079690</a> for list of all ids'],
+	['2','x',xyf],
+	['3','y',xyf],
+	['6','rotate','<ul><li>= 0 if doesn&apos;t exist</li><li>unit is degrees</li><li><strong class="when">(2.2) </strong>ignored if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li></ul>'+img(0,431,400,278)],
+	['13','portal checkbox','0','no','1','yes',img(0,0,400,341)],
+	Array.prototype.concat('21','main color',colors),
+	Array.prototype.concat('22','secondary color',colors),
+	['25','z order'],
+	['31','encoded text','encoded without gzip'],
+	['32','scale','<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale = 0 object impossible)</li><li><strong class="when">(2.2) </strong>ignored if scale x (128) or scale y (129) exist</li></ul>'],
+	['54','orange teleporter y offset','<table class="tableborder"><thead><tr><th>0 (resets to 100 when level loaded in editor)</th><th>100 (default)</th></tr></thead><tbody><tr><td align="center">'+img(502,661,102,102)+'</td><td align="center">'+img(400,525,102,238)+'</td></tr></tbody></table>'],
+	['57','groups','groups are separated by &quot;.&quot;'],
+	['96','glow','0','yes','1','no','default is yes (0)'],
+	['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;doesn&apos;t work with mirror, speed and dual portals'],
+	['128','scale x (2.2)',sof(scalef,{'a':'x','o':'y (129)'})],
+	['129','scale y (2.2)',sof(scalef,{'a':'y','o':'x (128)'})],
+	['131','rotate x (2.2)',rotatef],
+	['132','rotate y (2.2)',rotatef],
+'start pos and level start',
+	['kA2','start gamemode',
+		'0','square',
+		'1','ship',
+		'2','ball',
+		'3','ufo',
+		'4','wave',
+		'5','robot',
+		'6','spider',
+		'7','swing copter (2.2)',
+		'<strong>invalid</strong> values are <strong>square</strong> but gamemode button in editor is not <strong style="color:cyan;" class="tstroke">cyan</strong>'],
+	['kA3','start mini','0','no','1','yes'],
+	['kA4','start speed',
+		'0','<',
+		'1','>',
+		'2','>>',
+		'3','>>>',
+		'4','>>>>',
+		'<strong>invalid</strong> values are <strong style="color:cyan;" class="tstroke">&gt;</strong> but speed button in editor is not highlighted'],
+	['kA6','BG','<strong>0</strong> is same as <strong>1</strong>'+rimg(400,0,525,204)],
+	['kA7','G','<strong>0</strong> is same as <strong>1</strong>'+img(0,763,525,204)],
+	['kA8','start dual','0','no','1','yes'],
+	['kA9','menu type','0','level','1','start pos','default is <strong>menu type=level&#9205;kA9,0</strong><hr/><strong>menu type=level&#9205;kA9,0</strong> is like gear button in editor&#10;<strong>menu type=start pos&#9205;kA9,1</strong> is like start pos edit object<hr/>first object in level having <strong>menu type=start pos&#9205;kA9,1</strong> will make:<ul><li>editor gear button open menu like start pos edit object</li><li>colors (kS38) don&apos;t work</li><li>lots of properties don&apos;t survive editor saving</li></ul>start pos having <strong>menu type=level&#9205;kA9,0</strong> will crash game when you click edit object'],
+	['kA11','start flipped gravity','0','no','1','yes'],
+	['kA14','music lines',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/guideline-string.md')],
+	['kA15','song fade in','0','no','1','yes'],
+	['kA16','song fade out','0','no','1','yes'],
+	['kA17','G/Line','<strong>0</strong> in data is <strong>1</strong> in editor&#10;<strong>1</strong> in data is <strong>1</strong> in editor&#10;<strong>2</strong> in data is <strong>2</strong> in editor'+img(421,936,137,66)],
+	['kA20','start reverse (2.2)','0','no','1','yes'],
+	['kA22','platformer mode (2.2)','0','no','1','yes'],
+	['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
+	['kA24','start centered camera (2.2)','0','no','1','yes'],
+	['kA25','MG (2.2)','<strong>0</strong> and <strong>1</strong> are different middlegrounds (unlike BG (kA6) and G (kA7))'],
+	['kS38','colors',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/color-string.md')],
+'triggers',
+	['11','touch triggered','0','no','1','yes'],
+	['62','spawn triggered','0','no','1','yes'],
+	['87','multi trigger','0','no','1','yes'],
+	['30','easing',
+		'0','none',
+		'1','ease in out',
+		'2','ease in',
+		'3','ease out',
+		'4','elastic in out',
+		'5','elastic in',
+		'6','elastic out',
+		'7','bounce in out',
+		'8','bounce in',
+		'9','bounce out',
+		'10','exponential in out',
+		'11','exponential in',
+		'12','exponential out',
+		'13','sine in out',
+		'14','sine in',
+		'15','sine out',
+		'16','back in out',
+		'17','back in',
+		'18','back out',
+		'used in <strong>MOVE</strong> and <strong>ROTATE</strong> triggers'],
+	['85','easing rate',img(0,341,400,90)]
+],l=arr.length,i=0,key_html='',de=function(chr){
+	switch(chr){
+		case '"':return '&amp;quot;';
+		case '\'':return '&amp;apos;';
+		case '<':return '&amp;lt;';
+		case '>':return '&amp;gt;';
+		case '&':return '&amp;amp;';
+		default:return '&amp;#'+chr.codePointAt(0)+';';
+	}
+};l>i;){
+	var item=arr[i++];
+	if(typeof item==='string'){
+		key_html+='</optgroup><optgroup label="'+item+'">';
+		continue;
+	}
+	key_html+='<option';
+	var il=item.length;
+	if(il&1)key_html+=' data-valhelp="'+escape_xml(item[--il])+'"';
+	if(il>2){
+		key_html+=' data-valhtml="';
+		for(var vals={'__proto__':null},ii=2;il>ii;ii+=2)key_html+='&lt;option value=&quot;'+item[ii]+'&quot;&gt;'+item[ii]+'&amp;#9205;'+(vals[item[ii]]=item[1+ii]).replace(xml_escape_re,de)+'&lt;/option&gt;';
+		key_html+='"';
+		k2d[item[0]]=[item[1],vals];
+	}else k2d[item[0]]=item[1];
+	key_html+=' value="'+item[0]+'">'+item[0]+'&#9205;'+item[1]+'</option>';
+}
+ObjEditor.key_html=key_html.substring(11)+'</optgroup>';
+})();
 };
