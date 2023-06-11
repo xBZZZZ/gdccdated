@@ -3,6 +3,7 @@
 function ObjEditor(string,write){
 	var objs_arr=this.parse_string(string);
 	this.write=write;
+	ObjEditor.init_prop_display();
 	for(var gui=gui_div_with_html(false,
 '<div style="display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;right:0;-moz-user-select:none;-webkit-user-select:none;user-select:none;overflow:hidden;contain:strict;">\
 <div style="display:flex;overflow:hidden;contain:content;">\
@@ -41,7 +42,7 @@ function ObjEditor(string,write){
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	els=gui.getElementsByTagName('canvas');
 	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
-	this.s_props=new CSelect(els[1],Array.prototype,this.prop_display,this.default_prop,this.s_props_onchange.bind(this));
+	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this));
 	els=gui.handle_resize=this.drawifdeformed.bind(this);
 	gui.obj_editor=this;
 	new XSizer(this.s_objs.canv.parentNode.parentNode.parentNode,els);
@@ -252,7 +253,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	el.type='button';
 	el.value='back (no write)';
 	root.appendChild(el).addEventListener('click',pop_gui,passiveel);
-	el2.innerHTML=this.key_html;
+	el2.innerHTML=ObjEditor.key_html;
 	el=cre('fieldset');
 	el.className='objeditorfs';
 	el.innerHTML='<legend>key</legend>';
@@ -349,9 +350,10 @@ function linkf(url){
 	return '<a rel="noreferrer" target="_blank" href="'+url+'">'+url+'</a>';
 }
 
-(function(){
-	var k2d={'__proto__':null},p=ObjEditor.prototype;
-	p.prop_display=function(prop){
+ObjEditor.init_prop_display=function(){
+	var k2d={'__proto__':null};
+	ObjEditor.init_prop_display=Function.prototype;
+	ObjEditor.prop_display=function(prop){
 		var k=prop[0],v=prop[1],d=k2d[k];
 		switch(typeof d){
 			case 'object':
@@ -474,6 +476,6 @@ arr=[	'objects',
 			}else k2d[item[0]]=item[1];
 			key_html+=' value="'+item[0]+'">'+item[0]+'&#9205;'+item[1]+'</option>';
 		}
-		p.key_html=key_html.substring(11)+'</optgroup>';
+		ObjEditor.key_html=key_html.substring(11)+'</optgroup>';
 	})();
-})();
+};
