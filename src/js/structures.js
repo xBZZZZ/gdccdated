@@ -559,15 +559,17 @@ function urlsafeb64encode(a){
 	return btoa(a).replace(urlsafeb64encode_re,urlsafeb64encode_rep);
 }
 
-function string_editor_back(){
-	var g=current_gui();
+function string_editor_back(g){
+	g.preventDefault();
+	g=current_gui();
 	if(g.do_after)g.do_after(g.encoded.value);
 	if(g.do_after2)g.do_after2();
 	pop_gui();
 }
 
-function string_editor_back_no_write(){
-	var g=current_gui();
+function string_editor_back_no_write(g){
+	g.preventDefault();
+	g=current_gui();
 	if(g.do_after2)g.do_after2();
 	pop_gui();
 }
@@ -630,8 +632,9 @@ function gzip_decode_with_callback(text,onsuccess,onerror){
 	}
 }
 
-function string_editor_encode(){
-	var g=current_gui();
+function string_editor_encode(g){
+	g.preventDefault();
+	g=current_gui();
 	if(g.dataset.doingStuff!=null)return;
 	g.dataset.doingStuff='';
 	set_loading(true);
@@ -644,8 +647,7 @@ function string_editor_encode(){
 	function out(enc){
 		delete g.dataset.doingStuff;
 		set_loading(false);
-		set_toggler(g.encoded_toggler,enc.length<=10000,true);
-		g.encoded.value=enc;
+		set_toggler_and_val(g.encoded,enc);
 		g.status.nodeValue=' encoded,len='+enc.length+'\n';
 	}
 	try{
@@ -656,8 +658,9 @@ function string_editor_encode(){
 	}
 }
 
-function string_editor_decode(){
-	var g=current_gui();
+function string_editor_decode(g){
+	g.preventDefault();
+	g=current_gui();
 	if(g.dataset.doingStuff!=null)return;
 	g.dataset.doingStuff='';
 	set_loading(true);
@@ -670,8 +673,7 @@ function string_editor_decode(){
 	function out(dec){
 		delete g.dataset.doingStuff;
 		set_loading(false);
-		set_toggler(g.decoded_toggler,dec.length<=10000,true);
-		g.decoded.value=dec;
+		set_toggler_and_val(g.decoded,dec);
 		g.status.nodeValue=' decoded,len='+dec.length+'\n';
 	}
 	try{
@@ -682,31 +684,33 @@ function string_editor_decode(){
 	}
 }
 
-function string_editor_toggle_gzip(){
-	var z=current_gui().use_gzip;
-	z.nodeValue=z.nodeValue==='[yes'?'[no ':'[yes';
+function string_editor_toggle_gzip(e){
+	e.preventDefault();
+	e=current_gui().use_gzip;
+	e.nodeValue=e.nodeValue==='[yes'?'[no ':'[yes';
 }
 
-function string_editor_open_sel(){
-	var i=current_gui()[this.dataset.prop],sd=i.selectionDirection,ss=i.selectionStart,se=i.selectionEnd,v=i.value,b=v.substring(0,ss),a=v.substring(se);
+function string_editor_open_sel(e){
+	e.preventDefault();
+	e=current_gui()[this.dataset.prop];
+	var sd=e.selectionDirection,ss=e.selectionStart,se=e.selectionEnd,v=e.value,b=v.substring(0,ss),a=v.substring(se);
 	string_editor(function(n){
-		i.value=b+n+a;
+		set_toggler_and_val(e,b+n+a);
 		try{
-			i.setSelectionRange(ss,ss+n.length,sd);
+			e.setSelectionRange(ss,ss+n.length,sd);
 		}catch(err){
 			console.warn('setSelectionRange error:',err);
 		}
 	},function(){
-		setTimeout(focus_element,0,i);
+		if(e.parentNode)setTimeout(focus_element,0,e);
 	},v.substring(ss,se));
 }
 
-function string_editor_open_obj(){
+function string_editor_open_obj(e){
+	e.preventDefault();
+	e=current_gui()[this.dataset.prop];
 	try{
-		var i=current_gui()[this.dataset.prop];
-		new ObjEditor(i.value,function(new_val){
-			i.value=new_val;
-		});
+		new ObjEditor(e.value,set_toggler_and_val.bind(null,e));
 	}catch(error){
 		say_error('object editor',error);
 	}
@@ -723,7 +727,7 @@ function string_editor(do_after,do_after2,start_text){
 		el.className='btn';
 		el.textContent='back';
 		el.href='javascript:;';
-		el.onclick=string_editor_back;
+		el.addEventListener('click',string_editor_back,nonpassiveel);
 		g.appendChild(document.createTextNode(' '));
 		el=g.appendChild(cre('a'));
 		el.draggable=false;
@@ -731,23 +735,23 @@ function string_editor(do_after,do_after2,start_text){
 	el.className='btn';
 	el.textContent='back (no write)\n';
 	el.href='javascript:;';
-	el.onclick=string_editor_back_no_write;
-	g.appendChild(g.encoded=cre('textarea')).value=start_text;
-	set_toggler(g.encoded_toggler=add_toggler(g.encoded),start_text.length<=10000);
+	el.addEventListener('click',string_editor_back_no_write,nonpassiveel);
+	add_toggler(g.appendChild(g.encoded=cre('textarea')));
+	set_toggler_and_val(g.encoded,start_text);
 	g.appendChild(document.createTextNode('\n'));
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
 	el.className='btn';
 	el.textContent='[\u2193]';
 	el.href='javascript:;';
-	el.onclick=string_editor_decode;
+	el.addEventListener('click',string_editor_decode,nonpassiveel);
 	g.appendChild(document.createTextNode(' '));
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
 	el.className='btn';
 	el.textContent='[\u2191]';
 	el.href='javascript:;';
-	el.onclick=string_editor_encode;
+	el.addEventListener('click',string_editor_encode,nonpassiveel);
 	g.appendChild(document.createTextNode(' '));
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
@@ -755,9 +759,9 @@ function string_editor(do_after,do_after2,start_text){
 	el.appendChild(g.use_gzip=document.createTextNode('[no '));
 	el.appendChild(document.createTextNode('] use gzip'));
 	el.href='javascript:;';
-	el.onclick=string_editor_toggle_gzip;
+	el.addEventListener('click',string_editor_toggle_gzip,nonpassiveel);
 	g.appendChild(g.status=document.createTextNode(' none\n'));
-	g.decoded_toggler=add_toggler(g.appendChild(g.decoded=cre('textarea')));
+	add_toggler(g.appendChild(g.decoded=cre('textarea')));
 	g.appendChild(document.createTextNode('\n'));
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
@@ -765,28 +769,28 @@ function string_editor(do_after,do_after2,start_text){
 	el.textContent='open top selection\n';
 	el.href='javascript:;';
 	el.dataset.prop='encoded';
-	el.onclick=string_editor_open_sel;
+	el.addEventListener('click',string_editor_open_sel,nonpassiveel);
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
 	el.className='btn';
 	el.textContent='open bottom selection\n';
 	el.href='javascript:;';
 	el.dataset.prop='decoded';
-	el.onclick=string_editor_open_sel;
+	el.addEventListener('click',string_editor_open_sel,nonpassiveel);
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
 	el.className='btn';
 	el.textContent='open top in object editor\n';
 	el.href='javascript:;';
 	el.dataset.prop='encoded';
-	el.onclick=string_editor_open_obj;
+	el.addEventListener('click',string_editor_open_obj,nonpassiveel);
 	el=g.appendChild(cre('a'));
 	el.draggable=false;
 	el.className='btn';
 	el.textContent='open bottom in object editor\n';
 	el.href='javascript:;';
 	el.dataset.prop='decoded';
-	el.onclick=string_editor_open_obj;
+	el.addEventListener('click',string_editor_open_obj,nonpassiveel);
 	g.appendChild(document.createTextNode('use in JS console:\n  sd - decoded (bottom value)\n  se - encoded (top value)'));
 	push_gui(g);
 }

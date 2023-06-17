@@ -12,7 +12,7 @@ Object.defineProperties(window,{
 		'set':function(val){
 			var g=current_gui();
 			if(g.dataset.guiType!=='stringeditor')throw Error('not string editor');
-			g.decoded.value=val;
+			set_toggler_and_val(g.decoded,String(val));
 		}
 	},
 	'se':{
@@ -26,7 +26,7 @@ Object.defineProperties(window,{
 		'set':function(val){
 			var g=current_gui();
 			if(g.dataset.guiType!=='stringeditor')throw Error('not string editor');
-			g.encoded.value=val;
+			set_toggler_and_val(g.encoded,String(val));
 		}
 	},
 	'ovs':{

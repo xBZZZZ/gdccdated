@@ -416,20 +416,14 @@ function open_value_in_dict_editor_onclick(){
 }
 
 function open_value_in_encoded_string_editor_onclick(){
-	var g=current_gui(),i=current_gui().value_input;
-	string_editor(function(n){
-		set_toggler(g.value_toggler,n.length<=10000,true);
-		i.value=n;
-	},null,i.value);
+	var i=current_gui().value_input;
+	string_editor(set_toggler_and_val.bind(null,i),null,i.value);
 }
 
 function open_value_in_object_editor_onclick(){
-	var g=current_gui(),i=g.value_input;
+	var i=current_gui().value_input;
 	try{
-		new ObjEditor(i.value,function(n){
-			set_toggler(g.value_toggler,n.length<=10000,true);
-			i.value=n;
-		});
+		new ObjEditor(i.value,set_toggler_and_val.bind(null,i));
 	}catch(error){
 		say_error('object editor',error);
 	}
@@ -455,9 +449,9 @@ function dict_item_onclick(e){
 			g.item_num_tn=htext(1+current_gui().cc_dict.indexOf(item));
 		hclose('h2');
 		(f=g.key_input=textarea_in_fieldset(g,'key','display:flex;flex-direction:row;grid-column-end:3;grid-column-start:1;')).value=item.key;
-		f.style.setProperty('flex-grow','1');
+		f.style.flexGrow='1';
 		(f=g.type_input=input_in_fieldset(g,'type','text','display:flex;flex-direction:row;grid-column-end:3;grid-column-start:1;')).value=item.type;
-		f.style.setProperty('flex-grow','1');
+		f.style.flexGrow='1';
 		f.minLength=f.maxLength=1;
 		f.pattern='[a-z]';
 		if(item.type==='d'){
@@ -470,10 +464,9 @@ function dict_item_onclick(e){
 			hstyle('display','flex');
 			hstyle('flex-direction','column');
 			hstyle('grid-column','1/3');
-				f=g.value_input=cre('textarea');
-				f.value=item.value;
-				f.style.setProperty('flex-grow','1');
-				set_toggler(g.value_toggler=add_toggler(hopen('div').appendChild(f)),item.value.length<=10000).setAttribute('style','margin:auto 0;');
+				(f=g.value_input=cre('textarea')).style.flexGrow='1';
+				add_toggler(hopen('div').appendChild(f)).style.margin='auto 0';
+				set_toggler_and_val(f,item.value);
 				hstyle('display','flex');
 				hstyle('flex-direction','row');
 				hclose('div');

@@ -197,16 +197,24 @@ function add_toggler(el){
 	tog.addEventListener('change',toggler_onchange,passiveel);
 	tog.toggles_el=el;
 	tog.checked=true;
-	return el.parentNode.insertBefore(tog,el);
+	return el.toggler=el.parentNode.insertBefore(tog,el);
 }
 
-function set_toggler(tog,on,dont_on){
-	if(dont_on&&on)return tog;
-	if(tog.checked!==on){
-		tog.checked=on;
-		toggler_onchange.call(tog);
+function set_toggler_and_val(el,val){
+	var tog=el.toggler;
+	if(val.length>16384){
+		if(tog.checked){
+			tog.parentNode.removeChild(tog.toggles_el);
+			tog.checked=false;
+		}
+		el.value=val;
+	}else{
+		el.value=val;
+		if(!tog.checked){
+			tog.parentNode.insertBefore(tog.toggles_el,tog.nextSibling);
+			tog.checked=true;
+		}
 	}
-	return tog;
 }
 
 var hstack=[];
