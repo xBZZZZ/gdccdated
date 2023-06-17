@@ -201,49 +201,36 @@ details[open]>summary{
 	left:0;
 	right:0;
 	bottom:0;
-	overflow:auto;
-	margin:0;
+	display:flex;
+	overflow-y:hidden;
+	overflow-x:auto;
 	border-top:2px solid rgb(50,0,50);
 	background-color:rgb(200,200,200);
 	contain:strict;
 }
 .dict_items_list{
-	display:table;
-	counter-reset:dict_item sel_item;
-	border-spacing:0;
-	border-style:solid;
-	border-color:transparent;
-	border-width:1px 0 1px 2px;
+	display:flex;
+	flex-wrap:wrap;
+	flex-direction:column;
+	padding:1px;
+	counter-reset:dict_item;
 }
 .dict_items_list>div{
-	display:table-row;
+	display:flex;
+	padding:1px;
 }
 [data-item-div-anim]{
 	animation:1s itembg;
-}
-[data-stuck-active]{
-	counter-increment:sel_item;
 }
 .dict_items_list>div:before{
 	counter-increment:dict_item;
 	content:counter(dict_item)'.';
 	line-height:0;
-	display:table-cell;
-	vertical-align:middle;
+	margin:auto 0;
+	width:var(--cl);
 }
 .dict_items_list>div>input{
-	text-align:left;
-	display:inline-block;
-	margin:1px 0 1px 2px;
-}
-.dict_items_list:after{
-	content:counter(sel_item)' / 'counter(dict_item);
-	display:table-caption;
 	white-space:pre;
-	font-size:20px;
-	font-weight:bold;
-	font-style:italic;
-	text-align:center;
 }
 .dragging_item>div>input{
 	pointer-events:none;

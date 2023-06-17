@@ -170,18 +170,6 @@ function pop_gui(){
 	prev_gui.setAttribute('style','');
 }
 
-function do_under_current_gui(func,args){
-	if(guis.length<2)throw Error('no gui under');
-	var g=guis.pop();
-	try{
-		return func.apply(null,args);
-	}catch(error){
-		throw error;
-	}finally{
-		guis.push(g);
-	}
-}
-
 function input_in_fieldset(append_to,fieldset_legend,input_type,fstyle){
 	var f=append_to.appendChild(cre('fieldset'));
 	if(fstyle)f.setAttribute('style',fstyle);
