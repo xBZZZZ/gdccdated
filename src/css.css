@@ -201,19 +201,24 @@ details[open]>summary{
 	left:0;
 	right:0;
 	bottom:0;
-	display:flex;
-	overflow-y:hidden;
-	overflow-x:auto;
+	overflow:auto;
 	border-top:2px solid rgb(50,0,50);
 	background-color:rgb(200,200,200);
 	contain:strict;
 }
 .dict_items_list{
 	display:flex;
-	flex-wrap:wrap;
 	flex-direction:column;
 	padding:1px;
+	margin-right:auto;
 	counter-reset:dict_item;
+	width:-webkit-max-content;
+	width:-moz-max-content;
+	width:max-content;
+}
+.dict_items_list_wrap{
+	flex-wrap:wrap;
+	height:100%;
 }
 .dict_items_list>div{
 	display:flex;
@@ -513,8 +518,9 @@ body{
 	margin:8px;
 }
 legend{
-	/*fix legend sometimes streched in safari and epiphany*/
-	width:intrinsic;
+	width:-webkit-max-content;
+	width:-moz-max-content;
+	width:max-content;
 }
 @keyframes loading{
 	from{

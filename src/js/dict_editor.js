@@ -111,6 +111,7 @@ function push_dict_editor(dict,root_name){
 <option value="push_search">recursive RegExp search</option>\
 <option value="push_rename_helper">rename helper</option>\
 <option value="dict_editor_select_mode_on">select mode on</option>\
+<option value="dict_editor_toggle_wrap">[yes</option>\
 </select>\
 <div class="pathcontainer">\
 <div class="path"></div>\
@@ -122,23 +123,24 @@ function push_dict_editor(dict,root_name){
 </div>\
 </div>\
 <div class="dict_items_list_container">\
-<div class="dict_items_list" role="list"></div>\
-</div>'),sopts=g.querySelector('.sopts').childNodes;
-	sopts[0].addEventListener('click',dict_editor_select_mode_off,passiveel);
-	sopts[1].addEventListener('click',dict_editor_invert_selection,passiveel);
-	sopts[2].addEventListener('click',dict_editor_clear_selection,passiveel);
-	sopts[3].addEventListener('click',dict_editor_delete_selected,passiveel);
-	(sopts=g.dropb=g.querySelector('.dropb')).selectedIndex=0;
-	sopts.addEventListener('change',dict_editor_do_menu,passiveel);
-	sopts=g.items_list=g.querySelector('.dict_items_list');
-	sopts.addEventListener('dragstart',dict_item_div_ondragstart,passiveel);
-	sopts.addEventListener('dragend',dict_item_div_ondragend,passiveel);
-	sopts.addEventListener('dragover',dict_item_div_ondragover,nonpassiveel);
-	sopts.addEventListener('dragenter',dict_item_div_ondragenter,nonpassiveel);
-	sopts.addEventListener('dragleave',dict_item_div_ondragleave,passiveel);
-	sopts.addEventListener('drop',dict_item_div_ondrop,nonpassiveel);
-	sopts.addEventListener('contextmenu',dict_item_oncontextmenu,nonpassiveel);
-	sopts.addEventListener('click',dict_item_onclick,passiveel);
+<div class="dict_items_list dict_items_list_wrap" role="list"></div>\
+</div>'),s=g.querySelector('.sopts').childNodes;
+	s[0].addEventListener('click',dict_editor_select_mode_off,passiveel);
+	s[1].addEventListener('click',dict_editor_invert_selection,passiveel);
+	s[2].addEventListener('click',dict_editor_clear_selection,passiveel);
+	s[3].addEventListener('click',dict_editor_delete_selected,passiveel);
+	g.wrap_opt_text=(g.dropb=s=g.querySelector('.dropb')).lastChild.appendChild(document.createTextNode('] wrap items')).previousSibling;
+	s.selectedIndex=0;
+	s.addEventListener('change',dict_editor_do_menu,passiveel);
+	g.items_list=s=g.querySelector('.dict_items_list');
+	s.addEventListener('dragstart',dict_item_div_ondragstart,passiveel);
+	s.addEventListener('dragend',dict_item_div_ondragend,passiveel);
+	s.addEventListener('dragover',dict_item_div_ondragover,nonpassiveel);
+	s.addEventListener('dragenter',dict_item_div_ondragenter,nonpassiveel);
+	s.addEventListener('dragleave',dict_item_div_ondragleave,passiveel);
+	s.addEventListener('drop',dict_item_div_ondrop,nonpassiveel);
+	s.addEventListener('contextmenu',dict_item_oncontextmenu,nonpassiveel);
+	s.addEventListener('click',dict_item_onclick,passiveel);
 	(g.path_list=g.querySelector('.path')).addEventListener('click',path_link_onclick,passiveel);
 	g.dataset.selectMode='0';
 	g.do_before_hide=dict_editor_do_before_hide;
@@ -166,6 +168,11 @@ function cc_dict_compare_items(item1,item2){
 		++i;
 	}
 	return true;
+}
+
+function dict_editor_toggle_wrap(){
+	var g=current_gui();
+	g.wrap_opt_text.nodeValue=g.items_list.classList.toggle('dict_items_list_wrap')?'[yes':'[no';
 }
 
 function dict_editor_sort_keys(){
