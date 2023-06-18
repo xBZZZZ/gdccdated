@@ -273,13 +273,13 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	(this.dialog_value_help_pre=cre('pre')).setAttribute('style','margin:0;white-space:pre-wrap;');
 	el.appendChild(this.dialog_value_help_fieldset=el2);
 	root.appendChild(el);
-	root.insertAdjacentHTML('beforeend','<a href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md" rel="noreferrer" target="_blank" style="grid-column-start:1;grid-column-end:3;margin-right:auto;"><q cite="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md">Level Object</q> on gdprogra.me</a>');
+	root.insertAdjacentHTML('beforeend','<a href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md" rel="noreferrer" target="_blank" style="grid-column:1/3;margin-right:auto;"><q cite="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md">Level Object</q> on gdprogra.me</a>');
 	this.dialog=root;
 };
 
 ObjEditor.prototype.open_sort_objs_dialog=function(){
 	var g=gui_div_with_html('display:grid;grid-template-columns:auto auto auto;grid-template-rows:auto 30px;',
-'<ul style="grid-column-end:4;grid-column-start:1;" class="linside">\
+'<ul style="grid-column:1/4;" class="linside">\
 <li>objects are sorted smaller x (2) to top</li>\
 <li>objects with equal x (2) are sorted smaller y (3) to top</li>\
 <li>objects with equal x (2) and y (3) are sorted to same order as before sorting</li>\

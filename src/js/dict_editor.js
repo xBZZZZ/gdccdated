@@ -455,9 +455,9 @@ function dict_item_onclick(e){
 			htext('editing item #');
 			g.item_num_tn=htext(1+current_gui().cc_dict.indexOf(item));
 		hclose('h2');
-		(f=g.key_input=textarea_in_fieldset(g,'key','display:flex;flex-direction:row;grid-column-end:3;grid-column-start:1;')).value=item.key;
+		(f=g.key_input=textarea_in_fieldset(g,'key','display:flex;flex-direction:row;grid-column:1/3;')).value=item.key;
 		f.style.flexGrow='1';
-		(f=g.type_input=input_in_fieldset(g,'type','text','display:flex;flex-direction:row;grid-column-end:3;grid-column-start:1;')).value=item.type;
+		(f=g.type_input=input_in_fieldset(g,'type','text','display:flex;flex-direction:row;grid-column:1/3;')).value=item.type;
 		f.style.flexGrow='1';
 		f.minLength=f.maxLength=1;
 		f.pattern='[a-z]';
