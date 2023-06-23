@@ -82,7 +82,7 @@ input[type=checkbox],input[type=radio]{
 	padding:0;
 	touch-action:manipulation;
 }
-@media(any-pointer:coarse){
+@media only screen and (pointer:coarse){
 	input[type=button],input[type=file],select,.btn,summary,select{
 		padding-top:4px;
 		padding-bottom:4px;
