@@ -374,7 +374,7 @@ function dict_item_div_ondragstart(dt){
 		g.dragging_item=t;
 		g.items_list.classList.add('dragging_item');
 		(dt=dt.dataTransfer).clearData();
-		dt.setData('text/plain',this.firstChild.value);
+		dt.setData('text/plain',t.firstChild.value);
 		dt.effectAllowed='move';
 	}
 }
