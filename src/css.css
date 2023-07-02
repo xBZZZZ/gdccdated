@@ -8,10 +8,6 @@ input[type=text],input[type=number],textarea{
 input,textarea{
 	vertical-align:middle;
 }
-a.btn{
-	white-space:pre;
-	padding:0 2px;
-}
 optgroup{
 	color:rgb(255,255,255);
 	background-color:rgb(50,0,50);
@@ -499,11 +495,21 @@ hr{
 	background-color:rgb(200,200,200);
 	contain:strict;
 }
+.hbox{
+	display:flex;
+}
+.vbox{
+	display:flex;
+	flex-direction:column;
+}
+.growc>*{
+	flex-grow:1;
+}
 a.thiccb{
 	padding:10px;
 	color:rgb(0,0,255);
 	text-decoration:underline;
-	white-space:normal;
+	white-space:pre-wrap;
 }
 input.thiccb{
 	padding:10px;

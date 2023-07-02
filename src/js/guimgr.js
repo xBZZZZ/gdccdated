@@ -30,9 +30,11 @@ try{
 }
 
 function set_loading(is_loading){
-	try{
-		document.documentElement.classList[is_loading?'add':'remove']('loading_cursor');
-	}catch(error){}
+	document.documentElement.classList[is_loading?'add':'remove']('loading_cursor');
+	if(tbd=current_gui().tbd){
+		var i=tbd.length,tbd;
+		while(i)tbd[--i].disabled=is_loading;
+	}
 }
 
 function hide_drag_arrow(){
@@ -67,18 +69,12 @@ drag_cover.addEventListener('drop',function(e){
 	else alert('dropped too many files');
 },nonpassiveel);
 
-function tbd_set_disabled(d){
-	set_loading(d);
-	var tbd=current_gui().tbd,i=tbd.length;
-	while(i)tbd[--i].disabled=d;
-}
-
 function say_error(name,error){
-	var g=current_gui();
-	(g.tbd?tbd_set_disabled:set_loading)(false);
+	set_loading(false);
 	name+=' error:\n\n';
 	console.error(name,error);
-	if(g=g.error_tag)g.textContent=name+error;
+	var g=current_gui().error_tag;
+	if(g)g.textContent=name+error;
 	else alert(name+error);
 }
 
@@ -170,22 +166,6 @@ function pop_gui(){
 	prev_gui.setAttribute('style','');
 }
 
-function input_in_fieldset(append_to,fieldset_legend,input_type,fstyle){
-	var f=append_to.appendChild(cre('fieldset'));
-	if(fstyle)f.setAttribute('style',fstyle);
-	f.appendChild(cre('legend')).textContent=fieldset_legend;
-	f=f.appendChild(cre('input'));
-	f.type=input_type;
-	return f;
-}
-
-function textarea_in_fieldset(append_to,fieldset_legend,fstyle){
-	var f=append_to.appendChild(cre('fieldset'));
-	if(fstyle)f.setAttribute('style',fstyle);
-	f.appendChild(cre('legend')).textContent=fieldset_legend;
-	return f.appendChild(cre('textarea'));
-}
-
 function toggler_onchange(){
 	if(this.checked)this.parentNode.insertBefore(this.toggles_el,this.nextSibling);
 	else this.parentNode.removeChild(this.toggles_el);
@@ -247,14 +227,6 @@ function hstyle(prop,val){
 	hcurr().style.setProperty(prop,val,'');
 }
 
-function hattr(attr,val){
-	hcurr().setAttribute(attr,val);
-}
-
-function hset(prop,val){
-	hcurr()[prop]=val;
-}
-
 function hbutton(value,onclick,eopts){
 	var b=hopen('input');
 	b.addEventListener('click',onclick,eopts||passiveel);
@@ -263,10 +235,15 @@ function hbutton(value,onclick,eopts){
 	return b;
 }
 
-function hfieldset(legend){
-	hopen('fieldset');
-	hopen('legend').textContent=legend;
-	hclose();
+function hfieldset(legend,help){
+	var f=hopen('fieldset'),l=cre('legend');
+	if(help){
+		l.style.cursor='help';
+		l.title=help;
+	}
+	l.textContent=legend;
+	f.appendChild(l);
+	return f;
 }
 
 function focus_element(e){
@@ -325,4 +302,185 @@ XSizer.prototype.get_prog=function(x){
 	if(prog>=99)return '99%';
 	if(prog!==prog)return '50%';
 	return prog.toFixed(0)+'%';
+};
+
+function AdvTextArea(parent,show){
+	(c=this.select=cre('select')).innerHTML='<option>0</option>\
+<option>'+(show?'hide':'show')+'</option>\
+<option>open in string editor</option>\
+<option>open in object editor</option>\
+<option>save file (ISO-8859-1)</option>\
+<option>save file (UTF-8)</option>\
+<option>load file (ISO-8859-1)</option>\
+<option>load file (UTF-8)</option>\
+<option>clear</option>';
+	c.addEventListener('change',this,passiveel);
+	var c=c.childNodes;
+	this.chars=c[0].appendChild(document.createTextNode(' characters')).previousSibling;
+	this.showhide=c[1].firstChild;
+	(this.parent=parent).appendChild(this.select).selectedIndex=0;
+	(c=this.textarea=cre('textarea')).addEventListener('input',this,passiveel);
+	if(show){
+		parent.appendChild(c);
+		this.val=null;
+	}else this.val='';
+}
+
+AdvTextArea.prototype.getval=function(){
+	return null===this.val?this.textarea.value:this.val;
+};
+
+AdvTextArea.prototype.setval=function(val){
+	if(MAX_SHOW_CHARS<(this.chars.nodeValue=val.length)||-1!==val.indexOf('\r')){
+		if(null===this.val)this.deltextarea();
+		this.val=val;
+	}else{
+		this.textarea.value=val;
+		if(null!==this.val)this.addtextarea();
+	}
+};
+
+AdvTextArea.prototype.addtextarea=function(){
+	this.parent.appendChild(this.textarea);
+	this.val=null;
+	this.showhide.nodeValue='hide';
+};
+
+AdvTextArea.prototype.deltextarea=function(){
+	this.parent.removeChild(this.textarea);
+	this.textarea.value='';
+	this.showhide.nodeValue='show';
+};
+
+AdvTextArea.prototype.togsh=function(){
+	if(null===(v=this.val)){
+		this.val=this.textarea.value;
+		this.deltextarea();
+		return;
+	}
+	var b=MAX_SHOW_CHARS<v.length,l=-1!==v.indexOf('\r'),m,v;
+	if(b||l){
+		m='show? reasons to not show:';
+		if(b)m+='\n  value is big ('+v.length+') characters, showing might freeze browser';
+		if(l)m+='\n  value contains \\r, showing will not preserve those';
+		if(!confirm(m))return;
+		this.textarea.value=v;
+		this.chars.nodeValue=this.textarea.value.length;
+	}else this.textarea.value=v;
+	this.addtextarea();
+};
+
+AdvTextArea.prototype.saveraw=function(){
+	var u=URL.createObjectURL(new Blob([string_to_uint8array(this.getval())],binblobopts)),a;
+	setTimeout(URL.revokeObjectURL,0,u);
+	(a=cre('a')).href=u;
+	a.download='ISO-8859-1';
+	a.style.display='none';
+	this.parent.appendChild(a);
+	a.click();
+	this.parent.removeChild(a);
+};
+
+AdvTextArea.prototype.saveutf=function(){
+	var u=URL.createObjectURL(new Blob([string_to_uint8array(unescape(encodeURIComponent(this.getval())))],binblobopts)),a;
+	setTimeout(URL.revokeObjectURL,0,u);
+	(a=cre('a')).href=u;
+	a.download='UTF-8';
+	a.style.display='none';
+	this.parent.appendChild(a);
+	a.click();
+	this.parent.removeChild(a);
+};
+
+AdvTextArea.prototype.handleEvent=function(e){
+	if(this.textarea===e.target){
+		this.chars.nodeValue=this.getval().length;
+		return;
+	}
+	var i=this.select.selectedIndex;
+	this.select.selectedIndex=0;
+	switch(i){
+		case 1:
+			this.togsh();
+			return;
+		case 2:
+			string_editor(this.setval.bind(this),this.getval());
+			return;
+		case 3:
+			try{
+				new ObjEditor(this.getval(),this.setval.bind(this));
+			}catch(error){
+				say_error('object editor',error);
+			}
+			return;
+		case 4:
+			try{
+				this.saveraw();
+			}catch(error){
+				say_error('save file (ISO-8859-1)',error);
+			}
+			return;
+		case 5:
+			try{
+				this.saveutf();
+			}catch(error){
+				say_error('save file (UTF-8)',error);
+			}
+			return;
+		case 6:
+			new AdvFileLoader(true,this);
+			return;
+		case 7:
+			new AdvFileLoader(false,this);
+			return;
+		case 8:
+			this.chars.nodeValue='0';
+			this.textarea.value='';
+			if(null!==this.val)this.addtextarea();
+	}
+};
+
+function AdvFileLoader(raw,out){
+	this.raw=raw;
+	this.out=out;
+	var i=cre('input');
+	i.type='file';
+	i.addEventListener('change',this,onceel);
+	try{
+		if(i.showPicker)i.showPicker();
+		else i.click();
+	}catch(error){
+		say_error('open file picker',error);
+	}
+}
+
+AdvFileLoader.prototype.handleEvent=function(e){
+	switch(e.type){
+		case 'load':
+			if(this.raw)e=e.target.result;
+			else try{
+				e=decodeURIComponent(escape(e.target.result));
+			}catch(error){
+				say_error('bad UTF-8',error);
+				return;
+			}
+			this.out.setval(e);
+			set_loading(false);
+			return;
+		case 'error':
+			say_error('FileReader',e.target.error);
+			return;
+		default://case 'change':
+			if(e=e.target.files[0]){
+				set_loading(true);
+				try{
+					var r=new FileReader();
+					r.addEventListener('load',this,onceel);
+					r.addEventListener('error',this,onceel);
+					r.readAsBinaryString(e);
+				}catch(error){
+					say_error('FileReader');
+				}
+			}
+	}
 };

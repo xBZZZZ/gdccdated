@@ -199,7 +199,7 @@ function push_xml_ie(){
 	var g=hopen('div'),tbd=g.tbd=[];
 	g.last_blob_url='';
 	g.new_items=null;
-	hattr('data-is-modal','display:grid;grid-template-columns:auto auto;grid-template-rows:30px 30px 30px auto;');
+	g.dataset.isModal='display:grid;grid-template-columns:auto auto;grid-template-rows:30px 30px 30px auto;';
 	hbutton('back',xml_ie_back,onceel).className='npnb';tbd.push(hclose());
 	hbutton('back (no write)',xml_ie_back_no_write,onceel).className='npnb';tbd.push(hclose());
 	g.drop_file_input=hopen('input');hcurr().className='npnb';hcurr().type='file';hstyle('grid-column','1/3');tbd.push(hclose());
@@ -235,7 +235,7 @@ function xml_ie_show_error(e){
 	li.setAttribute('style','background-color:#F00;');
 	li.textContent=e;
 	g.status.appendChild(li);
-	tbd_set_disabled(false);
+	set_loading(false);
 }
 
 function xml_ie_filereader_onerror(){
@@ -252,7 +252,7 @@ function xml_ie_filereader_onload(){
 		d.setAttribute('style','background-color:#0F0;');
 		d.textContent='imported';
 		g.status.appendChild(d);
-		tbd_set_disabled(false);
+		set_loading(false);
 	}catch(error){
 		xml_ie_show_error(error);
 	}
@@ -273,7 +273,7 @@ function xml_ie_import(){
 		g.status.appendChild(f);
 		return;
 	}
-	tbd_set_disabled(true);
+	set_loading(true);
 	try{
 		var fr=new FileReader();
 		fr.addEventListener('error',xml_ie_filereader_onerror,onceel);
@@ -422,20 +422,6 @@ function open_value_in_dict_editor_onclick(){
 	dict_editor_add_path_link(i.value,i.key).click();
 }
 
-function open_value_in_encoded_string_editor_onclick(){
-	var i=current_gui().value_input;
-	string_editor(set_toggler_and_val.bind(null,i),null,i.value);
-}
-
-function open_value_in_object_editor_onclick(){
-	var i=current_gui().value_input;
-	try{
-		new ObjEditor(i.value,set_toggler_and_val.bind(null,i));
-	}catch(error){
-		say_error('object editor',error);
-	}
-}
-
 function dict_item_onclick(e){
 	var item=(e=e.target).cc_dict_item,g,f;
 	if(!item)return;
@@ -444,7 +430,8 @@ function dict_item_onclick(e){
 		else delete e.stuckActive;
 		return;
 	}
-	(g=hopen('div')).dataset.isModal='display:grid;grid-template-columns:auto auto;';
+	(g=hopen('div')).dataset.guiType='itemeditor';
+	g.dataset.isModal='display:grid;grid-template-columns:auto auto;';
 	(g.edit_button=e).dataset.stuckActive='';
 		hbutton('back',item_editor_back_button_onclick);hclose();
 		hbutton('back (no write)',item_editor_back_no_write_button_onclick,onceel);hclose();
@@ -455,30 +442,27 @@ function dict_item_onclick(e){
 			htext('editing item #');
 			g.item_num_tn=htext(1+current_gui().cc_dict.indexOf(item));
 		hclose('h2');
-		(f=g.key_input=textarea_in_fieldset(g,'key','display:flex;flex-direction:row;grid-column:1/3;')).value=item.key;
-		f.style.flexGrow='1';
-		(f=g.type_input=input_in_fieldset(g,'type','text','display:flex;flex-direction:row;grid-column:1/3;')).value=item.type;
-		f.style.flexGrow='1';
-		f.minLength=f.maxLength=1;
-		f.pattern='[a-z]';
+		hfieldset('key','use in JS console:\n  ik - key as string').className='objeditorfs';
+			(g.key_input=new AdvTextArea(hcurr())).setval(item.key);
+		hclose('fieldset');
+		hfieldset('type');
+		hstyle('display','flex');
+		hstyle('grid-column','1/3');
+			(f=cre('input')).type='text';
+			f.style.flexGrow='1';
+			f.minLength=f.maxLength=1;
+			f.pattern='[a-z]';
+			f.value=item.type;
+			hcurr().appendChild(g.type_input=f);
+		hclose('fieldset');
 		if(item.type==='d'){
 			f.disabled=true;
 			hbutton('open value in dict editor',open_value_in_dict_editor_onclick);
 			hstyle('grid-column','1/3');
 			hclose();
 		}else{
-			hfieldset('value');
-			hstyle('display','flex');
-			hstyle('flex-direction','column');
-			hstyle('grid-column','1/3');
-				(f=g.value_input=cre('textarea')).style.flexGrow='1';
-				add_toggler(hopen('div').appendChild(f)).style.margin='auto 0';
-				set_toggler_and_val(f,item.value);
-				hstyle('display','flex');
-				hstyle('flex-direction','row');
-				hclose('div');
-				hbutton('open in encoded string editor',open_value_in_encoded_string_editor_onclick);hclose();
-				hbutton('open in object editor',open_value_in_object_editor_onclick);hclose();
+			hfieldset('value','use in JS console:\n  iv - value as string').className='objeditorfs';
+				(g.value_input=new AdvTextArea(hcurr())).setval(item.value);
 			hclose('fieldset');
 		}
 		hbutton('duplicate item',item_editor_duplicate);hclose();
@@ -488,7 +472,7 @@ function dict_item_onclick(e){
 
 function item_editor_duplicate(){
 	var g=current_gui(),eb=g.edit_button,i=eb.cc_dict_item,t;
-	if(i.type==='d')i={'key':g.key_input.value,'type':'d','value':JSON.parse(JSON.stringify(i.value))};
+	if(i.type==='d')i={'key':g.key_input.getval(),'type':'d','value':JSON.parse(JSON.stringify(i.value))};
 	else{
 		if(!(t=g.type_input.value)){
 			alert('empty type');
@@ -502,7 +486,7 @@ function item_editor_duplicate(){
 			alert('invalid type '+t);
 			return;
 		}
-		i={'key':g.key_input.value,'type':t,'value':g.value_input.value};
+		i={'key':g.key_input.getval(),'type':t,'value':g.value_input.getval()};
 	}
 	delete eb.dataset.stuckActive;
 	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.nodeValue=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).dataset.stuckActive='';
@@ -530,9 +514,9 @@ function item_editor_back_button_onclick(){
 			return;
 		}
 		i.type=g.type_input.value;
-		i.value=g.value_input.value;
+		i.value=g.value_input.getval();
 	}
-	i.key=g.key_input.value;
+	i.key=g.key_input.getval();
 	b.value=dict_item_display_string(i);
 	delete b.dataset.stuckActive;
 	pop_gui();
@@ -548,16 +532,16 @@ function item_editor_delete_button_onclick(){
 }
 
 function push_search(){
-	var g=gui_div_with_html('display:flex;flex-direction:column;',
-'<div style="display:flex;flex-direction:row;">\
-<input onclick="pop_gui();" style="flex-grow:1;margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
-<label class="btn" style="flex-grow:1;margin:0;display:flex;height:25px;padding:0;">\
+	var g=gui_div_with_html(true,
+'<div class="hbox growc">\
+<input onclick="pop_gui();" style="margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
+<label class="btn" style="margin:0;display:flex;height:25px;padding:0;">\
 <input style="margin:auto 0 auto auto;width:18px;height:18px;" checked="" onchange="var g=current_gui();g[this.checked?&quot;appendChild&quot;:&quot;removeChild&quot;](g.ul_container);" type="checkbox"/>\
 <span style="margin:auto auto auto 0;">\
  <strong>0</strong> results\
 </span>\
 </label>\
-<input onclick="try{search_result();}catch(error){say_error(&quot;search&quot;,error);}" style="flex-grow:1;margin:0 1px;height:25px;padding:0;" type="button" value="search"/>\
+<input onclick="try{search_result();}catch(error){say_error(&quot;search&quot;,error);}" style="margin:0 1px;height:25px;padding:0;" type="button" value="search"/>\
 </div>\
 <table style="border-spacing:1px;width:100%;">\
 <thead>\
@@ -586,6 +570,7 @@ function push_search(){
 <div style="height:200px;flex-shrink:0;" class="resizebox">\
 <ul style="white-space:pre;margin:2px 0;"></ul>\
 </div>');
+	g.className='vbox';
 	g.tr_template=(g.tbody=g.querySelector('tbody')).firstChild.cloneNode(true);
 	g.results_count=g.firstChild.querySelector('strong');
 	g.cc_dict=current_gui().cc_dict;
@@ -650,7 +635,7 @@ function search_test_querys(item,querys){
 }
 
 function push_rename_helper(){
-	var g=gui_div_with_html('display:flex;flex-direction:column;',sof(
+	var g=gui_div_with_html(true,sof(
 '<input type="button" value="back"/>\
 <details>\
 <summary>help</summary>\
@@ -672,6 +657,7 @@ examples:\
 </details>\
 <textarea></textarea>\
 <input type="button" value="rename"/>',Number));
+	g.className='vbox';
 	g.command_input=g.querySelector('textarea');
 	g.firstChild.addEventListener('click',pop_gui,onceel);
 	g.lastChild.addEventListener('click',rename_onclick,passiveel);

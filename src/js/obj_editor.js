@@ -115,7 +115,7 @@ ObjEditor.prototype.s_props_onchange=function(s){
 
 ObjEditor.prototype.parse_string=function(string){
 	if(!string)return [];
-	string=string.split(';');
+	if((string=string.split(';')).length<2)throw Error('object string isn\'t empty but there is no ";"');
 	if(string.pop())throw Error('object string has extra data after ";"');
 	var sl=string.length,si=0,props,objs=[],pl,pi;
 	while(sl>si){
@@ -185,29 +185,30 @@ ObjEditor.prototype.dialog_key_onchange=function(){
 ObjEditor.prototype.open_edit_dialog=function(){
 	var prop=this.s_props.getsitem();
 	if(prop){
-		this.s_dialog_key.value=this.i_dialog_key.value=prop[0];
-		this.i_dialog_value.value=prop[1];
+		this.s_dialog_key.value=this.i_dialog_key.value=prop[0].replace(ObjEditor.re1,';');
+		this.i_dialog_value.value=prop[1].replace(ObjEditor.re1,';');
 		this.update_value_opts();
 		push_gui(this.dialog);
 	}
 };
 
-ObjEditor.prototype.invalid_re=RegExp('[,;]','');
+ObjEditor.re1=RegExp('\\r','g');
+ObjEditor.re2=RegExp(';','g');
 
 ObjEditor.prototype.dialog_back=function(){
-	var re=this.invalid_re,nk=this.i_dialog_key.value;
-	if(re.test(nk)){
-		alert('invalid key (contains "," or ";")');
+	var nk=this.i_dialog_key.value;
+	if(-1!==nk.indexOf(',')){
+		alert('invalid key (contains ",")');
 		return;
 	}
 	var nv=this.i_dialog_value.value;
-	if(re.test(nv)){
-		alert('invalid value (contains "," or ";")');
+	if(-1!==nv.indexOf(',')){
+		alert('invalid value (contains ",")');
 		return;
 	}
 	var prop=this.s_props.getsitem();
-	prop[0]=nk;
-	prop[1]=nv;
+	prop[0]=nk.replace(ObjEditor.re2,'\r');
+	prop[1]=nv.replace(ObjEditor.re2,'\r');
 	this.draw();
 	pop_gui();
 };
@@ -219,10 +220,10 @@ ObjEditor.prototype.back=function(){
 };
 
 ObjEditor.prototype.open_in_string_editor=function(){
-	var inp=this.i_dialog_value;
+	var s=this.s_dialog_value,i=this.i_dialog_value;
 	string_editor(function(newval){
-		inp.value=newval;
-	},null,inp.value);
+		s.value=i.value=newval.replace(ObjEditor.re1,';');
+	},i.value.replace(ObjEditor.re2,'\r'));
 };
 
 ObjEditor.prototype.toggle_dialog_help=function(){
@@ -256,18 +257,18 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	el2.innerHTML=ObjEditor.key_html;
 	el=cre('fieldset');
 	el.className='objeditorfs';
-	el.innerHTML='<legend>key</legend>';
+	el.innerHTML='<legend title="; is \\r escape&#10;use in JS console:&#10;  ok - key as string" style="cursor:help;">key</legend>';
 	el.appendChild(this.s_dialog_key=el2).addEventListener('change',this.dialog_key_onchange.bind(this),passiveel);
 	el.appendChild(this.i_dialog_key=cre('textarea')).addEventListener('input',this.dialog_key_oninput.bind(this),passiveel);
 	root.appendChild(el);
 	el=cre('fieldset');
 	el.className='objeditorfs';
-	el.innerHTML='<legend title="use in JS console:&#10;  ovs - value as string&#10;  ov - value as number" style="cursor:help;">value</legend>';
+	el.innerHTML='<legend title="; is \\r escape&#10;use in JS console:&#10;  ovs - value as string&#10;  ov - value as number" style="cursor:help;">value</legend>';
 	el.appendChild(this.s_dialog_value=cre('select')).addEventListener('change',this.dialog_value_onchange.bind(this),passiveel);
 	el.appendChild(this.i_dialog_value=cre('textarea')).addEventListener('input',this.dialog_value_oninput.bind(this),passiveel);
 	el2=cre('input');
 	el2.type='button';
-	el2.value='open in encoded string editor';
+	el2.value='open in string editor';
 	el.appendChild(el2).addEventListener('click',this.open_in_string_editor.bind(this),passiveel);
 	(el2=cre('fieldset')).appendChild(el3);
 	(this.dialog_value_help_pre=cre('pre')).setAttribute('style','margin:0;white-space:pre-wrap;');

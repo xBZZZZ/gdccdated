@@ -389,9 +389,9 @@ var structures={
 					}catch(error){
 						say_error('object editor',error);
 					}else{
-						tbd_set_disabled(true);
+						set_loading(true);
 						gzip_decode_with_callback(ld,function(ld){
-							tbd_set_disabled(false);
+							set_loading(false);
 							try{
 								new ObjEditor(ld,write_changes);
 							}catch(error){
@@ -559,18 +559,9 @@ function urlsafeb64encode(a){
 	return btoa(a).replace(urlsafeb64encode_re,urlsafeb64encode_rep);
 }
 
-function string_editor_back(g){
-	g.preventDefault();
-	g=current_gui();
-	if(g.do_after)g.do_after(g.encoded.value);
-	if(g.do_after2)g.do_after2();
-	pop_gui();
-}
-
-function string_editor_back_no_write(g){
-	g.preventDefault();
-	g=current_gui();
-	if(g.do_after2)g.do_after2();
+function string_editor_back(){
+	var g=current_gui();
+	if(g.do_after)g.do_after(g.encoded.getval());
 	pop_gui();
 }
 
@@ -632,165 +623,79 @@ function gzip_decode_with_callback(text,onsuccess,onerror){
 	}
 }
 
-function string_editor_encode(g){
-	g.preventDefault();
-	g=current_gui();
-	if(g.dataset.doingStuff!=null)return;
-	g.dataset.doingStuff='';
+function string_editor_encode(){
+	var g=current_gui();
 	set_loading(true);
-	g.status.nodeValue=' encoding\n';
+	g.status.nodeValue='encoding';
 	function err(error){
-		delete g.dataset.doingStuff;
-		g.status.nodeValue=' error\n';
+		g.status.nodeValue='encode error';
 		say_error('encode',error);
 	}
-	function out(enc){
-		delete g.dataset.doingStuff;
+	function out(dec){
 		set_loading(false);
-		set_toggler_and_val(g.encoded,enc);
-		g.status.nodeValue=' encoded,len='+enc.length+'\n';
+		g.encoded.setval(dec);
+		g.status.nodeValue='encoded,len='+dec.length;
 	}
 	try{
-		if(g.use_gzip.nodeValue==='[yes')gzip_encode_with_callback(g.decoded.value,out,err);
-		else out(urlsafeb64encode(g.decoded.value));
+		if(g.use_gzip.checked)gzip_encode_with_callback(g.decoded.getval(),out,err);
+		else out(urlsafeb64encode(g.decoded.getval()));
 	}catch(error){
 		err(error);
 	}
 }
 
-function string_editor_decode(g){
-	g.preventDefault();
-	g=current_gui();
-	if(g.dataset.doingStuff!=null)return;
-	g.dataset.doingStuff='';
+function string_editor_decode(){
+	var g=current_gui();
 	set_loading(true);
-	g.status.nodeValue=' decoding\n';
+	g.status.nodeValue='decoding';
 	function err(error){
-		delete g.dataset.doingStuff;
-		g.status.nodeValue=' error\n';
+		g.status.nodeValue='decode error';
 		say_error('decode',error);
 	}
 	function out(dec){
-		delete g.dataset.doingStuff;
 		set_loading(false);
-		set_toggler_and_val(g.decoded,dec);
-		g.status.nodeValue=' decoded,len='+dec.length+'\n';
+		g.decoded.setval(dec);
+		g.status.nodeValue='decoded,len='+dec.length;
 	}
 	try{
-		if(g.use_gzip.nodeValue==='[yes')gzip_decode_with_callback(g.encoded.value,out,err);
-		else out(urlsafeb64decode(g.encoded.value));
+		if(g.use_gzip.checked)gzip_decode_with_callback(g.encoded.getval(),out,err);
+		else out(urlsafeb64decode(g.encoded.getval()));
 	}catch(error){
 		err(error);
 	}
 }
 
-function string_editor_toggle_gzip(e){
-	e.preventDefault();
-	e=current_gui().use_gzip;
-	e.nodeValue=e.nodeValue==='[yes'?'[no ':'[yes';
-}
-
-function string_editor_open_sel(e){
-	e.preventDefault();
-	e=current_gui()[this.dataset.prop];
-	var sd=e.selectionDirection,ss=e.selectionStart,se=e.selectionEnd,v=e.value,b=v.substring(0,ss),a=v.substring(se);
-	string_editor(function(n){
-		set_toggler_and_val(e,b+n+a);
-		try{
-			e.setSelectionRange(ss,ss+n.length,sd);
-		}catch(err){
-			console.warn('setSelectionRange error:',err);
-		}
-	},function(){
-		if(e.parentNode)setTimeout(focus_element,0,e);
-	},v.substring(ss,se));
-}
-
-function string_editor_open_obj(e){
-	e.preventDefault();
-	e=current_gui()[this.dataset.prop];
-	try{
-		new ObjEditor(e.value,set_toggler_and_val.bind(null,e));
-	}catch(error){
-		say_error('object editor',error);
-	}
-}
-
-function string_editor(do_after,do_after2,start_text){
-	var g=cre('pre'),el=g.appendChild(cre('a'));
-	el.draggable=false;
-	g.dataset.isModal='line-height:20px;';
+function string_editor(do_after,start_text){
+	var g=hopen('div'),tbd=g.tbd=[];
+	g.dataset.isModal='';
 	g.dataset.guiType='stringeditor';
-	g.do_after=do_after;
-	g.do_after2=do_after2;
-	if(do_after){
-		el.className='btn';
-		el.textContent='back';
-		el.href='javascript:;';
-		el.addEventListener('click',string_editor_back,nonpassiveel);
-		g.appendChild(document.createTextNode(' '));
-		el=g.appendChild(cre('a'));
-		el.draggable=false;
-	}
-	el.className='btn';
-	el.textContent='back (no write)\n';
-	el.href='javascript:;';
-	el.addEventListener('click',string_editor_back_no_write,nonpassiveel);
-	add_toggler(g.appendChild(g.encoded=cre('textarea')));
-	set_toggler_and_val(g.encoded,start_text);
-	g.appendChild(document.createTextNode('\n'));
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='[\u2193]';
-	el.href='javascript:;';
-	el.addEventListener('click',string_editor_decode,nonpassiveel);
-	g.appendChild(document.createTextNode(' '));
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='[\u2191]';
-	el.href='javascript:;';
-	el.addEventListener('click',string_editor_encode,nonpassiveel);
-	g.appendChild(document.createTextNode(' '));
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.appendChild(g.use_gzip=document.createTextNode('[no '));
-	el.appendChild(document.createTextNode('] use gzip'));
-	el.href='javascript:;';
-	el.addEventListener('click',string_editor_toggle_gzip,nonpassiveel);
-	g.appendChild(g.status=document.createTextNode(' none\n'));
-	add_toggler(g.appendChild(g.decoded=cre('textarea')));
-	g.appendChild(document.createTextNode('\n'));
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='open top selection\n';
-	el.href='javascript:;';
-	el.dataset.prop='encoded';
-	el.addEventListener('click',string_editor_open_sel,nonpassiveel);
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='open bottom selection\n';
-	el.href='javascript:;';
-	el.dataset.prop='decoded';
-	el.addEventListener('click',string_editor_open_sel,nonpassiveel);
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='open top in object editor\n';
-	el.href='javascript:;';
-	el.dataset.prop='encoded';
-	el.addEventListener('click',string_editor_open_obj,nonpassiveel);
-	el=g.appendChild(cre('a'));
-	el.draggable=false;
-	el.className='btn';
-	el.textContent='open bottom in object editor\n';
-	el.href='javascript:;';
-	el.dataset.prop='decoded';
-	el.addEventListener('click',string_editor_open_obj,nonpassiveel);
-	g.appendChild(document.createTextNode('use in JS console:\n  sd - decoded (bottom value)\n  se - encoded (top value)'));
-	push_gui(g);
+	g.className='vbox';
+	if(g.do_after=do_after){
+		hopen('div').className='hbox growc';
+			tbd.push(hbutton('back',string_editor_back,onceel));hclose();
+			tbd.push(hbutton('back (no write)',pop_gui,onceel));hclose();
+	}else tbd.push(hbutton('back (no write)',pop_gui,onceel));
+	hclose();
+	hfieldset('encoded','use in JS console:\n  se - encoded (top value)').className='vbox';
+		(g.encoded=new AdvTextArea(hcurr())).setval(start_text);
+	tbd.push(hclose('fieldset'));
+	hopen('div').className='hbox';
+		tbd.push(hbutton('[\u2193]',string_editor_decode));hclose();
+		tbd.push(hbutton('[\u2191]',string_editor_encode));hclose();
+		hopen('label').className='hbox btn';
+			hopen('input').type='checkbox';
+			hstyle('margin','auto 0');
+			tbd.push(g.use_gzip=hclose('input'));
+			hopen('span').textContent='use gzip';
+			hstyle('margin','auto 0');
+			hclose('span');
+		hclose('label');
+		hopen('span').style.margin='auto 0';
+			g.status=htext('none');
+		hclose('span');
+	hclose('div');
+	hfieldset('decoded','use in JS console:\n  sd - decoded (bottom value)').className='vbox';
+		g.decoded=new AdvTextArea(hcurr(),true);
+	tbd.push(hclose('fieldset'));
+	push_gui(hclose('div'));
 }

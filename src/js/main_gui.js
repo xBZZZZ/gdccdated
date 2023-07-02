@@ -55,11 +55,11 @@ push_gui(gui_div_with_html(false,
 <hr style="margin:0;"/>\
 <h2>make a backup of CCGameManager.dat and CCLocalLevels.dat to be able to unbreak geometry dash</h2>\
 <input class="thiccb" type="file"/>\
-<input class="thiccb" type="button" value="load encrypted (windows and android)" '+(window.DecompressionStream?'onclick="var f=current_gui().drop_file_input.files[0];if(f){set_loading(true);cc_load_gzip(f);}else window.alert(&quot;no file&quot;);"':'title="your browser doesn&apos;t support DecompressionStream" disabled=""')+'/>\
-<input class="thiccb" type="button" value="load encrypted (mac os)" '+(typeof subtlecrypto==='object'?'onclick="var f=current_gui().drop_file_input.files[0];if(f){set_loading(true);cc_load_aes(f);}else window.alert(&quot;no file&quot;);"':subtlecrypto)+'/>\
-<input class="thiccb" type="button" value="load xml" onclick="var f=current_gui().drop_file_input.files[0];if(f){set_loading(true);cc_load_xml(f);}else window.alert(&quot;no file&quot;);"/>\
+<input class="thiccb" type="button" value="load encrypted (windows and android)" '+(window.DecompressionStream?'onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_gzip(f);else window.alert(&quot;no file&quot;);"':'title="your browser doesn&apos;t support DecompressionStream" disabled=""')+'/>\
+<input class="thiccb" type="button" value="load encrypted (mac os)" '+(typeof subtlecrypto==='object'?'onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_aes(f);else window.alert(&quot;no file&quot;);"':subtlecrypto)+'/>\
+<input class="thiccb" type="button" value="load xml" onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_xml(f);else window.alert(&quot;no file&quot;);"/>\
 <hr/>\
-<input class="thiccb" type="button" value="open encoded string editor" onclick="string_editor(null,null,&quot;&quot;);"/>\
+<input class="thiccb" type="button" value="open encoded string editor" onclick="string_editor(null,&quot;&quot;);"/>\
 <input class="thiccb" type="button" value="open empty dict editor" onclick="push_dict_editor([],&quot;fake root&quot;);"/>\
 <hr/>\
 <input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
