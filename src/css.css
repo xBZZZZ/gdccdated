@@ -435,7 +435,8 @@ details[open]>summary{
 	color:rgb(255,0,0);
 }
 .git_commit{
-	margin:4px 0 0 auto;
+	margin-top:4px;
+	text-align:right;
 	font-size:12px;
 }
 a{

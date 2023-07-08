@@ -64,10 +64,11 @@ push_gui(gui_div_with_html(false,
 <hr/>\
 <input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
 <a class="btn thiccb" href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/gamesave.md" rel="noreferrer" target="_blank"><q cite="https://github.com/gd-programming/gd.docs/blob/docs/docs/client/gamesave.md">Client Gamesave Resource</q> on gdprogra.me (github, <em>docs</em> branch)</a>\
-<a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug or suggestion on github</a>'+(
+<a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug or suggestion on github</a>\
+<div class="git_commit">'+(
 	git_commit?
-	'<a class="git_commit" href="https://github.com/xBZZZZ/gdccdated/commit/'+git_commit+'" rel="noreferrer" target="_blank">git commit '+git_commit+'</a>':
-	'<span class="git_commit">git commit unknown</span>'
-)+'</div>'));
+	'<a href="https://github.com/xBZZZZ/gdccdated/commit/'+git_commit+'" rel="noreferrer" target="_blank">git commit '+git_commit+'</a>':
+	'git commit unknown'
+)+' | <a href="https://gdccdated.glitch.me/gdccdated_standalone.xhtml" rel="noreferrer" download="gdccdated_standalone.xhtml" title="save link as if clicking doesn&apos;t work">download standalone xhtml</a></div></div>'));
 current_gui().drop_file_input=current_gui().querySelector('input[type=file]');
 if(location.hash==='#ccarticle')push_ccatricle();

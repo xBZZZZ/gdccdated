@@ -99,7 +99,7 @@ cat ../out_tmp/css ../out_tmp/after_css
 } > index.xhtml
 lend
 
-lstart "generate out/index_standalone.xhtml"
+lstart "generate out/gdccdated_standalone.xhtml"
 {
 echo "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\
 <html xml:lang='en' lang='en' xmlns='http://www.w3.org/1999/xhtml'>\
@@ -120,7 +120,7 @@ echo "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\
 <style>"
 sed -f../out_tmp/b64_help_sed_script ../out_tmp/css
 cat ../out_tmp/after_css
-} > index_standalone.xhtml
+} > gdccdated_standalone.xhtml
 lend
 
 echo done
