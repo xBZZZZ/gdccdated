@@ -380,12 +380,12 @@ var structures={
 					this.level_data_item.value=this.changes;
 				},
 				'edit_onclick':function(){
-					var b=this.chobj,ld=b.changes===null?b.level_data_item.value:b.changes,write_changes=function(n){
-						b.changes=n;
-						b.changed();
-					};
+					var b=this.chobj,ld=b.changes===null?b.level_data_item.value:b.changes;
 					if(!ld||ld.charAt(ld.length-1)===';')try{
-						new ObjEditor(ld,write_changes);
+						new ObjEditor(ld,function(n){
+							b.changes=n;
+							b.changed();
+						});
 					}catch(error){
 						say_error('object editor',error);
 					}else{
@@ -393,7 +393,14 @@ var structures={
 						gzip_decode_with_callback(ld,function(ld){
 							set_loading(false);
 							try{
-								new ObjEditor(ld,write_changes);
+								new ObjEditor(ld,function(n){
+									set_loading(true);
+									gzip_encode_with_callback(n,function(n){
+										set_loading(false);
+										b.changes=n;
+										b.changed();
+									},say_error.bind(null,'encode level data'));
+								});
 							}catch(error){
 								say_error('object editor',error);
 							}
