@@ -29,7 +29,7 @@ log "termbin url: $termbinurl"
 log "asking for console uuid"
 url="https://api.glitch.com/console/$(zenity --entry '--text=input console uuid from https://api.glitch.com/console/*/
 console uuid looks like xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx
-(replace x with one of 0123456789abcdef)')/socket.io/?transport=polling"
+(replace x with one of 0123456789abcdef)')/socket.io/?EIO=3&transport=polling"
 function wget2 { wget --tries=1 --output-document=- "$@" -- "$url";}
 log "downloading sid"
 sid=$(wget2)
