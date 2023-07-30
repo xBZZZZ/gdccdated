@@ -322,7 +322,7 @@ var structures={
 			return name_item?'local level '+JSON.stringify(name_item.value)+(lookup('k4',d)?' (yes level data)':' (no level data)'):null;
 		},
 		'changers':[
-			'<a href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level.md" rel="noreferrer" target="_blank">level documentation</a>',
+			'<a href="https://wyliemaster.github.io/gddocs/#/resources/client/level" rel="noreferrer" target="_blank">level documentation</a>',
 			new StrChanger('level name','k2','s','textarea'),
 			{
 				'__proto__':changerproto,

@@ -274,7 +274,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	(this.dialog_value_help_pre=cre('pre')).setAttribute('style','margin:0;white-space:pre-wrap;');
 	el.appendChild(this.dialog_value_help_fieldset=el2);
 	root.appendChild(el);
-	root.insertAdjacentHTML('beforeend','<a href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md" rel="noreferrer" target="_blank" style="grid-column:1/3;margin-right:auto;"><q cite="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/level-object.md">Level Object</q> on gdprogra.me</a>');
+	root.insertAdjacentHTML('beforeend','<a href="https://wyliemaster.github.io/gddocs/#/resources/client/level-components/level-object" rel="noreferrer" target="_blank" style="grid-column:1/3;margin-right:auto;"><q cite="https://wyliemaster.github.io/gddocs/#/resources/client/level-components/level-object">Level Object</q> on wyliemaster.github.io/gddocs</a>');
 	this.dialog=root;
 };
 
@@ -422,7 +422,7 @@ arr=['objects',
 	['kA8','start dual','0','no','1','yes'],
 	['kA9','menu type','0','level','1','start pos','default is <strong>menu type=level&#9205;kA9,0</strong><hr/><strong>menu type=level&#9205;kA9,0</strong> is like gear button in editor&#10;<strong>menu type=start pos&#9205;kA9,1</strong> is like start pos edit object<hr/>first object in level having <strong>menu type=start pos&#9205;kA9,1</strong> will make:<ul><li>editor gear button open menu like start pos edit object</li><li>colors (kS38) don&apos;t work</li><li>lots of properties don&apos;t survive editor saving</li></ul>start pos having <strong>menu type=level&#9205;kA9,0</strong> will crash game when you click edit object'],
 	['kA11','start flipped gravity','0','no','1','yes'],
-	['kA14','music lines',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/guideline-string.md')],
+	['kA14','music lines',linkf('https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string')],
 	['kA15','song fade in','0','no','1','yes'],
 	['kA16','song fade out','0','no','1','yes'],
 	['kA17','G/Line','<strong>0</strong> in data is <strong>1</strong> in editor&#10;<strong>1</strong> in data is <strong>1</strong> in editor&#10;<strong>2</strong> in data is <strong>2</strong> in editor'+img(421,936,137,66)],
@@ -431,7 +431,7 @@ arr=['objects',
 	['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
 	['kA24','start centered camera (2.2)','0','no','1','yes'],
 	['kA25','MG (2.2)','<strong>0</strong> and <strong>1</strong> are different middlegrounds (unlike BG (kA6) and G (kA7))'],
-	['kS38','colors',linkf('https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/level-components/color-string.md')],
+	['kS38','colors',linkf('https://wyliemaster.github.io/gddocs/#/resources/client/level-components/color-string')],
 'triggers',
 	['11','touch triggered','0','no','1','yes'],
 	['62','spawn triggered','0','no','1','yes'],

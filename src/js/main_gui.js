@@ -63,6 +63,7 @@ push_gui(gui_div_with_html(false,
 <input class="thiccb" type="button" value="open empty dict editor" onclick="push_dict_editor([],&quot;fake root&quot;);"/>\
 <hr/>\
 <input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
+<a class="btn thiccb" href="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave" rel="noreferrer" target="_blank"><q cite="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave">Client Gamesave Resource</q> on wyliemaster.github.io/gddocs</a>\
 <a class="btn thiccb" href="https://github.com/gd-programming/gd.docs/blob/docs/docs/resources/client/gamesave.md" rel="noreferrer" target="_blank"><q cite="https://github.com/gd-programming/gd.docs/blob/docs/docs/client/gamesave.md">Client Gamesave Resource</q> on gdprogra.me (github, <em>docs</em> branch)</a>\
 <a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug or suggestion on github</a>\
 <div class="git_commit">'+(
