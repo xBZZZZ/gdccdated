@@ -43,7 +43,7 @@ don&apos;t read entire file because there can be 1 or 2 bytes of garbage because
 <li>'+linkf('https://github.com/Wyliemaster/GD-Save-Decryptor')+' (can decrypt mac os saves, doesn&apos;t remove padding when padding=16)</li>\
 <li>'+linkf('https://github.com/GDColon/GD-Save-Decoder')+'</li>\
 <li>'+linkf('https://geometry-dash.fandom.com/wiki/User:XBZZZZALT#backup_of_useful_stuff_from_Save_Files_page')+'</li>\
-<li>'+linkf('https://gdprogra.me/#/topics/localfiles_encrypt_decrypt')+'</li>\
+<li>'+linkf('https://wyliemaster.github.io/gddocs/#/topics/localfiles_encrypt_decrypt')+'</li>\
 </ul></details>';
 	push_gui(g);
 	location.hash='#ccarticle';
