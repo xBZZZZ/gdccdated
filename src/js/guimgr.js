@@ -479,7 +479,7 @@ AdvFileLoader.prototype.handleEvent=function(e){
 					r.addEventListener('error',this,onceel);
 					r.readAsBinaryString(e);
 				}catch(error){
-					say_error('FileReader');
+					say_error('FileReader',error);
 				}
 			}
 	}
