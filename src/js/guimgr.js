@@ -305,6 +305,7 @@ XSizer.prototype.get_prog=function(x){
 };
 
 function AdvTextArea(parent,show){
+	this.onchange=null;
 	(c=this.select=cre('select')).innerHTML='<option>0</option>\
 <option>'+(show?'hide':'show')+'</option>\
 <option>open in string editor</option>\
@@ -340,6 +341,11 @@ AdvTextArea.prototype.setval=function(val){
 	}
 };
 
+AdvTextArea.prototype.setvalchg=function(val){
+	this.setval(val);
+	if(this.onchange)this.onchange();
+};
+
 AdvTextArea.prototype.addtextarea=function(){
 	this.parent.appendChild(this.textarea);
 	this.val=null;
@@ -361,11 +367,14 @@ AdvTextArea.prototype.togsh=function(){
 	var b=MAX_SHOW_CHARS<v.length,l=-1!==v.indexOf('\r'),m,v;
 	if(b||l){
 		m='show? reasons to not show:';
-		if(b)m+='\n  value is big ('+v.length+') characters, showing might freeze browser';
+		if(b)m+='\n  value is big ('+v.length+' characters), showing might freeze browser';
 		if(l)m+='\n  value contains \\r, showing will not preserve those';
 		if(!confirm(m))return;
 		this.textarea.value=v;
-		this.chars.nodeValue=this.textarea.value.length;
+		if(l){
+			this.chars.nodeValue=this.textarea.value.length;
+			if(this.onchange)this.onchange();
+		}
 	}else this.textarea.value=v;
 	this.addtextarea();
 };
@@ -395,6 +404,7 @@ AdvTextArea.prototype.saveutf=function(){
 AdvTextArea.prototype.handleEvent=function(e){
 	if(this.textarea===e.target){
 		this.chars.nodeValue=this.getval().length;
+		if(this.onchange)this.onchange();
 		return;
 	}
 	var i=this.select.selectedIndex;
@@ -404,11 +414,11 @@ AdvTextArea.prototype.handleEvent=function(e){
 			this.togsh();
 			return;
 		case 2:
-			string_editor(this.setval.bind(this),this.getval());
+			string_editor(this.setvalchg.bind(this),this.getval());
 			return;
 		case 3:
 			try{
-				new ObjEditor(this.getval(),this.setval.bind(this));
+				new ObjEditor(this.getval(),this.setvalchg.bind(this));
 			}catch(error){
 				say_error('object editor',error);
 			}
@@ -437,6 +447,7 @@ AdvTextArea.prototype.handleEvent=function(e){
 			this.chars.nodeValue='0';
 			this.textarea.value='';
 			if(null!==this.val)this.addtextarea();
+			if(this.onchange)this.onchange();
 	}
 };
 
@@ -464,7 +475,7 @@ AdvFileLoader.prototype.handleEvent=function(e){
 				say_error('bad UTF-8',error);
 				return;
 			}
-			this.out.setval(e);
+			this.out.setvalchg(e);
 			set_loading(false);
 			return;
 		case 'error':

@@ -158,13 +158,13 @@ StrChanger.prototype.is_dict_wrong=function(dict){
 	return is_wrong_type(this.itemkey,this.itemtype,dict);
 };
 StrChanger.prototype.makehtml=function(){
-	if(this.inptype==='textarea')var inp=cre('textarea');
-	else(inp=cre('input')).type=this.inptype;
-	inp.id=this.labelfor;
-	inp.oninput=this.changed.bind(this);
-	this.fs.appendChild(this.inp=inp);
+	var l=cre('input');
+	l.type=this.inptype;
+	l.id=this.labelfor;
+	l.oninput=this.changed.bind(this);
+	this.fs.appendChild(this.inp=l);
 	if(this.extratxt){
-		var l=cre('label');
+		l=cre('label');
 		l.style.marginLeft='5px';
 		l.htmlFor=this.labelfor;
 		l.textContent=this.extratxt;
@@ -176,6 +176,27 @@ StrChanger.prototype.inithtml=function(){
 };
 StrChanger.prototype.write=function(){
 	lookup(this.itemkey,this.d,this.itemtype,true).value=this.inp.value;
+};
+
+function AdvChanger(name,itemkey){
+	this.name=name+' ('+itemkey+')';
+	this.itemkey=itemkey;
+}
+AdvChanger.prototype.__proto__=changerproto;
+AdvChanger.prototype.is_dict_wrong=function(dict){
+	return is_wrong_type(this.itemkey,'s',dict);
+};
+AdvChanger.prototype.makehtml=function(){
+	this.fs.className='vbox';
+	(this.adv=new AdvTextArea(this.fs)).onchange=this.changed.bind(this);
+	this.adv.textarea.id=this.labelfor;
+	this.tbd.push(this.adv.select);
+};
+AdvChanger.prototype.inithtml=function(){
+	this.adv.setval(lookup(this.itemkey,this.d,'s').value);
+};
+AdvChanger.prototype.write=function(){
+	lookup(this.itemkey,this.d,'s',true).value=this.adv.getval();
 };
 
 function EnumChanger(name,itemkey,extrahtml){
@@ -323,15 +344,11 @@ var structures={
 		},
 		'changers':[
 			'<a href="https://wyliemaster.github.io/gddocs/#/resources/client/level" rel="noreferrer" target="_blank">level documentation</a>',
-			new StrChanger('level name','k2','s','textarea'),
+			new AdvChanger('level name','k2'),
 			{
 				'__proto__':changerproto,
 				'name':'level description (k3)',
-				'makehtml':function(){
-					(this.desc_input=cre('textarea')).id=this.labelfor;
-					this.desc_input.oninput=this.changed.bind(this);
-					this.fs.appendChild(this.desc_input);
-				},
+				'makehtml':AdvChanger.prototype.makehtml,
 				'is_dict_wrong':function(d){
 					d=lookup('k3',d);
 					if(!d)return false;
@@ -343,11 +360,11 @@ var structures={
 					return true;
 				},
 				'inithtml':function(){
-					this.desc_input.value=urlsafeb64decode(lookup('k3',this.d,'s').value);
+					this.adv.setval(urlsafeb64decode(lookup('k3',this.d,'s').value));
 				},
 				'geterror':function(){
 					try{
-						this.new_desc=urlsafeb64encode(this.desc_input.value);
+						this.new_desc=urlsafeb64encode(this.adv.getval());
 					}catch(error){
 						return error;
 					}
