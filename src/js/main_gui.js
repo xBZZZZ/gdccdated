@@ -70,6 +70,6 @@ push_gui(gui_div_with_html(false,
 	git_commit?
 	'<a href="https://github.com/xBZZZZ/gdccdated/commit/'+git_commit+'" rel="noreferrer" target="_blank">git commit '+git_commit+'</a>':
 	'git commit unknown'
-)+' | <a href="https://gdccdated.glitch.me/gdccdated_standalone.xhtml" rel="noreferrer" download="gdccdated_standalone.xhtml" title="save link as if clicking doesn&apos;t work">download standalone xhtml</a></div></div>'));
+)+' | <a href="https://gdccdated.glitch.me/gdccdated_standalone.xhtml" rel="noreferrer" download="gdccdated_standalone.xhtml" title="save link as if clicking doesn&apos;t work">download latest standalone xhtml</a></div></div>'));
 current_gui().drop_file_input=current_gui().querySelector('input[type=file]');
 if(location.hash==='#ccarticle')push_ccatricle();
