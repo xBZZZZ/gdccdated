@@ -221,20 +221,28 @@ EnumChanger.prototype.write=function(){
 	lookup(this.itemkey,this.d,'i',true).value=this.inp.value;
 };
 
-function BoolChanger(name,itemkey){
+function BoolChanger(name,itemkey,extratxt){
 	this.name=name+' ('+itemkey+')';
 	this.itemkey=itemkey;
+	this.extratxt=extratxt||'';
 }
 BoolChanger.prototype.__proto__=changerproto;
 BoolChanger.prototype.is_dict_wrong=function(dict){
 	return is_wrong_type(this.itemkey,'t',dict);
 };
 BoolChanger.prototype.makehtml=function(){
-	var c=this.inp=cre('input');
-	c.type='checkbox';
-	c.id=this.labelfor;
-	c.onchange=this.changed.bind(this);
-	this.fs.appendChild(c);
+	var l=this.inp=cre('input');
+	l.type='checkbox';
+	l.id=this.labelfor;
+	l.onchange=this.changed.bind(this);
+	this.fs.appendChild(l);
+	if(this.extratxt){
+		l=cre('label');
+		l.style.marginLeft='5px';
+		l.htmlFor=this.labelfor;
+		l.textContent=this.extratxt;
+		this.fs.appendChild(l);
+	}
 };
 BoolChanger.prototype.inithtml=function(){
 	this.inp.checked=lookup(this.itemkey,this.d)!==null;
@@ -426,6 +434,7 @@ var structures={
 				}
 			},
 			new BoolChanger('verified','k14'),
+			new BoolChanger('last completion auto','k33','completing level sets this only if k21 (level type) = 2 (editor level) and not testmode (start pos)'),
 			new StrChanger('coins','k64','i','number','0'),
 			new StrChanger('stars requested','k66','i','number','0'),
 			new EnumChanger('level type','k21','values:<div style="list-style-type:none;padding-left:20px;"><label style="display:list-item;"><input value="2" type="radio"/>2&#9205;editor level</label><label style="display:list-item;"><input value="3" type="radio"/>3&#9205;&quot;view&quot; online level</label><label style="display:list-item;"><input value="4" type="radio"/>4&#9205;&quot;view&quot; online level (level download failed)</label></div>any other value makes unclickable &quot;view&quot; online level (at least in CCLocalLevels.dat)'),
