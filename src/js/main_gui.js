@@ -19,7 +19,7 @@ don&apos;t read entire file because there can be 1 or 2 bytes of garbage because
 <summary>how to decode CC*.dat file (mac os and ios)?</summary>\
 <ol>\
 <li><strong><a href="https://www.highgo.ca/2019/08/08/the-difference-in-five-modes-in-the-aes-encryption-algorithm/" rel="noreferrer" target="_blank">AES-ECB</a> 256</strong> decrypt with key=<wbr/><q class="wpb" style="quotes:none;" cite="https://github.com/Wyliemaster/GD-Save-Decryptor/blob/main/saves.py#L43">ipu9TUv54yv]isFMh5@;t.5w34E2Ry@{</q></li>\
-<li>remove padding (last <var style="font-weight:bold;">value of last byte</var> bytes are equal and &#8804; 16 and are padding)</li>\
+<li>remove padding (last <var style="font-weight:bold;">value of last byte</var> bytes are equal and in range [1;16] and are padding)</li>\
 </ol></details>\
 <details open="" class="bigd">\
 <summary>geometry dash can load non-encoded XML files (windows and android)</summary><ul>\
