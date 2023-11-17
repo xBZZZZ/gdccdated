@@ -14,8 +14,7 @@ function CSelect(canvas,items,itemstr,itemdefualt,onchange){
 	canvas.addEventListener('keydown',this,nonpassiveel);
 	canvas.addEventListener('pointerdown',this,passiveel);
 	canvas.addEventListener('pointermove',this,passiveel);
-	canvas.addEventListener('pointerup',this,passiveel);
-	canvas.addEventListener('pointercancel',this,passiveel);
+	canvas.addEventListener('lostpointercapture',this,passiveel);
 	this.dragstartvy=this.dragstarty=this.scrollhandley=this.scrollhandleh=this.w=this.h=Number.NaN;
 	this.sel=-1;
 	this.vy=0;
@@ -189,7 +188,7 @@ CSelect.prototype.handleEvent=function(event){
 			this.vy=this.dragstartvy+(event.offsetY-this.dragstarty)*(this.items.length*CSITEMHEIGHT-this.h)/(this.h-this.scrollhandleh);
 			this.draw();
 			return;
-		default://case 'pointerup':case 'pointercancel':
+		default://case 'lostpointercapture':
 			if(this.scrollingpointerid===event.pointerId)this.scrollingpointerid=null;
 	}
 };

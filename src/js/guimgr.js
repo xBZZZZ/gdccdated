@@ -268,8 +268,7 @@ function XSizer(par,onsize){
 	par.classList.add('XSizerContainer');
 	s.addEventListener('pointerdown',this,passiveel);
 	s.addEventListener('pointermove',this,passiveel);
-	s.addEventListener('pointerup',this,passiveel);
-	s.addEventListener('pointercancel',this,passiveel);
+	s.addEventListener('lostpointercapture',this,passiveel);
 	par.appendChild(s);
 }
 
@@ -291,7 +290,7 @@ XSizer.prototype.handleEvent=function(event){
 				}
 			}
 			return;
-		default://case 'pointerup':case 'pointercancel':
+		default://case 'lostpointercapture':
 			if(event.pointerId===this.pointerid)this.pointerid=null;
 	}
 };
