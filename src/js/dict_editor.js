@@ -154,20 +154,21 @@ function push_dict_editor(dict,root_name){
 
 var ints_re=RegExp('(-?[0-9]+)','');
 
-function cc_dict_compare_items(item1,item2){
-	if((item1=item1.key)===(item2=item2.key))return true;
-	item1=item1.split(ints_re);
-	item2=item2.split(ints_re);
-	var l=Math.min(item1.push(Number.NEGATIVE_INFINITY),item2.push(Number.NEGATIVE_INFINITY)),i=0;
-	while(l>i){
-		if(i&1){
-			item1[i]-=0;
-			item2[i]-=0;
+function dict_compare_items(item1,item2){
+	if((item1=item1.key)!==(item2=item2.key)){
+		item1=item1.split(ints_re);
+		item2=item2.split(ints_re);
+		var l=Math.min(item1.push(Number.NEGATIVE_INFINITY),item2.push(Number.NEGATIVE_INFINITY)),i=0;
+		while(l>i){
+			if(i&1){
+				item1[i]-=0;
+				item2[i]-=0;
+			}
+			if(item1[i]!==item2[i])return item1[i]<item2[i]?-1:1;
+			++i;
 		}
-		if(item1[i]!==item2[i])return item1[i]<item2[i];
-		++i;
 	}
-	return true;
+	return 0;
 }
 
 function dict_editor_toggle_wrap(){
@@ -176,23 +177,11 @@ function dict_editor_toggle_wrap(){
 }
 
 function dict_editor_sort_keys(){
-	var g=current_gui(),dict=g.cc_dict,l=dict.length;
-	if(l<2)return;
-	mergesort(dict,0,l,cc_dict_compare_items);
-	dict_editor_update_inputs(g);
-}
-
-function mergesort(array,start,end,comparitor){
-	//comparitor(a,b) returns a<=b
-	if((len=end-start)<2)return;
-	var len,mid=Math.floor(len/2),i2=mid,i1=i2+start;
-	mergesort(array,i1,end,comparitor);
-	mergesort(array,start,i1,comparitor);
-	var arrayslice=array.slice(start,end);
-	i1=0;
-	do array[start++]=arrayslice[comparitor(arrayslice[i1],arrayslice[i2])?i1++:i2++];while(i1<mid&&i2<len);
-	if(i1<mid)do array[start++]=arrayslice[i1];while(++i1<mid);
-	else do array[start++]=arrayslice[i2];while(++i2<len);
+	var g=current_gui(),dict=g.cc_dict;
+	if(dict.length>1){
+		dict.sort(dict_compare_items);
+		dict_editor_update_inputs(g);
+	}
 }
 
 function push_xml_ie(){

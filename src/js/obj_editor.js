@@ -293,7 +293,7 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 	sortex=sortex[2];
 	if(itemcount>1){
 		sort.s_objs=this.s_objs;
-		sort.sort_start=0;
+		sort.exfist=true;
 		sort.addEventListener('click',ObjEditor.sort_option_onclick,onceel);
 	}else{
 		sort.disabled=true;
@@ -301,7 +301,7 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 	}
 	if(itemcount>2){
 		sortex.s_objs=this.s_objs;
-		sortex.sort_start=1;
+		sort.exfist=false;
 		sortex.addEventListener('click',ObjEditor.sort_option_onclick,onceel);
 	}else{
 		sortex.disabled=true;
@@ -312,7 +312,10 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 
 ObjEditor.sort_option_onclick=function(){
 	var s_objs=this.s_objs,items=s_objs.items,selitem=s_objs.getsitem();
-	mergesort(items,this.sort_start,items.length,ObjEditor.sort_comparitor);
+	if(this.exfirst){
+		var i=items.shift();
+		items.sort(ObjEditor.sort_comparitor).unshift(i);
+	}else items.sort(ObjEditor.sort_comparitor);
 	if(selitem){
 		s_objs.sel=items.indexOf(selitem);
 		s_objs.selinview();
@@ -336,7 +339,7 @@ ObjEditor.sort_comparitor=function(a,b){
 		case '3':
 			by=b[i][1];
 	}
-	return 0>=(ax-bx||ay-by);
+	return ax-bx||ay-by;
 };
 
 var sof_re=RegExp('\\$[_0-9A-Za-z]+','g');
