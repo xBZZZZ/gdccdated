@@ -2,9 +2,14 @@
 
 var git_commit='';//modified by out.sh
 
+function ccarticle_back_onclick(){
+	pop_gui();
+	location.hash='';
+}
+
 function push_ccatricle(){
 	var g=cre('article');
-	g.innerHTML='<input type="button" onclick="pop_gui();location.hash=&quot;&quot;;" value="back"/>\
+	g.innerHTML='<input type="button" value="back"/>\
 <details open="" class="bigd">\
 <summary>how to decode CC*.dat file (windows and android)?</summary><ol>\
 <li>read <strong class="wp">floor(<var>file size in bytes</var> / 4) * 4</strong> bytes from file<ul><li>\
@@ -45,32 +50,56 @@ don&apos;t read entire file because there can be 1 or 2 bytes of garbage because
 <li>'+linkf('https://geometry-dash.fandom.com/wiki/User:XBZZZZALT#backup_of_useful_stuff_from_Save_Files_page')+'</li>\
 <li>'+linkf('https://wyliemaster.github.io/gddocs/#/topics/localfiles_encrypt_decrypt')+'</li>\
 </ul></details>';
+	g.firstChild.addEventListener('click',ccarticle_back_onclick,onceel);
 	push_gui(g);
 	location.hash='#ccarticle';
 }
 
-push_gui(gui_div_with_html(false,
-'<div style="display:flex;flex-direction:column;">\
-<h1><a href="https://gdccdated.glitch.me/index.xhtml" rel="noreferrer" style="text-decoration:none;" title="link to myself">CCGameManager.dat or CCLocalLevels.dat editor</a></h1>\
+hopen('div').className='vbox';
+hcurr().innerHTML='<h1><a href="https://gdccdated.glitch.me/index.xhtml" rel="noreferrer" style="text-decoration:none;" title="link to myself">CCGameManager.dat or CCLocalLevels.dat editor</a></h1>\
 <hr style="margin:0;"/>\
-<h2>make a backup of CCGameManager.dat and CCLocalLevels.dat to be able to unbreak geometry dash</h2>\
-<input class="thiccb" type="file"/>\
-<input class="thiccb" type="button" value="load encrypted (windows and android)" '+(window.DecompressionStream?'onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_gzip(f);else window.alert(&quot;no file&quot;);"':'title="your browser doesn&apos;t support DecompressionStream" disabled=""')+'/>\
-<input class="thiccb" type="button" value="load encrypted (mac os and ios)" '+(typeof subtlecrypto==='object'?'onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_aes(f);else window.alert(&quot;no file&quot;);"':subtlecrypto)+'/>\
-<input class="thiccb" type="button" value="load xml" onclick="var f=current_gui().drop_file_input.files[0];if(f)cc_load_xml(f);else window.alert(&quot;no file&quot;);"/>\
-<hr/>\
-<input class="thiccb" type="button" value="open encoded string editor" onclick="string_editor(null,&quot;&quot;);"/>\
-<input class="thiccb" type="button" value="open empty dict editor" onclick="push_dict_editor([],&quot;fake root&quot;);"/>\
-<hr/>\
-<input class="thiccb" type="button" value="about CC*.dat files" onclick="push_ccatricle();"/>\
-<a class="btn thiccb" href="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave" rel="noreferrer" target="_blank"><q cite="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave">Client Gamesave Resource</q> on wyliemaster.github.io/gddocs</a>\
+<h2>make a backup of CCGameManager.dat and CCLocalLevels.dat to be able to unbreak geometry dash</h2>';
+(hcurr().drop_file_input=hopen('input')).type='file';hcurr().className='thiccb';hclose();
+hopen('input').type='button';
+hcurr().value='load encrypted (windows and android)';
+if('function'===typeof DecompressionStream)hcurr().addEventListener('click',function(){
+	var f=current_gui().drop_file_input.files[0];
+	if(f)cc_load_gzip(f);else alert('no file');
+},passiveel);else{
+	hcurr().title='your browser doesn\'t support DecompressionStream';
+	hcurr().disabled=true;
+}
+hcurr().className='thiccb';
+hclose('input');
+hopen('input').type='button';
+hcurr().value='load encrypted (mac os and ios)';
+if('object'===typeof subtlecrypto)hcurr().addEventListener('click',function(){
+	var f=current_gui().drop_file_input.files[0];
+	if(f)cc_load_aes(f);else alert('no file');
+},passiveel);else{
+	hcurr().title=subtlecrypto;
+	hcurr().disabled=true;
+}
+hcurr().className='thiccb';
+hclose('input');
+hbutton('load xml',function(){
+	var f=current_gui().drop_file_input.files[0];
+	if(f)cc_load_xml(f);else alert('no file');
+}).className='thiccb';hclose();
+hcurr().appendChild(cre('hr'));
+hbutton('open encoded string editor',string_editor.bind(null,null,'')).className='thiccb';hclose();
+hbutton('open empty dict editor',function(){
+	push_dict_editor([],'fake root');
+}).className='thiccb';hclose();
+hcurr().appendChild(cre('hr'));
+hbutton('about CC*.dat files',push_ccatricle).className='thiccb';hclose().insertAdjacentHTML('afterend','<a class="btn thiccb" href="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave" rel="noreferrer" target="_blank"><q cite="https://wyliemaster.github.io/gddocs/#/resources/client/gamesave">Client Gamesave Resource</q> on wyliemaster.github.io/gddocs</a>\
 <a class="btn thiccb" href="https://github.com/Wyliemaster/gddocs/tree/master" rel="noreferrer" target="_blank">gddocs (wyliemaster fork) github</a>\
 <a class="btn thiccb" href="https://github.com/gd-programming/gd.docs/tree/docs" rel="noreferrer" target="_blank">gddocs (<em>docs</em> branch, original) github</a>\
 <a class="btn thiccb" href="https://github.com/xBZZZZ/gdccdated/issues" rel="noreferrer" target="_blank">report bug or suggestion on github</a>\
 <div class="git_commit">'+(
-	git_commit?
-	'<a href="https://github.com/xBZZZZ/gdccdated/commit/'+git_commit+'" rel="noreferrer" target="_blank">git commit '+git_commit+'</a>':
-	'git commit unknown'
-)+' | <a href="https://gdccdated.glitch.me/gdccdated_standalone.xhtml" rel="noreferrer" download="gdccdated_standalone.xhtml" title="save link as if clicking doesn&apos;t work">download latest standalone xhtml</a></div></div>'));
-current_gui().drop_file_input=current_gui().querySelector('input[type=file]');
+	git_commit?'<a href="https://github.com/xBZZZZ/gdccdated/commit/'+git_commit+'" rel="noreferrer" target="_blank">git commit '+git_commit+'</a>'
+	:'git commit unknown'
+)+' | <a href="https://gdccdated.glitch.me/gdccdated_standalone.xhtml" rel="noreferrer" download="gdccdated_standalone.xhtml" title="save link as if clicking doesn&apos;t work">download latest standalone xhtml</a></div>');
+push_gui(hclose('div'));
+
 if(location.hash==='#ccarticle')push_ccatricle();

@@ -1,17 +1,29 @@
 'use strict';
 
+function save_modal_back_onclick(){
+	URL.revokeObjectURL(this.dataset.bloburl);
+	pop_gui();
+}
+
 function save_modal(buffers,name,blobopts){
 	set_loading(false);
-	var g=gui_div_with_html('display:flex;flex-direction:column;','<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back" onclick="window.URL.revokeObjectURL(current_gui().bloburl);pop_gui();"/>'),a=g.firstChild;
-	g.bloburl=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
+	var g=gui_div_with_html('display:flex;flex-direction:column;','<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back"/>'),a=g.firstChild,b=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
 	a.lastChild.textContent=a.download=name;
+	a=g.lastChild;
+	a.dataset.bloburl=b;
+	a.addEventListener('click',save_modal_back_onclick,onceel);
 	push_gui(g);
 }
 
+function reload_onclick(){
+	location.reload();
+}
+
 function push_loading_modal(file_name){
-	var g=gui_div_with_html('display:flex;flex-direction:column;','<h2 style="white-space:pre-wrap;margin:0 0 5px;"><span class="loading"></span> loading</h2><input class="thiccb" type="button" value="reload" onclick="location.reload();"/>');
+	var g=gui_div_with_html('display:flex;flex-direction:column;','<h2 style="white-space:pre-wrap;margin:0 0 5px;"><span class="loading"></span> loading</h2><input class="thiccb" type="button" value="reload"/>');
 	g.dataset.ccFileName=file_name;
 	g.error_tag=g.firstChild;
+	g.lastChild.addEventListener('click',reload_onclick,onceel);
 	push_gui(g);
 	set_loading(true);
 }
@@ -71,22 +83,79 @@ function cc_load_xml_string(plist){
 	}
 }
 
+function open_in_dict_editor_onclick(){
+	var g=current_gui(),e=g.dict_editor;
+	if(e)push_gui(e);else{
+		push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);
+		(g.dict_editor=current_gui()).dataset.reusable='';
+	}
+}
+
+function save_gzip_onclick(){
+	set_loading(true);
+	var g=current_gui();
+	cc_save_gzip(g.cc_data,g.dataset.ccFileName);
+}
+
+function save_aes_onclick(){
+	set_loading(true);
+	var g=current_gui();
+	cc_save_aes(g.cc_data,g.dataset.ccFileName,g.progbar);
+}
+
+function save_xml_onclick(){
+	set_loading(true);
+	try{
+		var a=[],m=new CcXmlMaker(a.push.bind(a),2),g=current_gui();
+		m.r(g.cc_data);
+		m.f();
+		save_modal(a,g.dataset.ccFileName,xmlblobopts);
+	}catch(error){
+		say_error('save xml',error);
+	}
+}
+
 function load_cc_data(cc_data){
 	set_loading(false);
-	var a=current_gui();
-	a.error_tag=null;
-	a.cc_data=cc_data;
-	a.innerHTML=
-'<input class="thiccb" type="button" value="back"/>\
-<h2 style="margin:5px 0;">done</h2>\
-<input class="thiccb" type="button" value="open in dict editor" onclick="var g=current_gui();if(g.dict_editor)push_gui(g.dict_editor);else{push_dict_editor(g.cc_data.dict,g.dataset.ccFileName);(g.dict_editor=current_gui()).dataset.reusable=&quot;&quot;;}"/>\
-<input class="thiccb" type="button" value="save encrypted (windows and android)" '+(window.CompressionStream?'onclick="var g=current_gui();set_loading(true);cc_save_gzip(g.cc_data,g.dataset.ccFileName);"':'title="your browser doesn&apos;t support CompressionStream" disabled=""')+'/>\
-<input class="thiccb" type="button" value="save encrypted (mac os and ios) (slow)" '+(typeof subtlecrypto==='object'?'onclick="var g=current_gui();set_loading(true);cc_save_aes(g.cc_data,g.dataset.ccFileName,this.nextSibling);"/><progress title="encrypting (mac os and ios) (slow)" aria-label="encrypting (mac os and ios) (slow)" max="64" value="0" style="display:none;"':subtlecrypto)+'/>\
-<input class="thiccb" type="button" value="save xml" onclick="set_loading(true);try{var a=[],m=new CcXmlMaker(a.push.bind(a),2),g=current_gui();m.r(g.cc_data);m.f();save_modal(a,g.dataset.ccFileName,xmlblobopts);}catch(error){say_error(&quot;save xml&quot;,error);}"/>\
-<input class="thiccb" type="button" value="open copy in new tab"/>';
-	a=a.tbd=Array.prototype.slice.call(a.querySelectorAll('input:enabled'));
-	a[0].addEventListener('click',pop_gui,onceel);
-	a.pop().addEventListener('click',copy_to_new_tab,passiveel);
+	hstack.push(document.createDocumentFragment());
+	hbutton('back',pop_gui,onceel).className='thiccb';var g=current_gui(),tbd=g.tbd=[hclose()];
+	hopen('h2').style.margin='5px 0';hcurr().textContent='done';hclose();
+	hbutton('open in dict editor',open_in_dict_editor_onclick).className='thiccb';tbd.push(hclose());
+	hopen('input').type='button';
+	hcurr().value='save encrypted (windows and android)';
+	if('function'===typeof CompressionStream){
+		hcurr().addEventListener('click',save_gzip_onclick,passiveel);
+		tbd.push(hcurr());
+	}else{
+		hcurr().title='your browser doesn\'t support CompressionStream';
+		hcurr().disabled=true;
+	}
+	hcurr().className='thiccb';
+	hclose('input');
+	hopen('input').type='button';
+	hcurr().value='save encrypted (mac os and ios) (slow)';
+	hcurr().className='thiccb';
+	if('object'===typeof subtlecrypto){
+		hcurr().addEventListener('click',save_aes_onclick,passiveel);
+		tbd.push(hclose('input'));
+		(g.progbar=hopen('progress')).title='encrypting (mac os and ios) (slow)';
+		hcurr().max=64;
+		hcurr().value=0;
+		hstyle('display','none');
+	}else{
+		hcurr().title=subtlecrypto;
+		hcurr().disabled=true;
+	}
+	hclose();
+	hbutton('save xml',save_xml_onclick).className='thiccb';tbd.push(hclose());
+	hbutton('open copy in new tab',copy_to_new_tab).className='thiccb';hclose();
+	g.error_tag=null;
+	g.cc_data=cc_data;
+	if(g.replaceChildren)g.replaceChildren(hclose());
+	else{
+		g.textContent='';
+		g.appendChild(hclose());
+	}
 }
 
 function copy_to_new_tab(){
@@ -153,7 +222,7 @@ function cc_load_gzip_file_reader_onload(){
 		return;
 	}
 	try{
-		str=new window.DecompressionStream('gzip');
+		str=new DecompressionStream('gzip');
 		ch=str.writable.getWriter();
 		ch.write(cc);
 		ch.close();
@@ -198,7 +267,10 @@ try{
 }catch(error){
 	console.warn('can\'t get window.crypto.subtle:\n\n',error);
 }
-if(!subtlecrypto||typeof subtlecrypto!=='object')subtlecrypto='disabled="" title="can&apos;t use window.crypto.subtle'+('https:'===location.protocol?'"':'&#10;&#10;try using https:"');
+if(!subtlecrypto||'object'!==typeof subtlecrypto){
+	subtlecrypto='can\'t use window.crypto.subtle';
+	if('https:'!==location.protocol)subtlecrypto+='\n\ntry using https:';
+}
 
 function ensure_aeskey(callback,onerror){
 	//key from https://github.com/Wyliemaster/GD-Save-Decryptor/blob/main/saves.py
@@ -451,7 +523,7 @@ CcXmlMaker.prototype.f=function(){
 
 function cc_save_gzip(cc_data,name){
 	try{
-		var c=new window.CompressionStream('gzip'),s=c.writable.getWriter(),out='',chr=String.fromCharCode,x=new CcXmlMaker(s.write.bind(s),2);
+		var c=new CompressionStream('gzip'),s=c.writable.getWriter(),out='',chr=String.fromCharCode,x=new CcXmlMaker(s.write.bind(s),2);
 		x.r(cc_data);
 		x.f();
 		s.close();

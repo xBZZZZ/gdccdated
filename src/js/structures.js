@@ -600,7 +600,7 @@ function string_editor_back(){
 
 function gzip_encode_with_callback(text,onsuccess,onerror){
 	try{
-		var c=new window.CompressionStream('gzip'),s=c.writable.getWriter(),out='',chr=String.fromCharCode;
+		var c=new CompressionStream('gzip'),s=c.writable.getWriter(),out='',chr=String.fromCharCode;
 		s.write(string_to_uint8array(text));
 		s.close();
 		s=c.readable.getReader();
@@ -629,7 +629,7 @@ function gzip_decode_with_callback(text,onsuccess,onerror){
 		text=urlsafeb64decode(text);
 		var i=0,len=text.length,u=new Uint8Array(len);
 		while(len>i)u[i]=text.charCodeAt(i++);
-		text=new window.DecompressionStream('gzip');
+		text=new DecompressionStream('gzip');
 		i=text.writable.getWriter();
 		i.write(u);
 		i.close();

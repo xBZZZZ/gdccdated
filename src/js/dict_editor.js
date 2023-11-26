@@ -520,29 +520,44 @@ function item_editor_delete_button_onclick(){
 	dict_editor_fix_cl(g);
 }
 
+function search_toggle_onchange(){
+	var g=current_gui();
+	if(this.checked)g.appendChild(g.ul_container);
+	else g.removeChild(g.ul_container);
+}
+
+function search_plus_onclick(){
+	var g=current_gui();
+	g.tbody.appendChild(g.tr_template.cloneNode(true));
+}
+
+function search_tbody_onclick(t){
+	if((t=t.target).matches('input[type=button]'))this.removeChild(t.parentNode.parentNode);
+}
+
 function push_search(){
 	var g=gui_div_with_html(true,
 '<div class="hbox growc">\
-<input onclick="pop_gui();" style="margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
+<input style="margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
 <label class="btn" style="margin:0;display:flex;height:25px;padding:0;">\
-<input style="margin:auto 0 auto auto;width:18px;height:18px;" checked="" onchange="var g=current_gui();g[this.checked?&quot;appendChild&quot;:&quot;removeChild&quot;](g.ul_container);" type="checkbox"/>\
+<input style="margin:auto 0 auto auto;width:18px;height:18px;" checked="" type="checkbox"/>\
 <span style="margin:auto auto auto 0;">\
  <strong>0</strong> results\
 </span>\
 </label>\
-<input onclick="try{search_result();}catch(error){say_error(&quot;search&quot;,error);}" style="margin:0 1px;height:25px;padding:0;" type="button" value="search"/>\
+<input style="margin:0 1px;height:25px;padding:0;" type="button" value="search"/>\
 </div>\
 <table style="border-spacing:1px;width:100%;">\
 <thead>\
 <tr>\
-<th class="tdf"><input onclick="var g=current_gui();g.tbody.appendChild(g.tr_template.cloneNode(true));" style="font-weight:bold;" type="button" value="+"/></th>\
+<th class="tdf"><input style="font-weight:bold;" type="button" value="+"/></th>\
 <th class="bor1" style="width:25px;">xor</th>\
 <th class="bor1">regexp</th>\
 <th class="bor1">regexp flags</th>\
 <th class="bor1">target</th>\
 </tr>\
 </thead>\
-<tbody onclick="if(event.target.matches(&quot;input[type=button]&quot;))this.removeChild(event.target.parentNode.parentNode);">\
+<tbody>\
 <tr>\
 <td class="tdf"><input type="button" value="-"/></td>\
 <td class="tdi"><input type="checkbox"/></td>\
@@ -560,49 +575,59 @@ function push_search(){
 <ul style="white-space:pre;margin:2px 0;"></ul>\
 </div>');
 	g.className='vbox';
-	g.tr_template=(g.tbody=g.querySelector('tbody')).firstChild.cloneNode(true);
+	var i=g.getElementsByTagName('input');
+	i[0].addEventListener('click',pop_gui,onceel);
+	i[1].addEventListener('change',search_toggle_onchange,passiveel);
+	i[2].addEventListener('click',search_onclick,passiveel);
+	i[3].addEventListener('click',search_plus_onclick,passiveel);
+	g.tr_template=(i=g.tbody=g.querySelector('tbody')).firstChild.cloneNode(true);
+	i.addEventListener('click',search_tbody_onclick,passiveel);
 	g.results_count=g.firstChild.querySelector('strong');
 	g.cc_dict=current_gui().cc_dict;
 	g.ul=(g.ul_container=g.lastChild).firstChild;
 	push_gui(g);
 }
 
-function search_result(){
-	var g=current_gui(),querys=Array.prototype.map.call(g.tbody.childNodes,search_tr_to_obj),path=[],results_count=0,frag=document.createDocumentFragment(),results_ul=g.ul;
-	(function f(dict){
-		var ol,inp,i=0,i2,p,dict_len=dict.length,item,path_len=path.push(null)-1;
-		while(dict_len>i){
-			if(search_test_querys(item=dict[i++],querys)){
-				if(!ol){
-					ol=frag.appendChild(cre('li'));
-					inp=ol.appendChild(cre('input'));
-					inp.type='button';
-					inp.onclick=structure_finder_dict_onclick;
-					inp.dict_relative_path=path.slice(0,path_len);
-					p='./';
-					i2=0;
-					while(path_len>i2)p+=path[i2++].key+'/';
-					inp.value=p;
-					ol=ol.appendChild(cre('ol'));
+function search_onclick(){
+	try{
+		var g=current_gui(),querys=Array.prototype.map.call(g.tbody.childNodes,search_tr_to_obj),path=[],results_count=0,frag=document.createDocumentFragment(),results_ul=g.ul;
+		(function f(dict){
+			var ol,inp,i=0,i2,p,dict_len=dict.length,item,path_len=path.push(null)-1;
+			while(dict_len>i){
+				if(search_test_querys(item=dict[i++],querys)){
+					if(!ol){
+						ol=frag.appendChild(cre('li'));
+						inp=ol.appendChild(cre('input'));
+						inp.type='button';
+						inp.onclick=structure_finder_dict_onclick;
+						inp.dict_relative_path=path.slice(0,path_len);
+						p='./';
+						i2=0;
+						while(path_len>i2)p+=path[i2++].key+'/';
+						inp.value=p;
+						ol=ol.appendChild(cre('ol'));
+					}
+					inp=ol.appendChild(cre('li'));
+					inp.value=i;
+					inp.textContent=dict_item_display_string(item);
+					++results_count;
 				}
-				inp=ol.appendChild(cre('li'));
-				inp.value=i;
-				inp.textContent=dict_item_display_string(item);
-				++results_count;
+				if(item.type==='d'){
+					path[path_len]=item;
+					f(item.value);
+				}
 			}
-			if(item.type==='d'){
-				path[path_len]=item;
-				f(item.value);
-			}
+			path.pop();
+		})(g.cc_dict);
+		if(results_ul.replaceChildren)results_ul.replaceChildren(frag);
+		else{
+			results_ul.textContent='';
+			results_ul.appendChild(frag);
 		}
-		path.pop();
-	})(g.cc_dict);
-	if(results_ul.replaceChildren)results_ul.replaceChildren(frag);
-	else{
-		results_ul.textContent='';
-		results_ul.appendChild(frag);
+		g.results_count.textContent=results_count;
+	}catch(error){
+		say_error('search',error);
 	}
-	g.results_count.textContent=results_count;
 }
 
 function search_tr_to_obj(tr){
