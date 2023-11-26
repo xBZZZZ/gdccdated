@@ -185,11 +185,12 @@ function dict_editor_sort_keys(){
 }
 
 function push_xml_ie(){
-	var g=hopen('div'),tbd=g.tbd=[];
+	var g=hopen('div');
 	g.last_blob_url='';
 	g.new_items=null;
-	g.dataset.isModal='display:grid;grid-template-columns:auto auto;grid-template-rows:30px 30px 30px auto;';
-	hbutton('back',xml_ie_back,onceel).className='npnb';tbd.push(hclose());
+	g.className='grid2 xmlie';
+	g.dataset.isModal='';
+	hbutton('back',xml_ie_back,onceel).className='npnb';var tbd=g.tbd=[hclose()];
 	hbutton('back (no write)',xml_ie_back_no_write,onceel).className='npnb';tbd.push(hclose());
 	g.drop_file_input=hopen('input');hcurr().className='npnb';hcurr().type='file';hstyle('grid-column','1/3');tbd.push(hclose());
 	hbutton('import',xml_ie_import).className='npnb';tbd.push(hclose());
@@ -420,7 +421,8 @@ function dict_item_onclick(e){
 		return;
 	}
 	(g=hopen('div')).dataset.guiType='itemeditor';
-	g.dataset.isModal='display:grid;grid-template-columns:auto auto;';
+	g.dataset.isModal='';
+	g.className='grid2';
 	(g.edit_button=e).dataset.stuckActive='';
 		hbutton('back',item_editor_back_button_onclick);hclose();
 		hbutton('back (no write)',item_editor_back_no_write_button_onclick,onceel);hclose();

@@ -5,8 +5,7 @@ function ObjEditor(string,write){
 	this.write=write;
 	ObjEditor.init_prop_display();
 	for(var gui=gui_div_with_html(false,
-'<div style="display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;right:0;-moz-user-select:none;-webkit-user-select:none;user-select:none;overflow:hidden;contain:strict;">\
-<div style="display:flex;overflow:hidden;contain:content;">\
+'<div style="display:flex;overflow:hidden;contain:content;">\
 <input type="button" value="back" style="flex:1;"/>\
 <input type="button" value="back (no write)" style="flex:1;"/>\
 </div>\
@@ -38,8 +37,8 @@ function ObjEditor(string,write){
 </div>\
 <div class="objeditorsbox"><canvas tabindex="0"></canvas></div>\
 </div>\
-</div>\
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
+	gui.className='objeditor vbox';
 	els=gui.getElementsByTagName('canvas');
 	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
 	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this));
@@ -227,13 +226,15 @@ ObjEditor.prototype.open_in_string_editor=function(){
 };
 
 ObjEditor.prototype.toggle_dialog_help=function(){
-	this.dialog_value_help_fieldset[this.dialog_help_cb.checked?'appendChild':'removeChild'](this.dialog_value_help_pre);
+	if(this.dialog_help_cb.checked)this.dialog_value_help_fieldset.appendChild(this.dialog_value_help_pre);
+	else this.dialog_value_help_fieldset.removeChild(this.dialog_value_help_pre);
 };
 
 ObjEditor.prototype.init_edit_dialog=function(){
 	var root=cre('div'),el=this.dialog_help_cb=cre('input'),el2=cre('label'),el3=cre('legend');
-	root.dataset.isModal='display:grid;grid-template-columns:auto auto;';
+	root.dataset.isModal='';
 	root.dataset.guiType='objeditordialog';
+	root.className='grid2';
 	el.type='checkbox';
 	el.addEventListener('change',this.toggle_dialog_help.bind(this),passiveel);
 	el.setAttribute('style','margin:auto 0;width:18px;height:18px;');
@@ -279,7 +280,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 };
 
 ObjEditor.prototype.open_sort_objs_dialog=function(){
-	var g=gui_div_with_html('display:grid;grid-template-columns:auto auto auto;grid-template-rows:auto 30px;',
+	var g=gui_div_with_html(true,
 '<ul style="grid-column:1/4;" class="linside">\
 <li>objects are sorted smaller x (2) to top</li>\
 <li>objects with equal x (2) are sorted smaller y (3) to top</li>\
@@ -291,9 +292,10 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 <input class="npnb" value="sort all" type="button"/>'),sortex=g.childNodes,sort=sortex[3],itemcount=this.s_objs.items.length;
 	sortex[1].addEventListener('click',pop_gui,onceel);
 	sortex=sortex[2];
+	g.className='sortdialog';
 	if(itemcount>1){
 		sort.s_objs=this.s_objs;
-		sort.exfist=true;
+		sort.exfirst=false;
 		sort.addEventListener('click',ObjEditor.sort_option_onclick,onceel);
 	}else{
 		sort.disabled=true;
@@ -301,7 +303,7 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 	}
 	if(itemcount>2){
 		sortex.s_objs=this.s_objs;
-		sort.exfist=false;
+		sortex.exfirst=true;
 		sortex.addEventListener('click',ObjEditor.sort_option_onclick,onceel);
 	}else{
 		sortex.disabled=true;
