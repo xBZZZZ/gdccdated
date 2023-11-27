@@ -148,7 +148,7 @@ function push_dict_editor(dict,root_name){
 	g.cl=-1;
 	push_gui(g);
 	g=dict_editor_add_path_link(dict,root_name);
-	g.setAttribute('style','font-weight:bold;');
+	g.style.fontWeight='bold';
 	g.click();
 }
 
@@ -221,7 +221,7 @@ function xml_ie_back(){
 function xml_ie_show_error(e){
 	console.error(e);
 	var li=cre('li'),g=current_gui();
-	li.setAttribute('style','background-color:#F00;');
+	li.style.backgroundColor='#F00';
 	li.textContent=e;
 	g.status.appendChild(li);
 	set_loading(false);
@@ -238,7 +238,7 @@ function xml_ie_filereader_onload(){
 		var g=current_gui();
 		g.new_items=cc_parse_dict(d.children);
 		d=cre('li');
-		d.setAttribute('style','background-color:#0F0;');
+		d.style.backgroundColor='#0F0';
 		d.textContent='imported';
 		g.status.appendChild(d);
 		set_loading(false);
@@ -257,17 +257,17 @@ function xml_ie_import(){
 	g.status.innerHTML='<li>importing</li>';
 	if(!f){
 		f=cre('li');
-		f.setAttribute('style','background-color:#F00;');
+		f.style.backgroundColor='#F00';
 		f.textContent='no file';
 		g.status.appendChild(f);
 		return;
 	}
 	set_loading(true);
 	try{
-		var fr=new FileReader();
-		fr.addEventListener('error',xml_ie_filereader_onerror,onceel);
-		fr.addEventListener('load',xml_ie_filereader_onload,onceel);
-		fr.readAsText(f);
+		g=new FileReader();
+		g.addEventListener('error',xml_ie_filereader_onerror,onceel);
+		g.addEventListener('load',xml_ie_filereader_onload,onceel);
+		g.readAsText(f);
 	}catch(error){
 		xml_ie_show_error(error);
 	}
@@ -292,7 +292,7 @@ function xml_ie_export(){
 		l.download='dict.xml';
 		l.textContent='exported, click me to save';
 		blob=cre('li');
-		blob.setAttribute('style','background-color:#0F0;');
+		blob.style.backgroundColor='#0F0';
 		blob.appendChild(l);
 		g.status.appendChild(blob);
 	}catch(error){

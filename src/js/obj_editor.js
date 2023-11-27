@@ -150,24 +150,24 @@ ObjEditor.prototype.update_value_opts=function(){
 		if(typeof h==='string'){
 			this.s_dialog_value.innerHTML=h;
 			this.dialog_value_oninput();
-			this.s_dialog_value.setAttribute('style','');
+			this.s_dialog_value.style.display='';
 		}else{
 			this.s_dialog_value.innerHTML='';
-			this.s_dialog_value.setAttribute('style','display:none;');
+			this.s_dialog_value.style.display='none';
 		}
 		h=o.valhelp;
 		if(typeof h==='string'){
 			this.dialog_value_help_pre.innerHTML=h;
-			this.dialog_value_help_fieldset.setAttribute('style','');
+			this.dialog_value_help_fieldset.style.display='';
 		}else{
 			this.dialog_value_help_pre.innerHTML='';
-			this.dialog_value_help_fieldset.setAttribute('style','display:none;');
+			this.dialog_value_help_fieldset.style.display='none';
 		}
 	}else{
 		this.s_dialog_value.innerHTML='';
-		this.s_dialog_value.setAttribute('style','display:none;');
+		this.s_dialog_value.style.display='none';
 		this.dialog_value_help_pre.innerHTML='';
-		this.dialog_value_help_fieldset.setAttribute('style','display:none;');
+		this.dialog_value_help_fieldset.style.display='none';
 	}
 };
 
@@ -238,10 +238,10 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	el.addEventListener('change',this.toggle_dialog_help.bind(this),passiveel);
 	el.setAttribute('style','margin:auto 0;width:18px;height:18px;');
 	el2.className='btn';
-	el2.setAttribute('style','display:inline-flex;');
+	el2.style.display='inline-flex';
 	el2.appendChild(el);
 	el=cre('span');
-	el.setAttribute('style','margin:auto 0;');
+	el.style.margin='auto 0';
 	el.textContent=' help';
 	el2.appendChild(el);
 	el3.appendChild(el2);
