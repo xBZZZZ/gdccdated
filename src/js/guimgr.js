@@ -80,10 +80,9 @@ function say_error(name,error){
 
 var cc_gzip_error=say_error.bind(null,'gzip');
 
-function gui_div_with_html(is_modal,html){
+function div_with_html(html){
 	var div=cre('div');
 	div.innerHTML=html;
-	if(is_modal)div.dataset.isModal='';
 	return div;
 }
 
@@ -112,54 +111,43 @@ function hide_modals(){
 	guis_div.removeEventListener('focus',focus_current_gui,capel);
 }
 
-function push_gui(gui){
+function push_gui(gui,modal){
 	hide_drag_arrow();
 	var prev_id=guis.push(gui)-2,lc;
-	if(gui.dataset.isModal!=null){
-		if(lc=modals.lastChild)lc.style.display='none';
-		gui.style.display='';
+	if(modal){
 		gui.setAttribute('tabindex','0');
 		gui.setAttribute('role','dialog');
 		gui.setAttribute('aria-modal','true');
 		modals.appendChild(gui);
-		if(guis[prev_id].dataset.isModal==null)show_modals();
+		if(guis[prev_id].parentNode===guis_div)show_modals();
 		return;
 	}
 	if(prev_id<0){
 		guis_div.appendChild(gui);
 		return;
 	}
-	if(guis[prev_id].dataset.isModal!=null){
-		lc=guis_div.lastChild;
-		if(lc.do_before_hide)lc.do_before_hide();
-		lc.style.display='none';
+	if(guis[prev_id].parentNode===modals){
+		if((lc=guis_div.lastChild).do_on_hide)lc.do_on_hide();
 		guis_div.appendChild(gui);
 		hide_modals();
 		return;
 	}
 	guis_div.appendChild(gui);
-	lc=guis[prev_id];
-	if(lc.do_before_hide)lc.do_before_hide();
-	lc.style.display='none';
+	if((lc=guis[prev_id]).do_on_hide)lc.do_on_hide();
 }
 
 function pop_gui(){
 	hide_drag_arrow();
 	var gui=guis.pop(),prev_gui=current_gui();
-	if(gui.dataset.isModal!=null){
+	if(gui.parentNode===modals){
 		modals.removeChild(gui);
-		if(prev_gui.dataset.isModal!=null)prev_gui.style.display='';
-		else hide_modals();
+		if(prev_gui.parentNode===guis_div)hide_modals();
 		return;
 	}
-	if(gui.dataset.reusable!=null)gui.do_before_hide();
 	guis_div.removeChild(gui);
+	if(gui.dataset.reusable!=null)gui.do_on_hide();
 	if((gui=guis_div.lastChild).handle_resize)setTimeout(gui.handle_resize,0);
-	prev_gui.style.display='';
-	if(prev_gui.dataset.isModal!=null){
-		show_modals();
-		guis_div.lastChild.style.display='';
-	}
+	if(prev_gui.parentNode===modals)show_modals();
 }
 
 function toggler_onchange(){

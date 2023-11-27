@@ -80,7 +80,7 @@ function dict_editor_delete_selected(){
 	dict_editor_fix_cl(g);
 }
 
-function dict_editor_do_before_hide(){
+function dict_editor_do_on_hide(){
 	var a=this.items_list.childNodes,i=a.length;
 	while(i)delete a[--i].dataset.itemDivAnim;
 }
@@ -98,7 +98,7 @@ function dict_editor_do_menu(){
 }
 
 function push_dict_editor(dict,root_name){
-	var g=gui_div_with_html(false,
+	var g=div_with_html(
 '<select class="dropb" title="menu" aria-label="menu">\
 <option value="">menu</option>\
 <option value="pop_gui">exit dict editor</option>\
@@ -143,7 +143,7 @@ function push_dict_editor(dict,root_name){
 	s.addEventListener('click',dict_item_onclick,passiveel);
 	(g.path_list=g.querySelector('.path')).addEventListener('click',path_link_onclick,passiveel);
 	g.dataset.selectMode='0';
-	g.do_before_hide=dict_editor_do_before_hide;
+	g.do_on_hide=dict_editor_do_on_hide;
 	g.dragging_item=null;
 	g.cl=-1;
 	push_gui(g);
@@ -189,7 +189,6 @@ function push_xml_ie(){
 	g.last_blob_url='';
 	g.new_items=null;
 	g.className='grid2 xmlie';
-	g.dataset.isModal='';
 	hbutton('back',xml_ie_back,onceel).className='npnb';var tbd=g.tbd=[hclose()];
 	hbutton('back (no write)',xml_ie_back_no_write,onceel).className='npnb';tbd.push(hclose());
 	g.drop_file_input=hopen('input');hcurr().className='npnb';hcurr().type='file';hstyle('grid-column','1/3');tbd.push(hclose());
@@ -200,7 +199,7 @@ function push_xml_ie(){
 		(g.status=hopen('ul')).className='linside';
 		hclose('ul');
 	hclose('fieldset');
-	push_gui(hclose('div'));
+	push_gui(hclose('div'),true);
 }
 
 function xml_ie_back_no_write(){
@@ -421,7 +420,6 @@ function dict_item_onclick(e){
 		return;
 	}
 	(g=hopen('div')).dataset.guiType='itemeditor';
-	g.dataset.isModal='';
 	g.className='grid2';
 	(g.edit_button=e).dataset.stuckActive='';
 		hbutton('back',item_editor_back_button_onclick);hclose();
@@ -458,7 +456,7 @@ function dict_item_onclick(e){
 		}
 		hbutton('duplicate item',item_editor_duplicate);hclose();
 		hbutton('delete item',item_editor_delete_button_onclick);hclose();
-	push_gui(hclose('div'));
+	push_gui(hclose('div'),true);
 }
 
 function item_editor_duplicate(){
@@ -538,7 +536,7 @@ function search_tbody_onclick(t){
 }
 
 function push_search(){
-	var g=gui_div_with_html(true,
+	var g=div_with_html(
 '<div class="hbox growc">\
 <input style="margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
 <label class="btn" style="margin:0;display:flex;height:25px;padding:0;">\
@@ -587,7 +585,7 @@ function push_search(){
 	g.results_count=g.firstChild.querySelector('strong');
 	g.cc_dict=current_gui().cc_dict;
 	g.ul=(g.ul_container=g.lastChild).firstChild;
-	push_gui(g);
+	push_gui(g,true);
 }
 
 function search_onclick(){
@@ -651,7 +649,7 @@ function search_test_querys(item,querys){
 }
 
 function push_rename_helper(){
-	var g=gui_div_with_html(true,sof(
+	var g=div_with_html(sof(
 '<input type="button" value="back"/>\
 <details>\
 <summary>help</summary>\
@@ -677,7 +675,7 @@ examples:\
 	g.command_input=g.querySelector('textarea');
 	g.firstChild.addEventListener('click',pop_gui,onceel);
 	g.lastChild.addEventListener('click',rename_onclick,passiveel);
-	push_gui(g);
+	push_gui(g,true);
 }
 
 function rename_onclick(){

@@ -53,8 +53,8 @@ lstart "generate out_tmp/after_css"
 echo "</style>\
 </head>\
 <body>\
-<div id='guis' role='none' aria-hidden='false'></div>\
-<div id='modals' role='none' style='display:none;'></div>\
+<div class='onlylast' id='guis' role='none' aria-hidden='false'></div>\
+<div class='onlylast' id='modals' role='none' style='display:none;'></div>\
 <div id='drag_cover' role='none' aria-hidden='true' style='display:none;'><div id='drag_arrow' role='none' aria-hidden='true'></div></div>\
 <script>'use strict'"';//<![CDATA['
 grep -Evh "^('use strict';)?$" "${jsfiles[@]}" | sed -Ezf../../out_tmp/js_sed_script

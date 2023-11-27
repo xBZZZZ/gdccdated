@@ -7,13 +7,13 @@ function save_modal_back_onclick(){
 
 function save_modal(buffers,name,blobopts){
 	set_loading(false);
-	var g=gui_div_with_html(true,'<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back"/>'),a=g.firstChild,b=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
+	var g=div_with_html('<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back"/>'),a=g.firstChild,b=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
 	a.lastChild.textContent=a.download=name;
 	a=g.lastChild;
 	a.dataset.bloburl=b;
 	a.addEventListener('click',save_modal_back_onclick,onceel);
 	g.className='vbox';
-	push_gui(g);
+	push_gui(g,true);
 }
 
 function reload_onclick(){
@@ -21,12 +21,12 @@ function reload_onclick(){
 }
 
 function push_loading_modal(file_name){
-	var g=gui_div_with_html(true,'<h2 style="white-space:pre-wrap;margin:0 0 5px;"><span class="loading"></span> loading</h2><input class="thiccb" type="button" value="reload"/>');
+	var g=div_with_html('<h2 style="white-space:pre-wrap;margin:0 0 5px;"><span class="loading"></span> loading</h2><input class="thiccb" type="button" value="reload"/>');
 	g.dataset.ccFileName=file_name;
 	g.error_tag=g.firstChild;
 	g.lastChild.addEventListener('click',reload_onclick,onceel);
 	g.className='vbox';
-	push_gui(g);
+	push_gui(g,true);
 	set_loading(true);
 }
 
@@ -175,10 +175,9 @@ function copy_to_new_tab(){
 			try{
 				if(no_support_once)win.removeEventListener('DOMContentLoaded',ld,onceel);
 				var g=win.cre('div');
-				g.dataset.isModal='';
 				g.dataset.ccFileName=name;
 				g.className='vbox';
-				win.push_gui(g);
+				win.push_gui(g,true);
 				win.load_cc_data(win.JSON.parse(json));
 			}catch(error){
 				say_error('open copy in new tab (ld)',error);

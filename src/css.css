@@ -72,7 +72,7 @@ input[type=button]:active,input[type=button][data-stuck-active],input[type=file]
 	display:flex;
 	contain:strict;
 }
-[data-is-modal]{
+#modals>*{
 	margin:auto;
 	overflow:auto;
 	max-width:calc(100% - 20px);
@@ -294,7 +294,7 @@ details[open]>summary{
 [data-select-mode='0']>.pathcontainer>.path,[data-select-mode='1']>.pathcontainer>.sopts{
 	display:inline;
 }
-[data-select-mode='1']>.pathcontainer>.path,[data-select-mode='0']>.pathcontainer>.sopts{
+.onlylast>:not(:last-child),[data-select-mode='1']>.pathcontainer>.path,[data-select-mode='0']>.pathcontainer>.sopts{
 	display:none;
 }
 .loading_cursor,.loading_cursor *{

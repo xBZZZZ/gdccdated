@@ -4,7 +4,7 @@ function ObjEditor(string,write){
 	var objs_arr=this.parse_string(string);
 	this.write=write;
 	ObjEditor.init_prop_display();
-	for(var gui=gui_div_with_html(false,
+	for(var gui=div_with_html(
 '<div style="display:flex;overflow:hidden;contain:content;">\
 <input type="button" value="back" style="flex:1;"/>\
 <input type="button" value="back (no write)" style="flex:1;"/>\
@@ -187,7 +187,7 @@ ObjEditor.prototype.open_edit_dialog=function(){
 		this.s_dialog_key.value=this.i_dialog_key.value=prop[0].replace(ObjEditor.re1,';');
 		this.i_dialog_value.value=prop[1].replace(ObjEditor.re1,';');
 		this.update_value_opts();
-		push_gui(this.dialog);
+		push_gui(this.dialog,true);
 	}
 };
 
@@ -232,7 +232,6 @@ ObjEditor.prototype.toggle_dialog_help=function(){
 
 ObjEditor.prototype.init_edit_dialog=function(){
 	var root=cre('div'),el=this.dialog_help_cb=cre('input'),el2=cre('label'),el3=cre('legend');
-	root.dataset.isModal='';
 	root.dataset.guiType='objeditordialog';
 	root.className='grid2';
 	el.type='checkbox';
@@ -280,7 +279,7 @@ ObjEditor.prototype.init_edit_dialog=function(){
 };
 
 ObjEditor.prototype.open_sort_objs_dialog=function(){
-	var g=gui_div_with_html(true,
+	var g=div_with_html(
 '<ul style="grid-column:1/4;" class="linside">\
 <li>objects are sorted smaller x (2) to top</li>\
 <li>objects with equal x (2) are sorted smaller y (3) to top</li>\
@@ -309,7 +308,7 @@ ObjEditor.prototype.open_sort_objs_dialog=function(){
 		sortex.disabled=true;
 		sortex.title='need more than 2 objects';
 	}
-	push_gui(g);
+	push_gui(g,true);
 };
 
 ObjEditor.sort_option_onclick=function(){

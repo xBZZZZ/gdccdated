@@ -13,9 +13,7 @@ function structure_finder_dict_onclick(){
 }
 
 function dict_editor_recursive_find_structures_onclick(){
-	var path=[],g=cre('div'),b;
-	g.dataset.isModal='';
-	b=g.appendChild(cre('input'));
+	var path=[],g=cre('div'),b=g.appendChild(cre('input'));
 	b.type='button';
 	b.value='back';
 	b.onclick=pop_gui;
@@ -50,7 +48,7 @@ function dict_editor_recursive_find_structures_onclick(){
 		}
 		path.pop();
 	})(current_gui().cc_dict);
-	push_gui(g);
+	push_gui(g,true);
 }
 
 function get_structure_name(s,d){
@@ -65,7 +63,6 @@ function dict_editor_edit_as_structure_onclick(){
 	b.value='back';
 	b.onclick=pop_gui;
 	g.cc_dict=dict;
-	g.dataset.isModal='';
 	g.appendChild(cre('h2')).textContent='select structure';
 	var bn,ul=g.appendChild(cre('ul'));
 	for(var stn in structures)if(bn=get_structure_name(structures[stn],dict)){
@@ -76,7 +73,7 @@ function dict_editor_edit_as_structure_onclick(){
 		b.onclick=structure_onclick;
 		ul.appendChild(cre('li')).appendChild(b);
 	}
-	push_gui(g);
+	push_gui(g,true);
 }
 
 function structure_onclick(){
@@ -700,7 +697,6 @@ function string_editor_decode(){
 
 function string_editor(do_after,start_text){
 	var g=hopen('div'),tbd=g.tbd=[];
-	g.dataset.isModal='';
 	g.dataset.guiType='stringeditor';
 	g.className='vbox';
 	if(g.do_after=do_after){
@@ -730,5 +726,5 @@ function string_editor(do_after,start_text){
 	hfieldset('decoded','use in JS console:\n  sd - decoded (bottom value)').className='vbox';
 		g.decoded=new AdvTextArea(hcurr(),true);
 	tbd.push(hclose('fieldset'));
-	push_gui(hclose('div'));
+	push_gui(hclose('div'),true);
 }
