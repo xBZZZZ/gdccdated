@@ -59,7 +59,7 @@ select{
 input[type=button]:hover,input[type=file]:hover,select:hover,.btn:hover,summary:hover{
 	filter:brightness(1.2);
 }
-input[type=button]:active,input[type=button][data-stuck-active],input[type=file]:active,select:active,.btn:active,summary:active{
+input[type=button]:active,.stuckactive.stuckactive.stuckactive,input[type=file]:active,select:active,.btn:active,summary:active{
 	filter:invert(1);
 }
 #modals{
@@ -101,7 +101,7 @@ input[type=button]:active,input[type=button][data-stuck-active],input[type=file]
 	grid-template-columns:auto auto auto;
 	grid-template-rows:auto 30px;
 }
-[data-select-mode='1']>.dict_items_list_container>.dict_items_list>div>input[type=button]:not([data-stuck-active]){
+[data-select-mode='1']>.dict_items_list_container>.dict_items_list>div>:not(.stuckactive){
 	filter:none;
 }
 [data-select-mode]{
@@ -259,7 +259,7 @@ details[open]>summary{
 	display:flex;
 	padding:1px;
 }
-[data-item-div-anim]{
+.itemanim{
 	animation:1s itembg;
 }
 .dict_items_list>div:before{
@@ -272,10 +272,10 @@ details[open]>summary{
 .dict_items_list>div>input{
 	white-space:pre;
 }
-.dragging_item>div>input{
+.draggingitem>div>input{
 	pointer-events:none;
 }
-[data-dragging-over]{
+.itemdraggingover{
 	box-shadow:0 2px rgb(0,100,0) inset,0 -2px rgb(30,130,30);
 }
 .pathcontainer{

@@ -52,7 +52,7 @@ function dict_editor_select_mode_on(){
 
 function dict_editor_clear_selection(){
 	var divs=current_gui().items_list.childNodes,len=divs.length,i=0;
-	while(len>i)delete divs[i++].firstChild.dataset.stuckActive;
+	while(len>i)divs[i++].firstChild.classList.remove('stuckactive');
 }
 
 function dict_editor_select_mode_off(){
@@ -63,17 +63,13 @@ function dict_editor_select_mode_off(){
 }
 
 function dict_editor_invert_selection(){
-	var divs=current_gui().items_list.childNodes,len=divs.length,i=0,d;
-	while(len>i){
-		d=divs[i++].firstChild.dataset;
-		if(d.stuckActive==null)d.stuckActive='';
-		else delete d.stuckActive;
-	}
+	var divs=current_gui().items_list.childNodes,len=divs.length,i=0;
+	while(len>i)divs[i++].firstChild.classList.toggle('stuckactive');
 }
 
 function dict_editor_delete_selected(){
 	var tbd=[],g=current_gui(),items_list=g.items_list,divs=items_list.childNodes,i=divs.length,div;
-	while(i)if((div=divs[--i]).firstChild.dataset.stuckActive!=null)tbd.push(div);
+	while(i)if((div=divs[--i]).firstChild.classList.contains('stuckactive'))tbd.push(div);
 	if(!((i=tbd.length)&&confirm('delete '+i+' selected items?')))return;
 	tbd.forEach(items_list.removeChild,items_list);
 	dict_editor_update_from_dom(g=current_gui());
@@ -82,7 +78,7 @@ function dict_editor_delete_selected(){
 
 function dict_editor_do_on_hide(){
 	var a=this.items_list.childNodes,i=a.length;
-	while(i)delete a[--i].dataset.itemDivAnim;
+	while(i)a[--i].classList.remove('itemanim');
 }
 
 function dict_editor_update_from_dom(g){
@@ -324,7 +320,7 @@ function dict_editor_add_item(g,item,index){
 	var b=cre('input'),d=cre('div'),dict=b.cc_dict=g.cc_dict,il=g.items_list;
 	d.draggable=true;
 	d.setAttribute('role','listitem');
-	d.dataset.itemDivAnim='';
+	d.classList.add('itemanim');
 	b.cc_dict_item=item;
 	b.type='button';
 	b.value=dict_item_display_string(item);
@@ -361,7 +357,7 @@ function dict_item_div_ondragstart(dt){
 	var g=current_gui(),t=dt.target;
 	if(t.parentNode===g.items_list){
 		g.dragging_item=t;
-		g.items_list.classList.add('dragging_item');
+		g.items_list.classList.add('draggingitem');
 		(dt=dt.dataTransfer).clearData();
 		dt.setData('text/plain',t.firstChild.value);
 		dt.effectAllowed='move';
@@ -372,7 +368,7 @@ function dict_item_div_ondragend(e){
 	var g=current_gui();
 	if(e.target.parentNode===g.items_list){
 		g.dragging_item=null;
-		g.items_list.classList.remove('dragging_item');
+		g.items_list.classList.remove('draggingitem');
 	}
 }
 
@@ -385,20 +381,20 @@ function dict_item_div_ondragenter(e){
 	var g=current_gui(),t=e.target;
 	if(g.dragging_item&&t.parentNode===g.items_list){
 		e.preventDefault();
-		t.dataset.draggingOver='';
+		t.classList.add('itemdraggingover');
 	}
 }
 
 function dict_item_div_ondragleave(e){
-	if((e=e.target).parentNode===current_gui().items_list)delete e.dataset.draggingOver;
+	if((e=e.target).parentNode===current_gui().items_list)e.classList.remove('itemdraggingover');
 }
 
 function dict_item_div_ondrop(e){
 	var g=current_gui(),d=g.dragging_item,t=e.target;
 	if(d&&t.parentNode===g.items_list){
 		e.preventDefault();
-		delete t.dataset.draggingOver;
-		d.dataset.itemDivAnim='';
+		t.classList.remove('itemdraggingover');
+		d.classList.add('itemanim');
 		g.dragging_item=null;
 		g.items_list.insertBefore(d,t);
 		dict_editor_update_from_dom(g);
@@ -415,13 +411,12 @@ function dict_item_onclick(e){
 	var item=(e=e.target).cc_dict_item,g,f;
 	if(!item)return;
 	if(current_gui().dataset.selectMode==='1'){
-		if((e=e.dataset).stuckActive==null)e.stuckActive='';
-		else delete e.stuckActive;
+		e.classList.toggle('stuckactive');
 		return;
 	}
 	(g=hopen('div')).dataset.guiType='itemeditor';
 	g.className='grid2';
-	(g.edit_button=e).dataset.stuckActive='';
+	(g.edit_button=e).classList.add('stuckactive');
 		hbutton('back',item_editor_back_button_onclick);hclose();
 		hbutton('back (no write)',item_editor_back_no_write_button_onclick,onceel);hclose();
 		hopen('h2');
@@ -477,12 +472,12 @@ function item_editor_duplicate(){
 		}
 		i={'key':g.key_input.getval(),'type':t,'value':g.value_input.getval()};
 	}
-	delete eb.dataset.stuckActive;
-	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.nodeValue=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).dataset.stuckActive='';
+	eb.classList.remove('stuckactive');
+	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.nodeValue=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).classList.add('stuckactive');
 }
 
 function item_editor_back_no_write_button_onclick(){
-	delete current_gui().edit_button.dataset.stuckActive;
+	current_gui().edit_button.classList.remove('stuckactive');
 	pop_gui();
 }
 
@@ -507,7 +502,7 @@ function item_editor_back_button_onclick(){
 	}
 	i.key=g.key_input.getval();
 	b.value=dict_item_display_string(i);
-	delete b.dataset.stuckActive;
+	b.classList.remove('stuckactive');
 	pop_gui();
 }
 
