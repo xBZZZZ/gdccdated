@@ -3,13 +3,23 @@
 function structure_finder_dict_onclick(){
 	pop_gui();
 	var p=this.dict_relative_path,l=p.length;
-	if(!l)return;
-	var i=0,t;
-	while(l>i){
-		t=p[i++];
-		t=dict_editor_add_path_link(t.value,t.key);
+	if(l){
+		var i=0,f=document.createDocumentFragment(),b;
+		while(l>i){
+			b=cre('input');
+			b.type='button';
+			b.value=p[i].key;
+			b.cc_dict=p[i++].value;
+			f.appendChild(b);
+		}
+		b.disabled=true;
+		b=current_gui();
+		b.cc_dict=p[i-1].value;
+		b=b.path_list;
+		b.lastChild.disabled=false;
+		b.appendChild(f);
+		dict_editor_add_lis();
 	}
-	t.click();
 }
 
 function dict_editor_recursive_find_structures_onclick(){

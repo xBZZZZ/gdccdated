@@ -18,7 +18,8 @@ function dict_editor_fix_cl(g){
 }
 
 function dict_editor_add_lis(){
-	var b=current_gui(),ul=b.items_list,d=b.cc_dict,i=0,item,len=d.length,div,frag=document.createDocumentFragment();
+	var b=current_gui(),l=b.items_list,d=b.cc_dict,i=0,item,len=d.length,div,frag=document.createDocumentFragment();
+	l.textContent='';
 	dict_editor_fix_cl(b);
 	while(len>i){
 		item=d[i++];
@@ -32,11 +33,7 @@ function dict_editor_add_lis(){
 		div.appendChild(b);
 		frag.appendChild(div);
 	}
-	if(ul.replaceChildren)ul.replaceChildren(frag);
-	else{
-		ul.textContent='';
-		ul.appendChild(frag);
-	}
+	l.appendChild(frag);
 }
 
 function dict_editor_update_inputs(g){
@@ -110,7 +107,9 @@ function push_dict_editor(dict,root_name){
 <option value="dict_editor_toggle_wrap">[yes</option>\
 </select>\
 <div class="pathcontainer">\
-<div class="path pathcontainer2"></div>\
+<div class="path pathcontainer2">\
+<input style="font-weight:bold;" disabled="" type="button"/>\
+</div>\
 <div class="sopts pathcontainer2">\
 <input type="button" value="select mode off"/>\
 <input type="button" value="invert selection"/>\
@@ -137,15 +136,15 @@ function push_dict_editor(dict,root_name){
 	s.addEventListener('drop',dict_item_div_ondrop,nonpassiveel);
 	s.addEventListener('contextmenu',dict_item_oncontextmenu,nonpassiveel);
 	s.addEventListener('click',dict_item_onclick,passiveel);
-	(g.path_list=g.querySelector('.path')).addEventListener('click',path_link_onclick,passiveel);
-	g.dataset.selectMode='0';
+	(g.path_list=s=g.querySelector('.path')).addEventListener('click',path_link_onclick,passiveel);
+	(s=s.firstChild).value=root_name;
+	g.cc_dict=s.cc_dict=dict;
 	g.do_on_hide=dict_editor_do_on_hide;
 	g.dragging_item=null;
 	g.cl=-1;
+	g.dataset.selectMode='0';
 	push_gui(g);
-	g=dict_editor_add_path_link(dict,root_name);
-	g.style.fontWeight='bold';
-	g.click();
+	dict_editor_add_lis();
 }
 
 var ints_re=RegExp('(-?[0-9]+)','');
@@ -299,21 +298,27 @@ function xml_ie_export(){
 function path_link_onclick(e){
 	var g=current_gui(),t=e.target;
 	if(t.cc_dict){
-		g.cc_dict=t.cc_dict;
-		dict_editor_add_lis();
 		t.disabled=true;
-		g=t.parentNode;
-		while(t!==(e=g.lastChild))g.removeChild(e);
+		var d=g.cc_dict=t.cc_dict,i=d.length,n=t.nextSibling.cc_dict,p=g.path_list;
+		while(t!==(e=p.lastChild))p.removeChild(e);
+		dict_editor_add_lis();
+		while(i)if(n===d[--i].value){
+			g.items_list.childNodes[i].firstChild.focus({'focusVisible':true});
+			return;
+		}
 	}
 }
 
-function dict_editor_add_path_link(dict,name){
-	var p=current_gui().path_list,b=cre('input'),l=p.lastChild;
+function dict_editor_go_item(item){
+	//console.assert('d'===item.type);
+	var g=current_gui(),l=g.path_list,b=cre('input');
+	b.disabled=true;
 	b.type='button';
-	b.value=JSON.stringify(name).slice(1,-1);
-	b.cc_dict=dict;
-	if(l)l.disabled=false;
-	return p.appendChild(b);
+	b.value=item.key;
+	b.cc_dict=g.cc_dict=item.value;
+	l.lastChild.disabled=false;
+	l.appendChild(b);
+	dict_editor_add_lis();
 }
 
 function dict_editor_add_item(g,item,index){
@@ -345,11 +350,10 @@ function dict_editor_add_s_item(){
 }
 
 function dict_item_oncontextmenu(e){
-	var item=e.target.cc_dict_item;
-	if(item){
+	var i=e.target.cc_dict_item;
+	if(i){
 		e.preventDefault();
-		if(current_gui().dataset.selectMode==='1')return;
-		if(item.type==='d')dict_editor_add_path_link(item.value,item.key).click();
+		if(i.type==='d'&&current_gui().dataset.selectMode!=='1')dict_editor_go_item(i);
 	}
 }
 
@@ -404,7 +408,7 @@ function dict_item_div_ondrop(e){
 function open_value_in_dict_editor_onclick(){
 	var i=current_gui().edit_button.cc_dict_item;
 	item_editor_back_button_onclick();
-	dict_editor_add_path_link(i.value,i.key).click();
+	dict_editor_go_item(i);
 }
 
 function dict_item_onclick(e){
