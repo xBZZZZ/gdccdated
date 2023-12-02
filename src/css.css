@@ -150,7 +150,7 @@ input,body,textarea,select,.btn{
 	text-decoration:none;
 	color:inherit;
 }
-.path>input,.sopts>input{
+.pathcontainer2>input{
 	height:100%;
 	margin:0;
 	white-space:pre;

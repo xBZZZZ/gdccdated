@@ -110,8 +110,8 @@ function push_dict_editor(dict,root_name){
 <option value="dict_editor_toggle_wrap">[yes</option>\
 </select>\
 <div class="pathcontainer">\
-<div class="path"></div>\
-<div class="sopts">\
+<div class="path pathcontainer2"></div>\
+<div class="sopts pathcontainer2">\
 <input type="button" value="select mode off"/>\
 <input type="button" value="invert selection"/>\
 <input type="button" value="clear selection"/>\
