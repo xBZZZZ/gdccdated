@@ -7,23 +7,19 @@
 //if(flags&CSITEMS){/*amount or order of items changed*/}
 //};
 
-function CSelect(canvas,items,itemstr,itemdefualt,onchange){
-	this.cont=(this.canv=canvas).getContext('2d',this.copts);
-	this.p=canvas.parentNode;
-	canvas.addEventListener('wheel',this,nonpassiveel);
-	canvas.addEventListener('keydown',this,nonpassiveel);
-	canvas.addEventListener('pointerdown',this,passiveel);
-	canvas.addEventListener('pointermove',this,passiveel);
-	canvas.addEventListener('lostpointercapture',this,passiveel);
-	this.dragstartvy=this.dragstarty=this.scrollhandley=this.scrollhandleh=this.w=this.h=Number.NaN;
-	this.sel=-1;
-	this.vy=0;
-	this.hasscrollbar=false;
+function CSelect(parent,items,itemstr,itemdefualt,onchange){
+	(this.p=parent).innerHTML='<canvas class="cselcover"></canvas><div class="cselcover cselcover2" tabindex="0"><div class="cseltall"></div></div>';
+	(this.s=parent.lastChild).addEventListener('scroll',this,passiveel);
+	this.s.addEventListener('keydown',this,nonpassiveel);
+	var t=this.s.firstChild;
+	t.addEventListener('click',this,passiveel);
+	this.ts=t.style;
+	this.cont=(this.canv=parent.firstChild).getContext('2d',this.copts);
+	this.w=this.h=this.oldlen=this.sel=-1;
 	this.items=items;
 	this.itemstr=itemstr;
  	this.itemdefualt=itemdefualt;
 	this.onchange=onchange;
-	this.scrollingpointerid=null;
 	if(!this.sel_grad){
 		CSelect.prototype.sel_grad=this.cont.createLinearGradient(0,0,0,CSITEMHEIGHT);
 		this.sel_grad.addColorStop(0,'rgb(100,50,100)');
@@ -39,15 +35,24 @@ CSelect.prototype.copts={
 };
 
 CSelect.prototype.draw=function(){
-	var p=this.p,w=Math.max(1,p.clientWidth),h=Math.max(1,p.clientHeight),dpr=window.devicePixelRatio||1;
+	s=this.s.scrollTop;
+	if(this.oldlen!==this.items.length){
+		this.fixscroll();
+		if(s!==this.s.scrollTop)return;
+	}
+	var p=this.p,w=Math.max(1,p.clientWidth),h=Math.max(1,p.clientHeight),dpr=window.devicePixelRatio||1,s;
 	if(w!==this.w)this.canv.width=(this.w=w)*dpr;
 	if(h!==this.h)this.canv.height=(this.h=h)*dpr;
-	this.cont.setTransform(dpr,0,0,dpr,0,0);
-	this.drawforreal();
+	this.drawforreal(dpr,s);
 };
 
 CSelect.prototype.drawifdeformed=function(){
-	var p=this.p,w=Math.max(1,p.clientWidth),h=Math.max(1,p.clientHeight),dpr;
+	s=this.s.scrollTop;
+	if(this.oldlen!==this.items.length){
+		this.fixscroll();
+		if(s!==this.s.scrollTop)return;
+	}
+	var p=this.p,w=Math.max(1,p.clientWidth),h=Math.max(1,p.clientHeight),dpr,s;
 	if(w!==this.w){
 		dpr=window.devicePixelRatio||1;
 		this.canv.width=(this.w=w)*dpr;
@@ -56,24 +61,20 @@ CSelect.prototype.drawifdeformed=function(){
 		if(!dpr)dpr=window.devicePixelRatio||1;
 		this.canv.height=(this.h=h)*dpr;
 	}
-	if(dpr){
-		this.cont.setTransform(dpr,0,0,dpr,0,0);
-		this.drawforreal();
-	}
+	if(dpr)this.drawforreal(dpr,s);
 };
 
-CSelect.prototype.drawforreal=function(){
-	var c=this.cont,
-		items=this.items,
+CSelect.prototype.drawforreal=function(dpr,vy){
+	var items=this.items,
 		i2=items.length,
-		aih=i2*CSITEMHEIGHT,
 		w=this.w,
 		h=this.h,
-		vy=this.vy=Math.max(0,Math.min(this.vy,aih-h)),
 		sel=this.sel,
 		cap=Math.min(i2,Math.ceil((vy+h)/CSITEMHEIGHT)),
 		i=i2=Math.floor(vy/CSITEMHEIGHT),
-		itemstr=this.itemstr;
+		itemstr=this.itemstr,
+		c=this.cont;
+	c.setTransform(dpr,0,0,dpr,0,0);
 	c.fillStyle='rgb(200,200,200)';
 	c.fillRect(0,0,w,h);
 	while(i<cap)if(i===sel){
@@ -92,36 +93,22 @@ CSelect.prototype.drawforreal=function(){
 		c.fillStyle=i2===sel?'rgb(255,255,255)':'rgb(50,0,50)';
 		c.fillText(itemstr(items[i2]),2,(0.5+i2++)*CSITEMHEIGHT-vy);
 	}
-	if(this.hasscrollbar=aih>h&&h>CSSCROLLHANDLEMINHEIGHT){
-		c.fillStyle='rgb(190,190,190)';
-		c.fillRect(w,0,-CSSCROLLBARWIDTH,h);
-		c.fillStyle='rgb(100,100,100)';
-		this.scrollhandleh=i2=Math.max(CSSCROLLHANDLEMINHEIGHT,h*h/aih);
-		c.fillRect(w,this.scrollhandley=(h-i2)*vy/(aih-h),-CSSCROLLBARWIDTH,i2);
-	}
 };
 
 CSelect.prototype.handleEvent=function(event){
 	switch(event.type){
-		case 'wheel':
-			if(event.ctrlKey||event.shiftKey||event.altKey||event.metaKey)return;
-			event.preventDefault();
-			switch(event.deltaMode){
-				case 0:
-					this.vy+=event.deltaY;
-					break;
-				case 1:
-					this.vy+=event.deltaY*CSITEMHEIGHT;
-					break;
-				case 2:
-					this.vy+=event.deltaY*this.h;
-					break;
-				default:
-					this.vy+=Math.sign(event.deltaY)*CSITEMHEIGHT;
-			}
+		case 'scroll':
 			this.draw();
 			return;
-		case 'keydown':
+		case 'click':
+			var t=Math.floor(event.offsetY/CSITEMHEIGHT);
+			if(t>=0&&t!==this.sel&&t<this.items.length){
+				this.sel=t;
+				this.draw();
+				this.onchange(CSSEL);
+			}
+			return;
+		default://case 'keydown':
 			keysw:switch(event.code){
 				case 'ArrowUp':
 					event.preventDefault();
@@ -149,52 +136,27 @@ CSelect.prototype.handleEvent=function(event){
 					return;
 			}
 			this.selinview();
-			this.draw();
 			this.onchange(CSSEL);
-			return;
-		case 'pointerdown':
-			if(!this.hasscrollbar||event.offsetX<this.w-CSSCROLLBARWIDTH){
-				var t=Math.floor((event.offsetY+this.vy)/CSITEMHEIGHT);
-				if(t>=0&&t!==this.sel&&t<this.items.length){
-					this.sel=t;
-					this.draw();
-					this.onchange(CSSEL);
-				}
-				return;
-			}
-			if(this.scrollingpointerid!==null)return;
-			t=event.offsetY;
-			if(t<this.scrollhandley){
-				this.vy-=this.h/4;
-				this.draw();
-				return;
-			}
-			if(t>this.scrollhandley+this.scrollhandleh){
-				this.vy+=this.h/4;
-				this.draw();
-				return;
-			}
-			this.canv.setPointerCapture(this.scrollingpointerid=event.pointerId);
-			this.dragstarty=t;
-			this.dragstartvy=this.vy;
-			return;
-		case 'pointermove':
-			if(this.scrollingpointerid!==event.pointerId)return;
-			if(!this.hasscrollbar){
-				this.canv.releasePointerCapture(this.scrollingpointerid);
-				this.scrollingpointerid=null;
-				return;
-			}
-			this.vy=this.dragstartvy+(event.offsetY-this.dragstarty)*(this.items.length*CSITEMHEIGHT-this.h)/(this.h-this.scrollhandleh);
-			this.draw();
-			return;
-		default://case 'lostpointercapture':
-			if(this.scrollingpointerid===event.pointerId)this.scrollingpointerid=null;
 	}
 };
 
+CSelect.prototype.fixscroll=function(){
+	this.ts.height=(this.oldlen=this.items.length)*CSITEMHEIGHT+'px';
+};
+
 CSelect.prototype.selinview=function(){
-	this.vy=Math.max((this.sel+1)*CSITEMHEIGHT-this.h,Math.min(this.sel*CSITEMHEIGHT,this.vy));
+	var s=this.sel,t;
+	if(s>=0){
+		if((t=this.s.scrollTop)>(s*=CSITEMHEIGHT)){
+			this.s.scrollTop=s;
+			return;
+		}
+		if(t<(s=s-this.h+CSITEMHEIGHT)){
+			this.s.scrollTop=s;
+			return;
+		}
+	}
+	this.draw();
 };
 
 CSelect.prototype.swapup=function(){
@@ -203,7 +165,6 @@ CSelect.prototype.swapup=function(){
 		this.items[this.sel]=this.items[--this.sel];
 		this.items[this.sel]=t;
 		this.selinview();
-		this.draw();
 		this.onchange(CSITEMS);
 	}
 };
@@ -214,7 +175,6 @@ CSelect.prototype.swapdown=function(){
 		this.items[this.sel]=this.items[++this.sel];
 		this.items[this.sel]=t;
 		this.selinview();
-		this.draw();
 		this.onchange(CSITEMS);
 	}
 };
@@ -224,8 +184,8 @@ CSelect.prototype.del=function(){
 		this.items.splice(this.sel,1);
 		var l=this.items.length-1;
 		if(this.sel>l)this.sel=l;
+		this.fixscroll();
 		this.selinview();
-		this.draw();
 		this.onchange(3);//CSSEL|CSITEMS
 	}
 };
@@ -233,8 +193,8 @@ CSelect.prototype.del=function(){
 CSelect.prototype.dup=function(){
 	if(this.sel>=0){
 		this.items.splice(this.sel,0,JSON.parse(JSON.stringify(this.items[this.sel++])));
+		this.fixscroll();
 		this.selinview();
-		this.draw();
 		this.onchange(CSITEMS);
 	}
 };
@@ -242,8 +202,8 @@ CSelect.prototype.dup=function(){
 CSelect.prototype.add=function(){
 	if(this.items!==Array.prototype){
 		this.items.splice(++this.sel,0,this.itemdefualt.slice());
+		this.fixscroll();
 		this.selinview();
-		this.draw();
 		this.onchange(3);//CSSEL|CSITEMS
 	}
 };

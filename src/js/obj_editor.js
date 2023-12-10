@@ -22,7 +22,7 @@ function ObjEditor(string,write){
 <input type="button" value="&#8593;" style="grid-area:up;"/>\
 <input type="button" value="&#8595;" style="grid-area:down;"/>\
 </div>\
-<div class="objeditorsbox"><canvas tabindex="0"></canvas></div>\
+<div class="objeditorsbox"></div>\
 </div>\
 <div class="objeditorcol">\
 <div style="grid-template-areas:\
@@ -35,16 +35,16 @@ function ObjEditor(string,write){
 <input type="button" value="&#8593;" style="grid-area:up;"/>\
 <input type="button" value="&#8595;" style="grid-area:down;"/>\
 </div>\
-<div class="objeditorsbox"><canvas tabindex="0"></canvas></div>\
+<div class="objeditorsbox"></div>\
 </div>\
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	gui.className='objeditor vbox';
-	els=gui.getElementsByTagName('canvas');
+	els=gui.getElementsByClassName('objeditorsbox');
 	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
 	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this));
 	els=gui.handle_resize=this.drawifdeformed.bind(this);
 	gui.obj_editor=this;
-	new XSizer(this.s_objs.canv.parentNode.parentNode.parentNode,els);
+	new XSizer(this.s_objs.p.parentNode.parentNode,els);
 	this.init_edit_dialog();
 	this.init_event_listeners();
 	push_gui(gui);
@@ -320,8 +320,7 @@ ObjEditor.sort_option_onclick=function(){
 	if(selitem){
 		s_objs.sel=items.indexOf(selitem);
 		s_objs.selinview();
-	}
-	s_objs.draw();
+	}else s_objs.draw();
 	pop_gui();
 };
 

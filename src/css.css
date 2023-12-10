@@ -410,15 +410,24 @@ details[open]>summary{
 	position:relative;
 	contain:strict;
 }
-.objeditorsbox>canvas{
+.cselcover{
 	display:block;
 	position:absolute;
 	top:0;
 	left:0;
 	width:100%;
 	height:100%;
-	touch-action:pan-x pinch-zoom;
 	contain:strict;
+}
+.cselcover2{
+	display:flex;
+	overflow-x:hidden;
+	overflow-y:auto;
+	overscroll-behavior:none;
+}
+.cseltall{
+	width:100%;
+	touch-action:manipulation;
 }
 .objeditorfs{
 	display:flex;
