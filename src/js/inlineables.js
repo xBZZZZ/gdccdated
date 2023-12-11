@@ -7,6 +7,7 @@
 
 //CSelect
 var CSITEMHEIGHT=24;
+var CSITEMHEIGHTHALF=12;
 var CSSEL=1;
 var CSITEMS=2;
 

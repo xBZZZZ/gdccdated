@@ -66,12 +66,12 @@ CSelect.prototype.drawifdeformed=function(){
 
 CSelect.prototype.drawforreal=function(dpr,vy){
 	var items=this.items,
-		i2=items.length,
 		w=this.w,
 		h=this.h,
 		sel=this.sel,
-		cap=Math.min(i2,Math.ceil((vy+h)/CSITEMHEIGHT)),
-		i=i2=Math.floor(vy/CSITEMHEIGHT),
+		cap=Math.min(items.length,Math.ceil((vy+h)/CSITEMHEIGHT)),
+		i=Math.floor(vy/CSITEMHEIGHT),
+		i2=i,
 		itemstr=this.itemstr,
 		c=this.cont;
 	c.setTransform(dpr,0,0,dpr,0,0);
@@ -89,10 +89,12 @@ CSelect.prototype.drawforreal=function(dpr,vy){
 	}
 	c.textBaseline='middle';
 	c.font='16px monospace';
-	while(i2<cap){
-		c.fillStyle=i2===sel?'rgb(255,255,255)':'rgb(50,0,50)';
-		c.fillText(itemstr(items[i2]),2,(0.5+i2++)*CSITEMHEIGHT-vy);
-	}
+	c.fillStyle='rgb(50,0,50)';
+	while(i2<cap)if(i2===sel){
+		c.fillStyle='rgb(255,255,255)';
+		c.fillText(itemstr(items[i2]),2,++i2*CSITEMHEIGHT-vy-CSITEMHEIGHTHALF);
+		c.fillStyle='rgb(50,0,50)';
+	}else c.fillText(itemstr(items[i2]),2,++i2*CSITEMHEIGHT-vy-CSITEMHEIGHTHALF);
 };
 
 CSelect.prototype.handleEvent=function(event){
