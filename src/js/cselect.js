@@ -47,11 +47,6 @@ CSelect.prototype.draw=function(){
 };
 
 CSelect.prototype.drawifdeformed=function(){
-	s=this.s.scrollTop;
-	if(this.oldlen!==this.items.length){
-		this.fixscroll();
-		if(s!==this.s.scrollTop)return;
-	}
 	var p=this.p,w=Math.max(1,p.clientWidth),h=Math.max(1,p.clientHeight),dpr,s;
 	if(w!==this.w){
 		dpr=window.devicePixelRatio||1;
@@ -61,7 +56,13 @@ CSelect.prototype.drawifdeformed=function(){
 		if(!dpr)dpr=window.devicePixelRatio||1;
 		this.canv.height=(this.h=h)*dpr;
 	}
-	if(dpr)this.drawforreal(dpr,s);
+	if(!dpr)return;
+	s=this.s.scrollTop;
+	if(this.oldlen!==this.items.length){
+		this.fixscroll();
+		if(s!==this.s.scrollTop)return;
+	}
+	this.drawforreal(dpr,s);
 };
 
 CSelect.prototype.drawforreal=function(dpr,vy){
