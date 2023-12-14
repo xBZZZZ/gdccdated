@@ -329,13 +329,13 @@ details[open]>summary{
 	content:'';
 	width:20px;
 	left:1px;
-	transform:rotate(-0.5rad);
+	transform:rotate(-.5rad);
 }
 #drag_arrow:after{
 	content:'';
 	width:20px;
 	left:1px;
-	transform:rotate(0.5rad);
+	transform:rotate(.5rad);
 }
 #drag_cover{
 	background-color:rgba(50,0,50,.25);
