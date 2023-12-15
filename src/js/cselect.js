@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 
 //console.assert(cs instanceof CSelect);
 //cs.onchange=function(flags){
@@ -48,17 +48,17 @@ CSelect.prototype.drawifdeformed=function(){
 		s=true;
 		if(w!==this.cw){
 			s=false;
-			this.canv.width=this.rw=Math.round((this.cw=w)*m)||1;
+			this.canv.width=this.rw=Math.floor((this.cw=w)*m)||1;
 		}
 		if(h!==this.ch){
 			s=false;
-			this.canv.height=this.rh=Math.round((this.ch=h)*m)||1;
+			this.canv.height=this.rh=Math.floor((this.ch=h)*m)||1;
 		}
 		if(s)return;
 	}else{
 		this.m=m;
-		this.canv.width=this.rw=Math.round((this.cw=w)*m)||1;
-		this.canv.height=this.rh=Math.round((this.ch=h)*m)||1;
+		this.canv.width=this.rw=Math.floor((this.cw=w)*m)||1;
+		this.canv.height=this.rh=Math.floor((this.ch=h)*m)||1;
 	}
 	s=this.s.scrollTop;
 	if(this.oldlen!==this.items.length){
@@ -72,51 +72,47 @@ CSelect.prototype.drawforreal=function(vy){
 	var items=this.items,
 		w=this.rw,
 		h=this.rh,
-		sel=this.sel+1,
+		sel=this.sel,
 		is=this.itemstr,
 		c=this.cont,
 		m=this.m,
 		ih=m*CSITEMHEIGHT,
 		o=vy%CSITEMHEIGHT*m,
-		i=Math.floor(vy/CSITEMHEIGHT),
-		cap=Math.min(Math.ceil((o+h)/ih)+i,items.length),
-		i2=i,
-		y,y2;
+		i2=Math.floor(vy/CSITEMHEIGHT),
+		cap=Math.min(Math.ceil((o+h)/ih)+i2,items.length),
+		i=i2+(i2&1),y,y2;
+	c.fontKerning='none';
+	c.textRendering='optimizeSpeed';
+	c.textBaseline='middle';
+	c.font=Math.round(m*CSTXTFONT)+'px monospace';
 	if(items.length*ih<h){
 		c.fillStyle=CSBGCOLOR;
 		c.fillRect(0,0,w,h);
 		c.fillStyle=CSODDCOLOR;
-		c.fillRect(0,0,w,Math.round((cap-i)*ih-o));
+		c.fillRect(0,0,w,Math.round((cap-i2)*ih-o));
 	}else{
 		c.fillStyle=CSODDCOLOR;
 		c.fillRect(0,0,w,h);
 	}
 	c.fillStyle=CSEVENCOLOR;
-	y2=Math.round(-o);
-	i2=i;
 	while(i<cap){
-		y=y2;
-		y2=Math.round((++i-i2)*ih-o);
-		if(i===sel){
-			c.setTransform(1,0,0,y2-y,0,y);
-			c.fillStyle=this.selgrad;
-			c.fillRect(0,0,w,1);
-			c.fillStyle=CSEVENCOLOR;
-			c.setTransform(1,0,0,1,0,0);
-		}else if(i&1)c.fillRect(0,y,w,y2-y);
+		if(i!==sel)c.fillRect(0,y2=Math.round((y=i-i2)*ih-o),w,Math.round((y+1)*ih-o)-y2);
+		i+=2;
+	}
+	if(i2<=sel&&sel<cap){
+		c.setTransform(1,0,0,Math.round(((y=sel-i2)+1)*ih-o)-(y2=Math.round(y*ih-o)),0,y2);
+		c.fillStyle=this.selgrad;
+		c.fillRect(0,0,w,1);
+		c.fillStyle=CSTXTSELCOLOR;
+		c.setTransform(1,0,0,1,0,0);
+		c.fillText(is(items[sel]),CSTXTLEFT,Math.round((y+.5)*ih-o));
 	}
 	c.fillStyle=CSTXTCOLOR;
-	c.fontKerning='none';
-	c.textRendering='optimizeSpeed';
-	c.textBaseline='middle';
-	c.font=Math.round(m*CSTXTFONT)+'px monospace';
-	--sel;
 	i=i2;
-	while(i<cap)if(i===sel){
-		c.fillStyle=CSTXTSELCOLOR;
-		c.fillText(is(items[i]),CSTXTLEFT,Math.round((++i-i2-.5)*ih-o));
-		c.fillStyle=CSTXTCOLOR;
-	}else c.fillText(is(items[i]),CSTXTLEFT,Math.round((++i-i2-.5)*ih-o));
+	while(i<cap){
+		if(i!==sel)c.fillText(is(items[i]),CSTXTLEFT,Math.round((i-i2+.5)*ih-o));
+		++i;
+	}
 };
 
 CSelect.prototype.handleEvent=function(event){
@@ -183,6 +179,22 @@ CSelect.prototype.selinview=function(){
 	this.draw();
 };
 
+CSelect.prototype.selinview2=function(){
+	var s=this.sel,t=this.s.scrollTop;
+	this.fixscroll();
+	if(s>=0){
+		if(t>(s*=CSITEMHEIGHT)){
+			this.s.scrollTop=s;
+			return;
+		}
+		if(t<(s=s-this.ch+CSITEMHEIGHT)){
+			this.s.scrollTop=s;
+			return;
+		}
+	}
+	if(t===this.s.scrollTop)this.draw();
+};
+
 CSelect.prototype.swapup=function(){
 	if(this.sel>0){
 		var t=this.items[this.sel];
@@ -208,8 +220,7 @@ CSelect.prototype.del=function(){
 		this.items.splice(this.sel,1);
 		var l=this.items.length-1;
 		if(this.sel>l)this.sel=l;
-		this.fixscroll();
-		this.selinview();
+		this.selinview2();
 		this.onchange(3);//CSSEL|CSITEMS
 	}
 };
@@ -217,8 +228,7 @@ CSelect.prototype.del=function(){
 CSelect.prototype.dup=function(){
 	if(this.sel>=0){
 		this.items.splice(this.sel,0,JSON.parse(JSON.stringify(this.items[this.sel++])));
-		this.fixscroll();
-		this.selinview();
+		this.selinview2();
 		this.onchange(CSITEMS);
 	}
 };
@@ -226,8 +236,7 @@ CSelect.prototype.dup=function(){
 CSelect.prototype.add=function(){
 	if(this.items!==Array.prototype){
 		this.items.splice(++this.sel,0,this.itemdefualt.slice());
-		this.fixscroll();
-		this.selinview();
+		this.selinview2();
 		this.onchange(3);//CSSEL|CSITEMS
 	}
 };
