@@ -254,7 +254,7 @@ function cc_load_aes(file){
 	try{
 		push_loading_modal(file.name);
 		if((fr=file.size)<16)throw Error('file size < 16');
-		if(fr%16)throw Error('file size not divisible by 16');
+		if(fr&15)throw Error('file size not divisible by 16');
 		var fr=new FileReader();
 		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_aes_file_reader_onload,onceel);
