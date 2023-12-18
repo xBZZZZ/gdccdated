@@ -1,4 +1,4 @@
- 'use strict';
+'use strict';
 
 //console.assert(cs instanceof CSelect);
 //cs.onchange=function(flags){
@@ -60,12 +60,7 @@ CSelect.prototype.drawifdeformed=function(){
 		this.canv.width=this.rw=Math.floor((this.cw=w)*m)||1;
 		this.canv.height=this.rh=Math.floor((this.ch=h)*m)||1;
 	}
-	s=this.s.scrollTop;
-	if(this.oldlen!==this.items.length){
-		this.fixscroll();
-		if(s!==this.s.scrollTop)return;
-	}
-	this.drawforreal(s);
+	this.draw();
 };
 
 CSelect.prototype.drawforreal=function(vy){
