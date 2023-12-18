@@ -8,6 +8,7 @@
 //};
 
 function CSelect(parent,items,itemstr,itemdefualt,onchange){
+	parent.classList.add('csel');
 	(this.p=parent).innerHTML='<canvas class="cselcover cselcanvas"></canvas><div class="cselcover cselcover2" tabindex="0"><div class="cseltall"></div></div>';
 	(this.s=parent.lastChild).addEventListener('scroll',this,passiveel);
 	this.s.addEventListener('keydown',this,nonpassiveel);

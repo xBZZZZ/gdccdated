@@ -408,10 +408,7 @@ details[open]>summary{
 }
 .objeditorsbox{
 	border-top:2px solid rgb(50,0,50);
-	overflow:hidden;
 	flex:1;
-	position:relative;
-	contain:strict;
 }
 .cselcover{
 	display:block;
@@ -435,6 +432,11 @@ details[open]>summary{
 .cseltall{
 	width:100%;
 	touch-action:manipulation;
+}
+.csel{
+	overflow:hidden;
+	position:relative;
+	contain:strict;
 }
 .objeditorfs{
 	display:flex;
