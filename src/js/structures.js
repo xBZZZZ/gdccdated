@@ -666,15 +666,15 @@ function gzip_decode_with_callback(text,onsuccess,onerror){
 function string_editor_encode(){
 	var g=current_gui();
 	set_loading(true);
-	g.status.nodeValue='encoding';
+	g.status.data='encoding';
 	function err(error){
-		g.status.nodeValue='encode error';
+		g.status.data='encode error';
 		say_error('encode',error);
 	}
 	function out(dec){
 		set_loading(false);
 		g.encoded.setval(dec);
-		g.status.nodeValue='encoded,len='+dec.length;
+		g.status.data='encoded,len='+dec.length;
 	}
 	try{
 		if(g.use_gzip.checked)gzip_encode_with_callback(g.decoded.getval(),out,err);
@@ -687,15 +687,15 @@ function string_editor_encode(){
 function string_editor_decode(){
 	var g=current_gui();
 	set_loading(true);
-	g.status.nodeValue='decoding';
+	g.status.data='decoding';
 	function err(error){
-		g.status.nodeValue='decode error';
+		g.status.data='decode error';
 		say_error('decode',error);
 	}
 	function out(dec){
 		set_loading(false);
 		g.decoded.setval(dec);
-		g.status.nodeValue='decoded,len='+dec.length;
+		g.status.data='decoded,len='+dec.length;
 	}
 	try{
 		if(g.use_gzip.checked)gzip_decode_with_callback(g.encoded.getval(),out,err);

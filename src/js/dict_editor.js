@@ -104,7 +104,7 @@ function push_dict_editor(dict,root_name){
 <option value="push_search">recursive RegExp search</option>\
 <option value="push_rename_helper">rename helper</option>\
 <option value="dict_editor_select_mode_on">select mode on</option>\
-<option value="dict_editor_toggle_wrap">[yes</option>\
+<option value="dict_editor_toggle_wrap">[yes] wrap items</option>\
 </select>\
 <div class="pathcontainer">\
 <div class="path pathcontainer2">\
@@ -124,7 +124,7 @@ function push_dict_editor(dict,root_name){
 	s[1].addEventListener('click',dict_editor_invert_selection,passiveel);
 	s[2].addEventListener('click',dict_editor_clear_selection,passiveel);
 	s[3].addEventListener('click',dict_editor_delete_selected,passiveel);
-	g.wrap_opt_text=(g.dropb=s=g.querySelector('.dropb')).lastChild.appendChild(document.createTextNode('] wrap items')).previousSibling;
+	g.wrap_opt_text=(g.dropb=s=g.querySelector('.dropb')).lastChild.lastChild;
 	s.selectedIndex=0;
 	s.addEventListener('change',dict_editor_do_menu,passiveel);
 	g.items_list=s=g.querySelector('.dict_items_list');
@@ -168,7 +168,8 @@ function dict_compare_items(item1,item2){
 
 function dict_editor_toggle_wrap(){
 	var g=current_gui();
-	g.wrap_opt_text.nodeValue=g.items_list.classList.toggle('dict_items_list_wrap')?'[yes':'[no';
+	if(g.items_list.classList.toggle('dict_items_list_wrap'))g.wrap_opt_text.replaceData(1,2,'yes');
+	else g.wrap_opt_text.replaceData(1,3,'no');
 }
 
 function dict_editor_sort_keys(){
@@ -477,7 +478,7 @@ function item_editor_duplicate(){
 		i={'key':g.key_input.getval(),'type':t,'value':g.value_input.getval()};
 	}
 	eb.classList.remove('stuckactive');
-	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.nodeValue=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).classList.add('stuckactive');
+	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.data=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).classList.add('stuckactive');
 }
 
 function item_editor_back_no_write_button_onclick(){
@@ -512,7 +513,7 @@ function item_editor_back_button_onclick(){
 
 function item_editor_delete_button_onclick(){
 	var g=current_gui(),b=g.edit_button,i=b.cc_dict_item,d;
-	if(!confirm('are you sure you want to delete '+g.item_num_tn.nodeValue+'. '+b.value+'?'))return;
+	if(!confirm('are you sure you want to delete '+g.item_num_tn.data+'. '+b.value+'?'))return;
 	pop_gui();
 	(g=current_gui()).items_list.removeChild(b.parentNode);
 	(d=g.cc_dict).splice(d.indexOf(i),1);

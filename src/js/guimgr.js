@@ -289,7 +289,7 @@ XSizer.prototype.get_prog=function(x){
 
 function AdvTextArea(parent,show){
 	this.onchange=null;
-	(c=this.select=cre('select')).innerHTML='<option>0</option>\
+	(c=this.select=cre('select')).innerHTML='<option>0 characters</option>\
 <option>'+(show?'hide':'show')+'</option>\
 <option>open in string editor</option>\
 <option>open in object editor</option>\
@@ -300,7 +300,7 @@ function AdvTextArea(parent,show){
 <option>clear</option>';
 	c.addEventListener('change',this,passiveel);
 	var c=c.childNodes;
-	this.chars=c[0].appendChild(document.createTextNode(' characters')).previousSibling;
+	(this.chars=c[0].firstChild).splitText(1);
 	this.showhide=c[1].firstChild;
 	(this.parent=parent).appendChild(this.select).selectedIndex=0;
 	(c=this.textarea=cre('textarea')).addEventListener('input',this,passiveel);
@@ -315,7 +315,7 @@ AdvTextArea.prototype.getval=function(){
 };
 
 AdvTextArea.prototype.setval=function(val){
-	if(MAX_SHOW_CHARS<(this.chars.nodeValue=val.length)||-1!==val.indexOf('\r')){
+	if(MAX_SHOW_CHARS<(this.chars.data=val.length)||-1!==val.indexOf('\r')){
 		if(null===this.val)this.deltextarea();
 		this.val=val;
 	}else{
@@ -332,13 +332,13 @@ AdvTextArea.prototype.setvalchg=function(val){
 AdvTextArea.prototype.addtextarea=function(){
 	this.parent.appendChild(this.textarea);
 	this.val=null;
-	this.showhide.nodeValue='hide';
+	this.showhide.data='hide';
 };
 
 AdvTextArea.prototype.deltextarea=function(){
 	this.parent.removeChild(this.textarea);
 	this.textarea.value='';
-	this.showhide.nodeValue='show';
+	this.showhide.data='show';
 };
 
 AdvTextArea.prototype.togsh=function(){
@@ -355,7 +355,7 @@ AdvTextArea.prototype.togsh=function(){
 		if(!confirm(m))return;
 		this.textarea.value=v;
 		if(l){
-			this.chars.nodeValue=this.textarea.value.length;
+			this.chars.data=this.textarea.value.length;
 			if(this.onchange)this.onchange();
 		}
 	}else this.textarea.value=v;
@@ -386,7 +386,7 @@ AdvTextArea.prototype.saveutf=function(){
 
 AdvTextArea.prototype.handleEvent=function(e){
 	if(this.textarea===e.target){
-		this.chars.nodeValue=this.getval().length;
+		this.chars.data=this.getval().length;
 		if(this.onchange)this.onchange();
 		return;
 	}
@@ -427,7 +427,7 @@ AdvTextArea.prototype.handleEvent=function(e){
 			new AdvFileLoader(false,this);
 			return;
 		case 8:
-			this.chars.nodeValue='0';
+			this.chars.data='0';
 			this.textarea.value='';
 			if(null!==this.val)this.addtextarea();
 			if(this.onchange)this.onchange();
