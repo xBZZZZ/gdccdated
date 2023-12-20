@@ -1,6 +1,6 @@
 'use strict';
 
-var bodystyle=document.body.style,drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],cre=document.createElementNS.bind(document,'http://www.w3.org/1999/xhtml'),passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
+var bodystyle=document.body.style,drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],cre=document.createElement.bind(document),passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
 
 try{
 	cre('div').addEventListener('passivetest',null,Object.create(null,{
