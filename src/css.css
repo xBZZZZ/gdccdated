@@ -31,7 +31,7 @@ input[type=button],input[type=file],select,.btn{
 	padding:2px 4px;
 	cursor:pointer;
 	background-color:rgb(200,150,200);
-	background-image:linear-gradient(to top,rgb(200,150,200),rgb(250,200,250));
+	background-image:linear-gradient(rgb(250,200,250),rgb(200,150,200));
 	-moz-user-select:none;
 	-webkit-user-select:none;
 	user-select:none;
@@ -43,7 +43,7 @@ input[type=button],input[type=file],select,.btn{
 summary{
 	cursor:pointer;
 	background-color:rgb(200,150,200);
-	background-image:linear-gradient(to top,rgb(200,150,200),rgb(250,200,250));
+	background-image:linear-gradient(rgb(250,200,250),rgb(200,150,200));
 	white-space:pre-wrap;
 	padding:2px 4px;
 	margin:0;
@@ -51,7 +51,7 @@ summary{
 }
 select{
 	padding:2px 22px 2px 4px;
-	background-image:repeating-linear-gradient(to top,rgb(50,0,50),rgb(50,0,50) 2px,transparent 2px,transparent 5px),linear-gradient(to top,rgb(200,150,200),rgb(250,200,250));
+	background-image:repeating-linear-gradient(rgb(50,0,50),rgb(50,0,50) 2px,transparent 2px,transparent 5px),linear-gradient(rgb(250,200,250),rgb(200,150,200));
 	background-repeat:no-repeat,no-repeat;
 	background-size:16px 12px,100% 100%;
 	background-position:right 4px center,center;
@@ -313,7 +313,7 @@ details[open]>summary{
 	background-repeat:no-repeat,no-repeat;
 	background-position:center,center;
 	background-size:28px 28px,50px 50px;
-	background-image:repeating-linear-gradient(to top,rgb(50,0,50),rgb(50,0,50) 4px,transparent 4px,transparent 8px),linear-gradient(to top,rgb(200,150,200),rgb(250,200,250));
+	background-image:repeating-linear-gradient(rgb(50,0,50),rgb(50,0,50) 4px,transparent 4px,transparent 8px),linear-gradient(rgb(250,200,250),rgb(200,150,200));
 	color:transparent;
 	padding:0;
 	contain:strict;
