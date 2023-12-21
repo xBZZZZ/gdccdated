@@ -1,6 +1,6 @@
 'use strict';
 
-var bodystyle=document.body.style,drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],cre=document.createElement.bind(document),passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
+var bodystyle=document.body.style,drag_arrow=document.getElementById('drag_arrow'),drag_cover=document.getElementById('drag_cover'),guis_div=document.getElementById('guis'),modals=document.getElementById('modals'),guis=[],passiveel=false,nonpassiveel=false,onceel=false,capel=true,no_support_once=true;
 
 try{
 	cre('div').addEventListener('passivetest',null,Object.create(null,{
@@ -239,9 +239,8 @@ window.addEventListener('resize',function(){
 	if(lc.handle_resize)lc.handle_resize();
 },passiveel);
 
-function XSizer(par,onsize){
+function XSizer(par){
 	var c=par.childNodes,s=this.s=cre('div');
-	this.onsize=onsize;
 	this.x=this.w=Number.NaN;
 	this.p=par;
 	(this.ps=par.style).setProperty('--prog','50%','');
@@ -267,12 +266,7 @@ XSizer.prototype.handleEvent=function(event){
 			}
 			return;
 		case 'pointermove':
-			if(event.pointerId===this.pointerid){
-				if((r=this.get_prog(event.clientX))!==this.ps.getPropertyValue('--prog')){
-					this.ps.setProperty('--prog',r,'');
-					if(this.onsize)this.onsize();
-				}
-			}
+			if(event.pointerId===this.pointerid)this.ps.setProperty('--prog',this.get_prog(event.clientX),'');
 			return;
 		default://case 'lostpointercapture':
 			if(event.pointerId===this.pointerid)this.pointerid=null;

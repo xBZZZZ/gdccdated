@@ -22,7 +22,7 @@ function ObjEditor(string,write){
 <input type="button" value="&#8593;" style="grid-area:up;"/>\
 <input type="button" value="&#8595;" style="grid-area:down;"/>\
 </div>\
-<div class="objeditorsbox"></div>\
+<div class="objeditorsbox" tabindex="0"></div>\
 </div>\
 <div class="objeditorcol">\
 <div style="grid-template-areas:\
@@ -35,20 +35,20 @@ function ObjEditor(string,write){
 <input type="button" value="&#8593;" style="grid-area:up;"/>\
 <input type="button" value="&#8595;" style="grid-area:down;"/>\
 </div>\
-<div class="objeditorsbox"></div>\
+<div class="objeditorsbox" tabindex="0"></div>\
 </div>\
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	gui.className='objeditor vbox';
 	els=gui.getElementsByClassName('objeditorsbox');
 	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
 	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this));
-	els=gui.handle_resize=this.drawifdeformed.bind(this);
+	gui.handle_resize=this.updateh.bind(this);
 	gui.obj_editor=this;
-	new XSizer(this.s_objs.p.parentNode.parentNode,els);
+	new XSizer(this.s_objs.p.parentNode.parentNode);
 	this.init_edit_dialog();
 	this.init_event_listeners();
 	push_gui(gui);
-	setTimeout(els,0);
+	setTimeout(this.updatefull,0,this);
 }
 
 ObjEditor.prototype.default_prop=['key','value'];
@@ -69,14 +69,14 @@ ObjEditor.prototype.button_names=[
 	'down_prop'
 ];
 
-ObjEditor.prototype.draw=function(){
-	this.s_objs.draw();
-	this.s_props.draw();
+ObjEditor.prototype.updatefull=function(o){
+	o.s_objs.updatefull();
+	o.s_props.updatefull();
 };
 
-ObjEditor.prototype.drawifdeformed=function(){
-	this.s_objs.drawifdeformed();
-	this.s_props.drawifdeformed();
+ObjEditor.prototype.updateh=function(){
+	this.s_objs.updateh();
+	this.s_props.updateh();
 };
 
 ObjEditor.prototype.init_event_listeners=function(){
@@ -101,15 +101,15 @@ ObjEditor.prototype.add_prop=function(){
 };
 
 ObjEditor.prototype.s_objs_onchange=function(s){
-	if(s&CSSEL){
+	if(s&CS_SEL){
 		(s=this.s_props).sel=-1;
 		s.items=this.s_objs.getsitem()||Array.prototype;
-		s.draw();
+		s.updatelen();
 	}
 };
 
 ObjEditor.prototype.s_props_onchange=function(s){
-	if(s&CSITEMS)this.s_objs.draw();
+	if(s&CS_ITEMS)this.s_objs.updateitemdivs();
 };
 
 ObjEditor.prototype.parse_string=function(string){
@@ -208,7 +208,8 @@ ObjEditor.prototype.dialog_back=function(){
 	var prop=this.s_props.getsitem();
 	prop[0]=nk.replace(ObjEditor.re2,'\r');
 	prop[1]=nv.replace(ObjEditor.re2,'\r');
-	this.draw();
+	this.s_objs.updateitemdivs();
+	this.s_props.updateitemdivs();
 	pop_gui();
 };
 
@@ -320,7 +321,7 @@ ObjEditor.sort_option_onclick=function(){
 	if(selitem){
 		s_objs.sel=items.indexOf(selitem);
 		s_objs.selinview();
-	}else s_objs.draw();
+	}else s_objs.updateitemdivs();
 	pop_gui();
 };
 

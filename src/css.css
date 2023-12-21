@@ -410,33 +410,40 @@ details[open]>summary{
 	border-top:2px solid rgb(50,0,50);
 	flex:1;
 }
-.cselcover{
-	display:block;
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	contain:strict;
-}
-.cselcanvas{
-	image-rendering:pixelated;
-	image-rendering:optimizeSpeed;
-}
-.cselcover2{
-	display:flex;
-	overflow-x:hidden;
-	overflow-y:auto;
-	overscroll-behavior:none;
-}
-.cseltall{
-	width:100%;
+.cselitem{
 	touch-action:manipulation;
+	padding-left:2px;
+	height:24px;
+	line-height:24px;
+	white-space:nowrap;
+	overflow:hidden;
+	overflow:-moz-hidden-unscrollable;
+	overflow:clip;
+	contain:strict;
+	background-color:rgb(220,220,220);
+}
+.cselodd{
+	background-color:rgb(210,210,210);
+}
+.cselsel{
+	color:rgb(255,255,255);
+	background-color:rgb(50,0,50);
+	background-image:linear-gradient(rgb(100,50,100),rgb(50,0,50));
+}
+.csel2{
+	overflow:hidden;
+	overflow:-moz-hidden-unscrollable;
+	overflow:clip;
 }
 .csel{
-	overflow:hidden;
-	position:relative;
+	overflow-x:hidden;
+	overflow-y:scroll;
 	contain:strict;
+	overscroll-behavior:none;
+	background-color:rgb(200,200,200);
+	-moz-user-select:none;
+	-webkit-user-select:none;
+	user-select:none;
 }
 .objeditorfs{
 	display:flex;
