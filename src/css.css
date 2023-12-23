@@ -412,6 +412,7 @@ details[open]>summary{
 }
 .cselitem{
 	touch-action:manipulation;
+	cursor:default;
 	padding-left:2px;
 	height:24px;
 	line-height:24px;
