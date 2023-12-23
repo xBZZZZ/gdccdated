@@ -126,6 +126,13 @@ CSelect.prototype.handleEvent=function(event){
 	}
 };
 
+CSelect.prototype.unsel=function(){
+	if(this.sel>=0){
+		this.sel=-1;
+		this.updateitemdivs();
+	}
+};
+
 CSelect.prototype.selinview=function(){
 	var s=this.sel;
 	if(s>=0&&(this.scroll>(s*=CS_ITEM_HEIGHT)||this.scroll<(s=s-this.h+CS_ITEM_HEIGHT))&&this.updatemin(this.p.scrollTop=s))this.updatecss();

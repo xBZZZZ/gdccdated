@@ -141,7 +141,7 @@ var changerproto={
 		var o=this.chobj;
 		o.changes=null;
 		o.inithtml();
-		o._reset_btn.disabled=true;
+		this.disabled=true;
 	},
 	'changed':function(){
 		if(this.changes===null)this.changes=true;
@@ -258,6 +258,153 @@ BoolChanger.prototype.write=function(){
 	set_bool(this.itemkey,this.d,this.inp.checked);
 };
 
+function CoinTableChanger(name,itemkey){
+	this.name=name+' ('+itemkey+')';
+	this.itemkey=itemkey;
+}
+CoinTableChanger.prototype.__proto__=changerproto;
+CoinTableChanger.prototype.is_dict_wrong=function(d){
+	if(!(d=lookup(this.itemkey,d))||'d'!==d.type)return true;
+	var i=(d=d.value).length,m,l,k;
+	while(i)if(
+		's'!==(m=d[--i]).type||
+		'1'!==m.value||
+		(l=(k=m.key).length)<3||
+		95!==k.charCodeAt(l-=2)||
+		(m=k.charCodeAt(l+1))<49||m>51||
+		(k=k.substring(0,l))!==(k>>0).toString()
+	)return true;
+	return false;
+};
+CoinTableChanger.prototype.makehtml=function(){
+	this.darr=lookup(this.itemkey,this.d).value;
+	this.fs.insertAdjacentHTML('beforeend','<div class="resizebox" tabindex="0" style="width:400px;height:400px;"></div><input type="checkbox" title="coin 1"/><input type="checkbox" title="coin 2"/><input type="checkbox" title="coin 3"/><input type="number" title="level id" min="-2147483648" max="2147483647" id="'+this.labelfor+'"/>');
+	this.idinp=this.fs.lastChild;
+	this.c3=this.idinp.previousSibling;
+	this.c2=this.c3.previousSibling;
+	this.c1=this.c2.previousSibling;
+	this.c1.onchange=this.c2.onchange=this.c3.onchange=CoinTableChanger.cchange;
+	this.idinp.oninput=CoinTableChanger.idinpchange;
+	this.sel=new CSelect(this.c1.previousSibling,[],CoinTableChanger.itemstr,null,CoinTableChanger.selchange);
+	this.c1.chobj=this.c2.chobj=this.c3.chobj=this.idinp.chobj=this.sel.chobj=this;
+	//https://bugs.webkit.org/show_bug.cgi?id=266846
+	new MutationObserver(this.sel.updateh.bind(this.sel)).observe(this.sel.p,CoinTableChanger.obsopts);
+	this.lvlid=this.inspos=-1;
+	this.selupdated=false;
+	setTimeout(CoinTableChanger.updatefull,0,this);
+};
+CoinTableChanger.prototype.inithtml=function(){
+	(arr3=this.sel.items).length=0;
+	if(l=(arr=this.darr).length){
+		i=0;
+		arr2=new Float64Array(l);
+		do arr2[i]=parseInt(str=arr[i].key,10)*8+(1<<str.charCodeAt(str.length-1)-49);
+		while(++i<l);
+		arr2.sort();
+		var i=0,id=Math.floor(arr2[0]/8),coins=arr2[0]-id*8,id2,arr,arr2,arr3,l,str;
+		while(++i<l)if(id===(id2=Math.floor(arr2[i]/8)))coins|=arr2[i]-id*8;
+		else{
+			arr3.push(id*8+coins);
+			coins=arr2[i]-(id=id2)*8;
+		}
+		arr3.push(id*8+coins);
+	}
+	this.sel.sel=-1;
+	if(this.selupdated)this.sel.updatelen();
+	this.disc();
+	this.idinp.value='';
+};
+CoinTableChanger.prototype.write=function(){
+	var arr=this.sel.items,l=arr.length,i=0,arr2=this.darr;
+	arr2.length=0;
+	while(i<l){
+		var coins=arr[i++],id=Math.floor(coins/8);
+		coins-=id*8;
+		id+='_';
+		if(coins&1)arr2.push({'key':id+'1','type':'s','value':'1'});
+		if(coins&2)arr2.push({'key':id+'2','type':'s','value':'1'});
+		if(coins&4)arr2.push({'key':id+'3','type':'s','value':'1'});
+	}
+};
+CoinTableChanger.prototype.setc=function(coins){
+	this.c1.checked=coins&1;this.c1.disabled=false;
+	this.c2.checked=coins&2;this.c2.disabled=false;
+	this.c3.checked=coins&4;this.c3.disabled=false;
+};
+CoinTableChanger.prototype.disc=function(){
+	this.c1.checked=false;this.c1.disabled=true;
+	this.c2.checked=false;this.c2.disabled=true;
+	this.c3.checked=false;this.c3.disabled=true;
+};
+CoinTableChanger.obsopts={
+	'attributeFilter':['style'],
+	'attributes':true
+};
+CoinTableChanger.coinstrs=['\u25CF\u25CC\u25CC','\u25CC\u25CF\u25CC','\u25CF\u25CF\u25CC','\u25CC\u25CC\u25CF','\u25CF\u25CC\u25CF','\u25CC\u25CF\u25CF','\u25CF\u25CF\u25CF'];
+CoinTableChanger.itemstr=function(i){
+	var id=Math.floor(i/8);
+	return CoinTableChanger.coinstrs[i-id*8-1]+id;
+};
+CoinTableChanger.updatefull=function(chobj){
+	chobj.sel.updatefull();
+	chobj.selupdated=true;
+};
+CoinTableChanger.selchange=function(s){
+	if(s&CS_SEL){
+		var item=this.items[this.sel],c=this.chobj;
+		c.inspos=-1;
+		c.setc(item-(c.idinp.valueAsNumber=c.lvlid=Math.floor(item/8))*8);
+	}
+};
+CoinTableChanger.cchange=function(){
+	var c=this.chobj,coins=c.c1.checked|(c.c2.checked<<1)|(c.c3.checked<<2);
+	if(c.inspos>=0){
+		c.sel.items.splice(c.sel.sel=c.inspos,0,c.lvlid*8+coins);
+		c.sel.selinview2();
+		c.inspos=-1;
+	}else if(coins){
+		c.sel.items[c.sel.sel]=c.lvlid*8+coins;
+		c.sel.updateitemdivs();
+	}else{
+		c.sel.items.splice(c.inspos=c.sel.sel,1);
+		c.sel.sel=-1;
+		c.sel.updatelen();
+	}
+	c.changed();
+};
+CoinTableChanger.idinpchange=function(){
+	var id=this.valueAsNumber,c=this.chobj,sel=c.sel;
+	if(id!==id>>0){
+		sel.unsel();
+		c.disc();
+		return;
+	}
+	c.lvlid=id;
+	id*=8;
+	var items=sel.items,max=items.length,min=0;
+	if(max){
+		--max;
+		while(min<max){
+			var mid=(max-min>>1)+min;
+			if(items[mid]<id)min=mid+1;else max=mid;
+		}
+		//min = index of item or future neighbour
+		if(items[min]<id)++min;
+		else if((id=items[min]-id)<8){
+			//min = index of item
+			//id variable is coins here
+			sel.sel=min;
+			sel.selinview();
+			c.inspos=-1;
+			c.setc(id);
+			return;
+		}
+	}
+	sel.unsel();
+	c.inspos=min;
+	c.setc(0);
+};
+
 function structure_editor_back_button_onclick(){
 	for(var charr=current_gui().charr,i=0,l=charr.length,e;l>i;++i)if(charr[i].changes!==null&&(e=charr[i].geterror())!==null){
 		charr='can\'t write '+charr[i].name+' because\n\n';
@@ -351,6 +498,7 @@ function is_wrong_all(key,type,value,dict){
 }
 
 var structures={
+	'__proto__':null,
 	'local level':{
 		'is_dict_wrong':is_wrong_all.bind(null,'kCEK','i','4'),
 		'get_name':function(d){
@@ -575,6 +723,16 @@ var structures={
 			new StrChanger('original level id','k42','i','number','0','(0 means level is not copied from online level)'),
 			new StrChanger('seconds spent editing this level','k80','i','number','0'),
 			new StrChanger('seconds spent editing originals','k81','i','number','0','(seconds spent editing original of this level + seconds spent editing original of original of this level\u2026)')
+		]
+	},
+	'CCGameManager.dat root':{
+		'is_dict_wrong':changerproto.geterror,
+		'get_name':function(){
+			return 'CCGameManager.dat root';
+		},
+		'changers':[
+			new CoinTableChanger('gray coins','GS_3'),
+			new CoinTableChanger('brown coins','GS_4')
 		]
 	}
 };
