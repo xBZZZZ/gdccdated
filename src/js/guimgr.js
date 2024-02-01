@@ -283,8 +283,21 @@ XSizer.prototype.get_prog=function(x){
 
 function AdvTextArea(parent,show){
 	this.onchange=null;
-	(c=this.select=cre('select')).innerHTML='<option>0 characters</option>\
-<option>'+(show?'hide':'show')+'</option>\
+	AdvTextArea.initselect();
+	(c=this.select=AdvTextArea.select.cloneNode(true)).addEventListener('change',this,passiveel);
+	var c=c.firstChild;
+	this.chars=c.firstChild;
+	this.showhide=c.nextSibling.firstChild;
+	(this.parent=parent).appendChild(this.select).selectedIndex=0;
+	(c=this.textarea=cre('textarea')).addEventListener('input',this,passiveel);
+	if(show)this.addtextarea();else this.val='';
+}
+
+AdvTextArea.initselect=function(){
+	AdvTextArea.initselect=Function.prototype;
+	var s=AdvTextArea.select=cre('select');
+	s.innerHTML='<option>0 characters</option>\
+<option>show</option>\
 <option>open in string editor</option>\
 <option>open in object editor</option>\
 <option>save file (ISO-8859-1)</option>\
@@ -292,17 +305,8 @@ function AdvTextArea(parent,show){
 <option>load file (ISO-8859-1)</option>\
 <option>load file (UTF-8)</option>\
 <option>clear</option>';
-	c.addEventListener('change',this,passiveel);
-	var c=c.childNodes;
-	(this.chars=c[0].firstChild).splitText(1);
-	this.showhide=c[1].firstChild;
-	(this.parent=parent).appendChild(this.select).selectedIndex=0;
-	(c=this.textarea=cre('textarea')).addEventListener('input',this,passiveel);
-	if(show){
-		parent.appendChild(c);
-		this.val=null;
-	}else this.val='';
-}
+	s.firstChild.firstChild.splitText(1);
+};
 
 AdvTextArea.prototype.getval=function(){
 	return null===this.val?this.textarea.value:this.val;
