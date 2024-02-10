@@ -49,7 +49,7 @@ function dict_editor_select_mode_on(){
 
 function dict_editor_clear_selection(){
 	var divs=current_gui().items_list.childNodes,len=divs.length,i=0;
-	while(len>i)divs[i++].firstChild.classList.remove('stuckactive');
+	while(len>i)divs[i++].firstChild.classList.remove('selbtn');
 }
 
 function dict_editor_select_mode_off(){
@@ -61,12 +61,12 @@ function dict_editor_select_mode_off(){
 
 function dict_editor_invert_selection(){
 	var divs=current_gui().items_list.childNodes,len=divs.length,i=0;
-	while(len>i)divs[i++].firstChild.classList.toggle('stuckactive');
+	while(len>i)divs[i++].firstChild.classList.toggle('selbtn');
 }
 
 function dict_editor_delete_selected(){
 	var tbd=[],g=current_gui(),items_list=g.items_list,divs=items_list.childNodes,i=divs.length,div;
-	while(i)if((div=divs[--i]).firstChild.classList.contains('stuckactive'))tbd.push(div);
+	while(i)if((div=divs[--i]).firstChild.classList.contains('selbtn'))tbd.push(div);
 	if(!((i=tbd.length)&&confirm('delete '+i+' selected items?')))return;
 	tbd.forEach(items_list.removeChild,items_list);
 	dict_editor_update_from_dom(g=current_gui());
@@ -217,7 +217,7 @@ function xml_ie_back(){
 function xml_ie_show_error(e){
 	console.error(e);
 	var li=cre('li'),g=current_gui();
-	li.style.backgroundColor='#F00';
+	li.style.backgroundColor='var(--Bad)';
 	li.textContent=e;
 	g.status.appendChild(li);
 	set_loading(false);
@@ -234,7 +234,7 @@ function xml_ie_filereader_onload(){
 		var g=current_gui();
 		g.new_items=cc_parse_dict(d.children);
 		d=cre('li');
-		d.style.backgroundColor='#0F0';
+		d.style.backgroundColor='var(--Good)';
 		d.textContent='imported';
 		g.status.appendChild(d);
 		set_loading(false);
@@ -253,7 +253,7 @@ function xml_ie_import(){
 	g.status.innerHTML='<li>importing</li>';
 	if(!f){
 		f=cre('li');
-		f.style.backgroundColor='#F00';
+		f.style.backgroundColor='var(--Bad)';
 		f.textContent='no file';
 		g.status.appendChild(f);
 		return;
@@ -288,7 +288,7 @@ function xml_ie_export(){
 		l.download='dict.xml';
 		l.textContent='exported, click me to save';
 		blob=cre('li');
-		blob.style.backgroundColor='#0F0';
+		blob.style.backgroundColor='var(--Good)';
 		blob.appendChild(l);
 		g.status.appendChild(blob);
 	}catch(error){
@@ -416,12 +416,12 @@ function dict_item_onclick(e){
 	var item=(e=e.target).cc_dict_item,g,f;
 	if(!item)return;
 	if(current_gui().dataset.selectMode==='1'){
-		e.classList.toggle('stuckactive');
+		e.classList.toggle('selbtn');
 		return;
 	}
 	(g=hopen('div')).dataset.guiType='itemeditor';
 	g.className='grid2';
-	(g.edit_button=e).classList.add('stuckactive');
+	(g.edit_button=e).classList.add('selbtn');
 		hbutton('back',item_editor_back_button_onclick);hclose();
 		hbutton('back (no write)',item_editor_back_no_write_button_onclick,onceel);hclose();
 		hopen('h2');
@@ -477,12 +477,12 @@ function item_editor_duplicate(){
 		}
 		i={'key':g.key_input.getval(),'type':t,'value':g.value_input.getval()};
 	}
-	eb.classList.remove('stuckactive');
-	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.data=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).classList.add('stuckactive');
+	eb.classList.remove('selbtn');
+	(g.edit_button=dict_editor_add_item(t=guis[guis.length-2],i,(g.item_num_tn.data=2+t.cc_dict.indexOf(eb.cc_dict_item))-1)).classList.add('selbtn');
 }
 
 function item_editor_back_no_write_button_onclick(){
-	current_gui().edit_button.classList.remove('stuckactive');
+	current_gui().edit_button.classList.remove('selbtn');
 	pop_gui();
 }
 
@@ -507,7 +507,7 @@ function item_editor_back_button_onclick(){
 	}
 	i.key=g.key_input.getval();
 	b.value=dict_item_display_string(i);
-	b.classList.remove('stuckactive');
+	b.classList.remove('selbtn');
 	pop_gui();
 }
 

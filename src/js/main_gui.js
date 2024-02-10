@@ -31,13 +31,13 @@ don&apos;t read entire file because there can be 1 or 2 bytes of garbage because
 <li>file name ends with <strong class="wp">.dat</strong>, not <strong class="wp">.xml</strong>!</li>\
 <li>doesn&apos;t work with mac os version</li>\
 </ul></details>\
-<details style="background-color:#f0f3f3;" open="" class="bigd">\
+<details style="background-color:#272822;" open="" class="bigd">\
 <summary>linux shell command to decode CC*.dat file (windows and android)</summary>\
-<code style="white-space:pre-wrap;color:#000;"><span style="color: #0099FF; font-style: italic"># replace $CCFILE with input file path&#10;# replace $DECODEDCCFILE with output file path</span>&#10;xxd -p -c4 <span style="color: #CC3300">&quot;$CCFILE&quot;</span> | gawk <span style="color: #CC3300">&#39;length($0)==8{printf&quot;%08x&quot;,xor(0xb0b0b0b,strtonum(&quot;0x&quot;$0))}&#39;</span> | xxd -p -r | tr <span style="color: #CC3300">&#39;_-&#39;</span> <span style="color: #CC3300">&#39;/+&#39;</span> | base64 -d | zcat &gt; <span style="color: #CC3300">&quot;$DECODEDCCFILE&quot;</span></code>\
+<code style="white-space:pre-wrap;"><span style="color:#959077;"># replace $CCFILE with input file path&#10;# replace $DECODEDCCFILE with output file path</span><span style="color:#f8f8f2;">&#10;xxd -p -c4 </span><span style="color:#e6db74;">&quot;</span><span style="color:#f8f8f2;">$CCFILE</span><span style="color:#e6db74;">&quot; </span><span style="color:#f8f8f2;">| gawk </span><span style="color:#e6db74;">&apos;length($0)==8{printf&quot;%08x&quot;,xor(0xb0b0b0b,strtonum(&quot;0x&quot;$0))}&apos; </span><span style="color:#f8f8f2;">| xxd -p -r | tr </span><span style="color:#e6db74;">&apos;_-&apos; &apos;/+&apos; </span><span style="color:#f8f8f2;">| base64 -d | gzip -cd &gt; </span><span style="color:#e6db74;">&quot;</span><span style="color:#f8f8f2;">$DECODEDCCFILE</span><span style="color:#e6db74;">&quot;</span></code>\
 </details>\
-<details style="background-color:#f0f3f3;" open="" class="bigd">\
+<details style="background-color:#272822;" open="" class="bigd">\
 <summary>mac os and linux shell command to decode CC*.dat file (mac os and ios)</summary>\
-<code style="white-space:pre-wrap;color:#000;"><span style="color: #0099FF; font-style: italic"># replace $CCFILE with input file path&#10;# replace $DECODEDCCFILE with output file path</span>&#10;openssl aes-256-ecb -in <span style="color: #CC3300">&quot;$CCFILE&quot;</span> -out <span style="color: #CC3300">&quot;$DECODEDCCFILE&quot;</span> -d -K 69707539545576353479765D6973464D6835403B742E3577333445325279407B</code>\
+<code style="white-space:pre-wrap;"><span style="color:#959077;"># replace $CCFILE with input file path&#10;# replace $DECODEDCCFILE with output file path</span><span style="color:#f8f8f2;">&#10;openssl aes-256-ecb -in </span><span style="color:#e6db74;">&quot;</span><span style="color:#f8f8f2;">$CCFILE</span><span style="color:#e6db74;">&quot; </span><span style="color:#f8f8f2;">-out </span><span style="color:#e6db74;">&quot;</span><span style="color:#f8f8f2;">$DECODEDCCFILE</span><span style="color:#e6db74;">&quot; </span><span style="color:#f8f8f2;">-d -K 69707539545576353479765D6973464D6835403B742E3577333445325279407B</span></code>\
 </details>\
 <details open="" class="bigd">\
 <summary>other CC*.dat file tools</summary><strong>WARNING (doesn&apos;t apply to mac os and ios saves):</strong> some of these sometimes don&apos;t work because they read entire file instead of just <strong class="wp">floor(<var>file size in bytes</var> / 4) * 4</strong> bytes<ul>\

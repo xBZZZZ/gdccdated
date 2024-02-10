@@ -86,7 +86,7 @@ echo -n "--><title>geometry dash CC*.dat editor</title>\
 <meta name='application-name' content='gdccdated'/>\
 <meta name='author' content='BZZZZ'/>\
 <meta name='description' content='CCGameManager.dat or CCLocalLevels.dat editor'/>\
-<meta name='theme-color' content='rgb(50,0,50)'/>\
+<meta name='theme-color' content='hsl(120,10%,20%)'/>\
 <meta property='og:title' content='geometry dash CC*.dat editor'/>\
 <meta property='og:type' content='website'/>\
 <meta property='og:url' content='https://gdccdated.glitch.me/index.xhtml'/>\
@@ -109,7 +109,7 @@ echo "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\
 <meta name='application-name' content='gdccdated'/>\
 <meta name='author' content='BZZZZ'/>\
 <meta name='description' content='CCGameManager.dat or CCLocalLevels.dat editor'/>\
-<meta name='theme-color' content='rgb(50,0,50)'/>\
+<meta name='theme-color' content='hsl(120,10%,20%)'/>\
 <meta property='og:title' content='geometry dash CC*.dat editor'/>\
 <meta property='og:type' content='website'/>\
 <meta property='og:url' content='https://gdccdated.glitch.me/index.xhtml'/>\
