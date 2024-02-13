@@ -36,7 +36,7 @@ CSelect.prototype.updateitemdivs=function(){
 	else if(havedivs>needdivs)do itemdiv.removeChild(itemdiv.lastChild);while(--havedivs>needdivs);
 	while(i<cap){
 		(itemdiv=itemdivs[i-min]).cseli=i;
-		itemdiv.className=sel===i?'cselitem cselsel':i&1?'cselitem cselodd':'cselitem';
+		itemdiv.className=sel===i?'cselitem cselsel':i&1?'cselitem':'cselitem cselodd';
 		itemdiv.firstChild.data=itemstr(items[i++]);
 	}
 };
