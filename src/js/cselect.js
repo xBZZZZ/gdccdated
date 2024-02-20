@@ -7,12 +7,13 @@
 //if(flags&CS_ITEMS){/*amount or order of items changed*/}
 //};
 
-function CSelect(parent,items,itemstr,itemdefualt,onchange){
+function CSelect(parent,items,itemstr,itemdefualt,onchange,ondblclick){
 	parent.classList.add('csel');
 	parent.addEventListener('scroll',this,passiveel);
 	parent.addEventListener('keydown',this,nonpassiveel);
 	parent.innerHTML='<div class="csel2" style="height:0px;padding-top:0px;"></div>';
 	(this.itemsdiv=(this.p=parent).firstChild).addEventListener('click',this,passiveel);
+	if(this.ondblclick=ondblclick)this.itemsdiv.addEventListener('dblclick',this,passiveel);
 	this.itemsdivstyle=this.itemsdiv.getAttributeNode('style');
 	this.h=this.sel=-1;
 	this.scroll=this.min=this.size=0;
@@ -123,6 +124,9 @@ CSelect.prototype.handleEvent=function(event){
 			}
 			this.selinview();
 			this.onchange(CS_SEL);
+			return;
+		case 'dblclick':
+			if('number'===typeof event.target.cseli)this.ondblclick();
 	}
 };
 

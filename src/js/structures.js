@@ -285,7 +285,7 @@ CoinTableChanger.prototype.makehtml=function(){
 	this.c1=this.c2.previousSibling;
 	this.c1.onchange=this.c2.onchange=this.c3.onchange=CoinTableChanger.cchange;
 	this.idinp.oninput=CoinTableChanger.idinpchange;
-	this.sel=new CSelect(this.c1.previousSibling,[],CoinTableChanger.itemstr,null,CoinTableChanger.selchange);
+	this.sel=new CSelect(this.c1.previousSibling,[],CoinTableChanger.itemstr,null,CoinTableChanger.selchange,null);
 	this.c1.chobj=this.c2.chobj=this.c3.chobj=this.idinp.chobj=this.sel.chobj=this;
 	//https://bugs.webkit.org/show_bug.cgi?id=266846
 	new MutationObserver(this.sel.updateh.bind(this.sel)).observe(this.sel.p,CoinTableChanger.obsopts);

@@ -40,8 +40,8 @@ function ObjEditor(string,write){
 </div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	gui.className='objeditor vbox';
 	els=gui.getElementsByClassName('objeditorsbox');
-	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this));
-	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this));
+	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this),null);
+	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this),this.open_edit_dialog.bind(this));
 	gui.handle_resize=this.updateh.bind(this);
 	gui.obj_editor=this;
 	new XSizer(this.s_objs.p.parentNode.parentNode);
@@ -92,7 +92,7 @@ ObjEditor.prototype.init_event_listeners=function(){
 	this.b_down_prop.addEventListener('click',this.s_props.swapdown.bind(this.s_props),passiveel);
 	this.b_del_prop.addEventListener('click',this.s_props.del.bind(this.s_props),passiveel);
 	this.b_add_prop.addEventListener('click',this.add_prop.bind(this),passiveel);
-	this.b_edit_prop.addEventListener('click',this.open_edit_dialog.bind(this),passiveel);
+	this.b_edit_prop.addEventListener('click',this.s_props.ondblclick,passiveel);
 };
 
 ObjEditor.prototype.add_prop=function(){
