@@ -7,7 +7,7 @@ function save_modal_back_onclick(){
 
 function save_modal(buffers,name,blobopts){
 	set_loading(false);
-	var g=div_with_html('<a rel="noreferrer" class="btn" style="padding:10px;">save <strong></strong></a><input class="thiccb" type="button" value="back"/>'),a=g.firstChild,b=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
+	var g=div_with_html('<a rel="noreferrer" class="btn thiccb">save <strong></strong></a><input class="thiccb" type="button" value="back"/>'),a=g.firstChild,b=a.href=URL.createObjectURL(new Blob(buffers,blobopts));
 	a.lastChild.textContent=a.download=name;
 	a=g.lastChild;
 	a.dataset.bloburl=b;
