@@ -119,6 +119,9 @@ CSelect.prototype.handleEvent=function(event){
 							this.sel=(this.sel+1)%this.items.length;
 							break keysw;
 					}
+				case 'Enter':
+					event.preventDefault();
+					if(this.ondblclick&&this.sel>=0)this.ondblclick();
 				default:
 					return;
 			}
