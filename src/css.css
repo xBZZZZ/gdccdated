@@ -447,6 +447,12 @@ details[open]>summary{
 .objeditorsbox{
 	flex:1;
 }
+.resizebox{
+	overflow:auto;
+	resize:both;
+	background-color:var(--BG);
+	contain:strict;
+}
 .cselitem{
 	touch-action:manipulation;
 	cursor:default;
@@ -594,12 +600,6 @@ hr{
 	border-bottom-color:var(--DownSlope);
 	padding:1px;
 	touch-action:manipulation;
-}
-.resizebox{
-	overflow:auto;
-	resize:both;
-	background-color:var(--BG);
-	contain:strict;
 }
 .hbox{
 	display:flex;
