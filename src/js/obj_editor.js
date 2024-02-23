@@ -37,23 +37,23 @@ function ObjEditor(string,write){
 </div>\
 <div class="objeditorsbox" tabindex="0"></div>\
 </div>\
-</div>'),els=gui.getElementsByTagName('input'),bts=this.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
+</div>'),els=gui.getElementsByTagName('input'),bts=ObjEditor.button_names,i=bts.length;i;this['b_'+bts[--i]]=els[i]);
 	gui.className='objeditor vbox';
 	els=gui.getElementsByClassName('objeditorsbox');
 	this.s_objs=new CSelect(els[0],objs_arr,this.str_obj,Array.prototype,this.s_objs_onchange.bind(this),null);
-	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,this.default_prop,this.s_props_onchange.bind(this),this.open_edit_dialog.bind(this));
+	this.s_props=new CSelect(els[1],Array.prototype,ObjEditor.prop_display,ObjEditor.default_prop,this.s_props_onchange.bind(this),this.open_edit_dialog.bind(this));
 	gui.handle_resize=this.updateh.bind(this);
 	gui.obj_editor=this;
 	new XSizer(this.s_objs.p.parentNode.parentNode);
 	this.init_edit_dialog();
 	this.init_event_listeners();
 	push_gui(gui);
-	setTimeout(this.updatefull,0,this);
+	setTimeout(ObjEditor.updatefull,0,this);
 }
 
-ObjEditor.prototype.default_prop=['key','value'];
+ObjEditor.default_prop=['key','value'];
 
-ObjEditor.prototype.button_names=[
+ObjEditor.button_names=[
 	'back',
 	'back_no_write',
 	'dup_obj',
@@ -69,7 +69,7 @@ ObjEditor.prototype.button_names=[
 	'down_prop'
 ];
 
-ObjEditor.prototype.updatefull=function(o){
+ObjEditor.updatefull=function(o){
 	o.s_objs.updatefull();
 	o.s_props.updatefull();
 };
