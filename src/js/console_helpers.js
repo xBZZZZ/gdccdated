@@ -52,7 +52,8 @@ Object.defineProperties(window,{
 		'set':function(val){
 			if(guis[guis.length-1].dataset.guiType!=='objeditordialog')throw Error('not object editor dialog');
 			var o=guis[guis.length-2].obj_editor;
-			o.s_dialog_value.value=o.i_dialog_value.value=String(val).replace(ObjEditor.re1,';');
+			o.i_dialog_value.value=String(val).replace(ObjEditor.re1,';');
+			o.dialog_value_oninput();
 		}
 	},
 	'ov':{
@@ -68,7 +69,8 @@ Object.defineProperties(window,{
 			if(guis[guis.length-1].dataset.guiType!=='objeditordialog')throw Error('not object editor dialog');
 			if(!Number.isFinite(val-=0))throw Error('failed to parse value as finite number');
 			var o=guis[guis.length-2].obj_editor;
-			o.s_dialog_value.value=o.i_dialog_value.value=String(val);
+			o.i_dialog_value.value=val;
+			o.dialog_value_oninput();
 		}
 	},
 	'ik':{

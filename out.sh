@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o errexit -o pipefail
 export LC_ALL=C
-rootfiles=(s js big_favicon.png favicon.ico css.css help.jpg index.html index_multifile.xhtml)
+rootfiles=(s js big_favicon.png favicon.ico css.css tiles.png help.jpg index.html index_multifile.xhtml)
 jsfiles=(cc.js dict_editor.js structures.js obj_editor.js cselect.js guimgr.js main_gui.js console_helpers.js)
 
 d=$(dirname -- "$0")
@@ -67,12 +67,14 @@ cd ..
 sed -Ez 's-[\t\n]|/\*[^*]*\*/--g' css.css > ../out_tmp/css
 lend
 
-lstart "generate out_tmp/b64_help_sed_script"
+lstart "generate out_tmp/b64_sed_script"
 {
-echo -n 's-help\.jpg-data:image/jpeg;base64,'
+echo -n 's-tiles\.png-data:image/png;base64,'
+base64 -w0 tiles.png
+echo -n '-;s-help\.jpg-data:image/jpeg;base64,'
 base64 -w0 help.jpg
 echo -n -
-} > ../out_tmp/b64_help_sed_script
+} > ../out_tmp/b64_sed_script
 lend
 
 lstart "generate out/index.xhtml"
@@ -118,7 +120,7 @@ echo "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>\
 <meta property='og:description' content='CCGameManager.dat or CCLocalLevels.dat editor'/>\
 <link rel='canonical' href='https://gdccdated.glitch.me/index.xhtml'/>\
 <style>"
-sed -f../out_tmp/b64_help_sed_script ../out_tmp/css
+sed -f../out_tmp/b64_sed_script ../out_tmp/css
 cat ../out_tmp/after_css
 } > gdccdated_standalone.xhtml
 lend

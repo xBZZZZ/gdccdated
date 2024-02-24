@@ -41,7 +41,7 @@ input,textarea,fieldset,input[type=button]:not(:disabled):active,.pathcontainer,
 	border-right-color:var(--UpSlope);
 }
 .selbtn{
-	background-color:var(--Sel);
+	--BG:var(--Sel);
 	--UpSlope:var(--SelUpSlope);
 	--DownSlope:var(--SelDownSlope);
 }
@@ -148,7 +148,7 @@ select{
 	grid-template-columns:auto auto auto;
 	grid-template-rows:auto 30px;
 }
-[data-select-mode]{
+[data-select-mode],.nosel{
 	-moz-user-select:none;
 	-webkit-user-select:none;
 	user-select:none;
@@ -486,6 +486,16 @@ details[open]>summary{
 	-moz-user-select:none;
 	-webkit-user-select:none;
 	user-select:none;
+}
+.tile.tile{
+	contain:strict;
+	width:calc(2ch + 55px);
+	height:49px;
+	padding:0 0 0 4px;
+	box-shadow:calc(2ch + 6px) 0 var(--BG) inset,-4px 0 var(--BG) inset;
+	text-align:left;
+	background-repeat:no-repeat;
+	background-image:url(tiles.png);
 }
 .objeditorfs{
 	display:flex;

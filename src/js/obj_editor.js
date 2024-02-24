@@ -45,7 +45,6 @@ function ObjEditor(string,write){
 	gui.handle_resize=this.updateh.bind(this);
 	gui.obj_editor=this;
 	new XSizer(this.s_objs.p.parentNode.parentNode);
-	this.init_edit_dialog();
 	this.init_event_listeners();
 	push_gui(gui);
 	setTimeout(ObjEditor.updatefull,0,this);
@@ -135,7 +134,8 @@ ObjEditor.prototype.str_obj=function(obj){
 };
 
 ObjEditor.prototype.dialog_value_oninput=function(){
-	this.s_dialog_value.value=this.i_dialog_value.value;
+	if(this.s_dialog_value.parentNode)this.s_dialog_value.value=this.i_dialog_value.value;
+	else if(this.b_dialog_tile.parentNode)set_tile(this.b_dialog_tile,this.tile_def,parseInt(this.i_dialog_value.value,10));
 };
 
 ObjEditor.prototype.dialog_value_onchange=function(){
@@ -143,32 +143,25 @@ ObjEditor.prototype.dialog_value_onchange=function(){
 };
 
 ObjEditor.prototype.update_value_opts=function(){
-	var o=this.s_dialog_key.selectedOptions[0],h;
-	if(o){
-		o=o.dataset;
-		h=o.valhtml;
-		if(typeof h==='string'){
-			this.s_dialog_value.innerHTML=h;
-			this.dialog_value_oninput();
-			this.s_dialog_value.style.display='';
+	//update stuff in "value" fieldset
+	if(o=this.s_dialog_key.selectedOptions[0])var o=o.dataset,s=o.s,h=o.h;
+	if('string'===typeof s){
+		if(60===s.charCodeAt(0)){
+			this.s_dialog_value.innerHTML=s;
+			if(this.b_dialog_tile.parentNode)this.f_dialog_value.replaceChild(this.s_dialog_value,this.b_dialog_tile);
+			else if(!this.s_dialog_value.parentNode)this.f_dialog_value.insertBefore(this.s_dialog_value,this.i_dialog_value);
+			this.s_dialog_value.value=this.i_dialog_value.value;
 		}else{
-			this.s_dialog_value.innerHTML='';
-			this.s_dialog_value.style.display='none';
+			set_tile(this.b_dialog_tile,this.tile_def=parseInt(s,36),parseInt(this.i_dialog_value.value,10));
+			if(this.s_dialog_value.parentNode)this.f_dialog_value.replaceChild(this.b_dialog_tile,this.s_dialog_value);
+			else if(!this.b_dialog_tile.parentNode)this.f_dialog_value.insertBefore(this.b_dialog_tile,this.i_dialog_value);
 		}
-		h=o.valhelp;
-		if(typeof h==='string'){
-			this.dialog_value_help_pre.innerHTML=h;
-			this.dialog_value_help_fieldset.style.display='';
-		}else{
-			this.dialog_value_help_pre.innerHTML='';
-			this.dialog_value_help_fieldset.style.display='none';
-		}
-	}else{
-		this.s_dialog_value.innerHTML='';
-		this.s_dialog_value.style.display='none';
-		this.dialog_value_help_pre.innerHTML='';
-		this.dialog_value_help_fieldset.style.display='none';
-	}
+	}else if(this.s_dialog_value.parentNode)this.f_dialog_value.removeChild(this.s_dialog_value);
+	else if(this.b_dialog_tile.parentNode)this.f_dialog_value.removeChild(this.b_dialog_tile);
+	if('string'===typeof h){
+		if(this.dialog_help_cb.checked)this.p_dialog_value_help.innerHTML=h;
+		if(!this.f_dialog_value_help.parentNode)this.f_dialog_value.appendChild(this.f_dialog_value_help);
+	}else if(this.f_dialog_value_help.parentNode)this.f_dialog_value.removeChild(this.f_dialog_value_help);
 };
 
 ObjEditor.prototype.dialog_key_oninput=function(){
@@ -184,6 +177,7 @@ ObjEditor.prototype.dialog_key_onchange=function(){
 ObjEditor.prototype.open_edit_dialog=function(){
 	var prop=this.s_props.getsitem();
 	if(prop){
+		if(!this.dialog)this.init_edit_dialog();
 		this.s_dialog_key.value=this.i_dialog_key.value=prop[0].replace(ObjEditor.re1,';');
 		this.i_dialog_value.value=prop[1].replace(ObjEditor.re1,';');
 		this.update_value_opts();
@@ -227,12 +221,40 @@ ObjEditor.prototype.open_in_string_editor=function(){
 };
 
 ObjEditor.prototype.toggle_dialog_help=function(){
-	if(this.dialog_help_cb.checked)this.dialog_value_help_fieldset.appendChild(this.dialog_value_help_pre);
-	else this.dialog_value_help_fieldset.removeChild(this.dialog_value_help_pre);
+	this.p_dialog_value_help.innerHTML=this.dialog_help_cb.checked?this.s_dialog_key.selectedOptions[0].dataset.h:'';
+};
+
+ObjEditor.prototype.dialog_value_tile_onclick=function(){
+	var sel_id=parseInt(this.b_dialog_tile.value,10),def=this.tile_def,id=def&1,cap=id+(def>>1&63),d=cre('div'),b,sb;
+	d.className='resizebox';
+	d.setAttribute('style','width:480px;height:360px;');
+	while(id<cap){
+		set_tile(b=cre('input'),def,id);
+		b.type='button';
+		if(sel_id===id++)(sb=b).className='selbtn tile';
+		else b.className='tile';
+		d.appendChild(b);
+	}
+	b=cre('input');
+	b.type='button';
+	b.value='back (no write)';
+	id=cre('div');
+	id.className='nosel vbox';
+	id.appendChild(b).addEventListener('click',pop_gui,onceel);
+	id.appendChild(d).addEventListener('click',this.tile_picker_dialog_onclick.bind(this),passiveel);
+	push_gui(id,true);
+	if(sb)sb.scrollIntoView({'behavior':'instant','block':'center','inline':'center'});
+};
+
+ObjEditor.prototype.tile_picker_dialog_onclick=function(t){
+	if((t=t.target).classList.contains('tile')){
+		set_tile(this.b_dialog_tile,this.tile_def,parseInt(this.i_dialog_value.value=t.value,10));
+		pop_gui();
+	}
 };
 
 ObjEditor.prototype.init_edit_dialog=function(){
-	var root=cre('div'),el=this.dialog_help_cb=cre('input'),el2=cre('label'),el3=cre('legend');
+	var root=this.dialog=cre('div'),el=this.dialog_help_cb=cre('input'),el2=cre('label'),el3=cre('legend');
 	root.dataset.guiType='objeditordialog';
 	root.className='grid2';
 	el.type='checkbox';
@@ -246,8 +268,17 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	el.textContent=' help';
 	el2.appendChild(el);
 	el3.appendChild(el2);
+	el2=this.p_dialog_value_help=cre('pre');
+	el2.setAttribute('style','margin:0;white-space:pre-wrap;');
+	el=this.f_dialog_value_help=cre('fieldset');
+	el.appendChild(el3);
+	el.appendChild(el2);
+	(this.s_dialog_value=cre('select')).addEventListener('change',this.dialog_value_onchange.bind(this),passiveel);
+	el=this.b_dialog_tile=cre('input');
+	el.type='button';
+	el.className='tile';
+	el.addEventListener('click',this.dialog_value_tile_onclick.bind(this),passiveel);
 	el=cre('input');
-	el2=cre('select');
 	el.type='button';
 	el.value='back';
 	root.appendChild(el).addEventListener('click',this.dialog_back.bind(this),passiveel);
@@ -255,28 +286,25 @@ ObjEditor.prototype.init_edit_dialog=function(){
 	el.type='button';
 	el.value='back (no write)';
 	root.appendChild(el).addEventListener('click',pop_gui,passiveel);
-	el2.innerHTML=ObjEditor.key_html;
 	el=cre('fieldset');
 	el.className='objeditorfs';
 	el.innerHTML='<legend title="; is \\r escape&#10;use in JS console:&#10;  ok - key as string" style="cursor:help;">key</legend>';
+	el2=cre('select');
+	el2.innerHTML=ObjEditor.key_html;
 	el.appendChild(this.s_dialog_key=el2).addEventListener('change',this.dialog_key_onchange.bind(this),passiveel);
 	el.appendChild(this.i_dialog_key=cre('textarea')).addEventListener('input',this.dialog_key_oninput.bind(this),passiveel);
 	root.appendChild(el);
-	el=cre('fieldset');
+	el=this.f_dialog_value=cre('fieldset');
 	el.className='objeditorfs';
 	el.innerHTML='<legend title="; is \\r escape&#10;use in JS console:&#10;  ovs - value as string&#10;  ov - value as number" style="cursor:help;">value</legend>';
-	el.appendChild(this.s_dialog_value=cre('select')).addEventListener('change',this.dialog_value_onchange.bind(this),passiveel);
 	el.appendChild(this.i_dialog_value=cre('textarea')).addEventListener('input',this.dialog_value_oninput.bind(this),passiveel);
 	el2=cre('input');
 	el2.type='button';
 	el2.value='open in string editor';
 	el.appendChild(el2).addEventListener('click',this.open_in_string_editor.bind(this),passiveel);
-	(el2=cre('fieldset')).appendChild(el3);
-	(this.dialog_value_help_pre=cre('pre')).setAttribute('style','margin:0;white-space:pre-wrap;');
-	el.appendChild(this.dialog_value_help_fieldset=el2);
 	root.appendChild(el);
 	root.insertAdjacentHTML('beforeend','<a href="https://wyliemaster.github.io/gddocs/#/resources/client/level-components/level-object" rel="noreferrer" target="_blank" style="grid-column:1/3;margin-right:auto;"><q cite="https://wyliemaster.github.io/gddocs/#/resources/client/level-components/level-object">Level Object</q> on wyliemaster.github.io/gddocs</a>');
-	this.dialog=root;
+	this.tile_def=0;
 };
 
 ObjEditor.prototype.open_sort_objs_dialog=function(){
@@ -342,6 +370,28 @@ ObjEditor.sort_comparitor=function(a,b){
 	}
 	return ax-bx||ay-by;
 };
+
+function set_tile_css(tile,offset){
+	tile.style.backgroundPosition='right '+(offset*41-3440)+'px center';
+}
+
+function set_tile(tile,def,id){
+	//def is unsigned integer
+	//def bits:
+	//  ...     XXXXXX  Y
+	//  offset  len     min_id
+	var min_id=def&1,offset=def>>7;
+	if(id>=min_id){
+		var len=def>>1&63;
+		if(id-min_id<len){
+			set_tile_css(tile,id-min_id+offset);
+			tile.value=id;
+			return;
+		}
+		set_tile_css(tile,len-1+offset);
+	}else set_tile_css(tile,offset);
+	tile.value='';
+}
 
 var sof_re=RegExp('\\$[_0-9A-Za-z]+','g');
 
@@ -421,8 +471,8 @@ arr=['objects',
 		'3','>>>',
 		'4','>>>>',
 		'<strong>invalid</strong> values are <strong style="color:cyan;" class="tstroke">&gt;</strong> but speed button in editor is not highlighted'],
-	['kA6','BG','<strong>0</strong> is same as <strong>1</strong>'+rimg(400,0,525,204)],
-	['kA7','G','<strong>0</strong> is same as <strong>1</strong>'+img(0,763,525,204)],
+	['kA6','BG',0,59,1,0,'numbers &lt; 1 are same as 1&#10;numbers &gt; 59 are same as 59'],
+	['kA7','G',59,22,1,0,'numbers &lt; 1 are same as 1&#10;numbers &gt; 22 are same(ish*) as 22<hr/>*ground > 22 looks vertically flipped during level start on android&#10;TODO: test windows'],
 	['kA8','start dual','0','no','1','yes'],
 	['kA9','menu type','0','level','1','start pos','default is <strong>menu type=level&#9205;kA9,0</strong><hr/><strong>menu type=level&#9205;kA9,0</strong> is like gear button in editor&#10;<strong>menu type=start pos&#9205;kA9,1</strong> is like start pos edit object<hr/>first object in level having <strong>menu type=start pos&#9205;kA9,1</strong> will make:<ul><li>editor gear button open menu like start pos edit object</li><li>colors (kS38) don&apos;t work</li><li>lots of properties don&apos;t survive editor saving</li></ul>start pos having <strong>menu type=level&#9205;kA9,0</strong> will crash game when you click edit object'],
 	['kA11','start flipped gravity','0','no','1','yes'],
@@ -434,7 +484,7 @@ arr=['objects',
 	['kA22','platformer mode (2.2)','0','no','1','yes'],
 	['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
 	['kA24','start centered camera (2.2)','0','no','1','yes'],
-	['kA25','MG (2.2)','<strong>0</strong> and <strong>1</strong> are different middlegrounds (unlike BG (kA6) and G (kA7))'],
+	['kA25','MG',81,4,0,0,'numbers &lt; 0 are same as 0&#10;numbers &gt; 3 are same as 3'],
 	['kS38','colors',linkf('https://wyliemaster.github.io/gddocs/#/resources/client/level-components/color-string')],
 'triggers',
 	['11','touch triggered','0','no','1','yes'],
@@ -479,12 +529,18 @@ arr=['objects',
 	}
 	key_html+='<option';
 	var il=item.length;
-	if(il&1)key_html+=' data-valhelp="'+escape_xml(item[--il])+'"';
+	if(il&1)key_html+=' data-h="'+escape_xml(item[--il])+'"';
 	if(il>2){
-		key_html+=' data-valhtml="';
-		for(var vals={'__proto__':null},ii=2;il>ii;ii+=2)key_html+='&lt;option value=&quot;'+item[ii]+'&quot;&gt;'+item[ii]+'&amp;#9205;'+(vals[item[ii]]=item[1+ii]).replace(xml_escape_re,de)+'&lt;/option&gt;';
+		key_html+=' data-s="';
+		if('number'===typeof item[2]){
+			//item[5] is unused
+			key_html+=(item[2]<<7|item[3]<<1|item[4]).toString(36);
+			k2d[item[0]]=item[1];
+		}else{
+			for(var vals={'__proto__':null},ii=2;il>ii;ii+=2)key_html+='&lt;option value=&quot;'+item[ii]+'&quot;&gt;'+item[ii]+'&amp;#9205;'+(vals[item[ii]]=item[1+ii]).replace(xml_escape_re,de)+'&lt;/option&gt;';
+			k2d[item[0]]=[item[1],vals];
+		}
 		key_html+='"';
-		k2d[item[0]]=[item[1],vals];
 	}else k2d[item[0]]=item[1];
 	key_html+=' value="'+item[0]+'">'+item[0]+'&#9205;'+item[1]+'</option>';
 }
