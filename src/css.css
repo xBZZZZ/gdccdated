@@ -50,9 +50,6 @@ input[type=text],input[type=number],textarea{
 	margin:0;
 	padding:2px;
 }
-input,textarea{
-	vertical-align:middle;
-}
 input,textarea,select{
 	-webkit-appearance:none;
 	-moz-appearance:none;
@@ -159,6 +156,7 @@ input[type=checkbox],input[type=radio]{
 	margin:0;
 	padding:0;
 	touch-action:manipulation;
+	vertical-align:middle;
 }
 @media only screen and (pointer:coarse){
 	input[type=button],input[type=file],select,.btn,summary,select{
