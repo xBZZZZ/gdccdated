@@ -226,7 +226,7 @@ ObjEditor.prototype.toggle_dialog_help=function(){
 
 ObjEditor.prototype.dialog_value_tile_onclick=function(){
 	var sel_id=parseInt(this.b_dialog_tile.value,10),def=this.tile_def,id=def&1,cap=id+(def>>1&63),d=cre('div'),b,sb;
-	d.className='resizebox';
+	d.className='tilebox resizebox';
 	d.setAttribute('style','width:480px;height:360px;');
 	while(id<cap){
 		set_tile(b=cre('input'),def,id);

@@ -491,11 +491,18 @@ details[open]>summary{
 	contain:strict;
 	width:calc(2ch + 55px);
 	height:49px;
+	flex-shrink:0;
+	line-height:0;
 	padding:0 0 0 4px;
 	box-shadow:calc(2ch + 6px) 0 var(--BG) inset,-4px 0 var(--BG) inset;
 	text-align:left;
 	background-repeat:no-repeat;
 	background-image:url(tiles.png);
+}
+.tilebox{
+	display:flex;
+	flex-wrap:wrap;
+	align-content:start;
 }
 .objeditorfs{
 	display:flex;
