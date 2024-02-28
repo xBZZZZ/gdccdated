@@ -181,8 +181,8 @@ input:disabled,select:disabled{
 	font-family:monospace;
 	font-kerning:none;
 	font-variant-ligatures:none;
-	image-rendering:pixelated;
 	image-rendering:optimizeSpeed;
+	image-rendering:pixelated;
 	text-rendering:optimizeSpeed;
 	line-height:1.15;
 }
