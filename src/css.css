@@ -183,6 +183,7 @@ input:disabled,select:disabled{
 	font-family:monospace;
 	font-kerning:none;
 	font-variant-ligatures:none;
+	image-rendering:optimizeSpeed;
 	text-rendering:optimizeSpeed;
 	line-height:1.15;
 }
@@ -517,13 +518,8 @@ details[open]>summary{
 	background-clip:content-box;
 	background-color:var(--FG);
 }
-.helpimg,.helprimg:before{
-	background-image:url(help.jpg);
-	background-repeat:no-repeat;
-	contain:strict;
-}
 .helprimg:before{
-	background-position:var(--x) var(--y);
+	contain:strict;
 	display:block;
 	content:'';
 	position:absolute;
@@ -533,6 +529,9 @@ details[open]>summary{
 	top:0;
 	transform-origin:top left;
 	transform:rotate(90deg);
+	background-position:var(--x) var(--y);
+	background-repeat:no-repeat;
+	background-image:url(help.png);
 }
 .helprimg{
 	position:relative;

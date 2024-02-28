@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o errexit -o pipefail
 export LC_ALL=C
-rootfiles=(s js big_favicon.png favicon.ico css.css tiles.png help.jpg index.html index_multifile.xhtml)
+rootfiles=(s js big_favicon.png favicon.ico css.css tiles.png help.png index.html index_multifile.xhtml)
 jsfiles=(cc.js dict_editor.js structures.js obj_editor.js cselect.js guimgr.js main_gui.js console_helpers.js)
 
 d=$(dirname -- "$0")
@@ -71,8 +71,8 @@ lstart "generate out_tmp/b64_sed_script"
 {
 echo -n 's-tiles\.png-data:image/png;base64,'
 base64 -w0 tiles.png
-echo -n '-;s-help\.jpg-data:image/jpeg;base64,'
-base64 -w0 help.jpg
+echo -n '-;s-help\.png-data:image/jpeg;base64,'
+base64 -w0 help.png
 echo -n -
 } > ../out_tmp/b64_sed_script
 lend

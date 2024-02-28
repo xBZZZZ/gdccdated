@@ -422,9 +422,7 @@ ObjEditor.prop_display=function(prop){
 	}
 };
 (function(){
-for(var img=function(x,y,w,h){
-	return '<div style="background-position:'+-x+'px '+-y+'px;width:'+w+'px;height:'+h+'px;" role="img" class="helpimg"></div>';
-},rimg=function(x,y,w,h){
+for(var rimg=function(x,y,w,h){
 	return '<div style="--x:'+-x+'px;--y:'+-y+'px;--w:'+w+'px;--h:'+h+'px;" role="img" class="helprimg"></div>';
 },scalef='<ul class="linside"><li>= 0 is same as not existing (scale $a = 0 object impossible)</li><li>makes scale (32) meaningless if exists</li><li>= 1 if doesn&apos;t exist (only matters if scale $o exists)</li><li>see '+linkf('https://www.desmos.com/calculator/mugxsxvruf')+'</li></ul>',
 fwarn='<li>beware of <a style="font-weight:bold;" href="https://h-schmidt.net/FloatConverter/IEEE754.html" rel="noreferrer" target="_blank">float32</a> imprecision (69.000001 = 68.999999 = 69)!</li>',
@@ -436,17 +434,17 @@ arr=['objects',
 	['1','id','play level <a style="font-weight:bold;" href="https://gdbrowser.com/58079690" rel="noreferrer" target="_blank">58079690</a> for list of all ids'],
 	['2','x',xyf],
 	['3','y',xyf],
-	['6','rotate','<ul><li>= 0 if doesn&apos;t exist</li><li>unit is degrees</li><li><strong class="when">(2.2) </strong>ignored if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li></ul>'+img(0,431,400,278)],
-	['13','portal checkbox','0','no','1','yes',img(0,0,400,341)],
+	['6','rotate','<ul><li>= 0 if doesn&apos;t exist</li><li>unit is degrees</li><li><strong class="when">(2.2) </strong>ignored if rotate x (131) &#8800; rotate y (132)<ul>'+fwarn+'</ul></li></ul>'+rimg(380,11,119,74)],
+	['13','preview','0','no','1','yes','checkbox in edit group'],
 	Array.prototype.concat('21','main color',colors),
 	Array.prototype.concat('22','secondary color',colors),
 	['25','z order','0','default','0 means default&#10;<a href="https://gdforum.freeforums.net/thread/66686/object-678-order" rel="noreferrer" target="_blank">for some objects 0 is default z order</a>'],
 	['31','encoded text','encoded without gzip'],
 	['32','scale','<ul class="linside"><li>= 1 if doesn&apos;t exist</li><li>= 0 is same as not existing (scale = 0 object impossible)</li><li><strong class="when">(2.2) </strong>ignored if scale x (128) or scale y (129) exist</li></ul>'],
-	['54','orange teleporter y offset','<table class="tableborder"><thead><tr><th>0 (resets to 100 when level loaded in editor)</th><th>100 (default)</th></tr></thead><tbody><tr><td align="center">'+img(502,661,102,102)+'</td><td align="center">'+img(400,525,102,238)+'</td></tr></tbody></table>'],
+	['54','orange teleporter y offset','<table class="tableborder"><thead><tr><th>0 (resets to 100 when level loaded in editor)</th><th>100 (default)</th></tr></thead><tbody><tr><td align="center">'+rimg(265,0,130,117)+'</td><td align="center">'+rimg(0,0,130,267)+'</td></tr></tbody></table>'],
 	['57','groups','groups are separated by &quot;.&quot;'],
 	['96','glow','0','yes','1','no','default is yes (0)'],
-	['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;doesn&apos;t work with mirror, speed and dual portals'],
+	['99','multi activate','0','no','1','yes','works with orbs, pads and portals&#10;triggers and speed portals use multi trigger (87)'],
 	['108','link controls id','0','no link'],
 	['128','scale x (2.2)',sof(scalef,{'a':'x','o':'y (129)'})],
 	['129','scale y (2.2)',sof(scalef,{'a':'y','o':'x (128)'})],
@@ -479,7 +477,7 @@ arr=['objects',
 	['kA14','music lines',linkf('https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string')],
 	['kA15','song fade in','0','no','1','yes'],
 	['kA16','song fade out','0','no','1','yes'],
-	['kA17','G/Line','<strong>0</strong> in data is <strong>1</strong> in editor&#10;<strong>1</strong> in data is <strong>1</strong> in editor&#10;<strong>2</strong> in data is <strong>2</strong> in editor'+img(421,936,137,66)],
+	['kA17','G/Line','<strong>0</strong> in data is <strong>1</strong> in editor&#10;<strong>1</strong> in data is <strong>1</strong> in editor&#10;<strong>2</strong> in data is <strong>2</strong> in editor&#10;<strong>3</strong> in data is <strong>3</strong> in editor'],
 	['kA20','start reverse (2.2)','0','no','1','yes'],
 	['kA22','platformer mode (2.2)','0','no','1','yes'],
 	['kA21','disable start pos (2.2)','0','no','1','yes','<ul class="linside"><li>does nothing on level start</li><li>level can be verified if there are only disabled <strong>start pos</strong>es</li></ul>'],
@@ -489,7 +487,7 @@ arr=['objects',
 'triggers',
 	['11','touch triggered','0','no','1','yes'],
 	['62','spawn triggered','0','no','1','yes'],
-	['87','multi trigger','0','no','1','yes'],
+	['87','multi trigger','0','no','1','yes','also used in speed portals'],
 	['30','easing',
 		'0','none',
 		'1','ease in out',
@@ -511,7 +509,7 @@ arr=['objects',
 		'17','back in',
 		'18','back out',
 		'used in <strong>MOVE</strong> and <strong>ROTATE</strong> triggers'],
-	['85','easing rate',img(0,341,400,90)]
+	['85','easing rate']
 ],l=arr.length,i=0,key_html='',de=function(chr){
 	switch(chr){
 		case '"':return '&amp;quot;';
