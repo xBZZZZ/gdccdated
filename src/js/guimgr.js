@@ -71,7 +71,7 @@ drag_cover.addEventListener('drop',function(e){
 
 function say_error(name,error){
 	set_loading(false);
-	name+=' error:\n\n';
+	name+=' error:\n';
 	console.error(name,error);
 	var g=current_gui().error_tag;
 	if(g)g.textContent=name+error;

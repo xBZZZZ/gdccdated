@@ -34,28 +34,50 @@ var valid_type_re=RegExp('^[a-z]$','');
 
 function cc_parse_dict(chl){
 	var i=0,len=chl.length,k,v,out=[],vt;
-	if(len&1)throw Error('odd number of children: '+len);
+	if(len&1){
+		console.error('children:',chl);
+		throw Error('odd number of children: '+len);
+	}
 	while(len>i){
 		k=chl[i++];
-		if(k.tagName!=='k')throw Error('tag is not <k>');
-		if(k.children.length)throw Error('<k> contains elements (expected only text)');
-		if(k.attributes.length)throw Error('<k> has attributes');
-		v=chl[i++];
-		vt=v.tagName;
-		if(v.attributes.length)throw Error('<'+vt+'> has attributes');
-		if('d'===vt)out.push({
-			'key':k.textContent,
-			'type':'d',
-			'value':cc_parse_dict(v.children)
-		});else{
-			if(!valid_type_re.test(vt))throw Error('invalid value type: '+vt);
-			if(v.firstElementChild)throw Error('<'+vt+'> contains elements (expected only text)');
+		if(k.tagName!=='k'){
+			console.error('not <k>:',k);
+			throw Error('tag name is not <k> but <'+k.tagName+'>');
+		}
+		if(k.firstElementChild){
+			console.error('<k>:',k);
+			throw Error('<k> contains elements');
+		}
+		if(k.attributes.length){
+			console.error('<k>:',k);
+			throw Error('<k> has attributes');
+		}
+		vt=(v=chl[i++]).tagName;
+		if(v.attributes.length){
+			console.error('<'+vt+'>:',v);
+			throw Error('<'+vt+'> has attributes');
+		}
+		if(vt==='d'){
 			out.push({
 				'key':k.textContent,
-				'type':vt,
-				'value':v.textContent
+				'type':'d',
+				'value':cc_parse_dict(v.children)
 			});
+			continue;
 		}
+		if(!valid_type_re.test(vt)){
+			console.error('<'+vt+'>:',v);
+			throw Error('invalid value type: '+vt);
+		}
+		if(v.firstElementChild){
+			console.error('<'+vt+'>:',v);
+			throw Error('<'+vt+'> contains elements (expected only text)');
+		}
+		out.push({
+			'key':k.textContent,
+			'type':vt,
+			'value':v.textContent
+		});
 	}
 	return out;
 }
@@ -63,21 +85,32 @@ function cc_parse_dict(chl){
 function cc_load_xml_string(plist){
 	try{
 		plist=new DOMParser().parseFromString(plist,'application/xml').documentElement;
-		if(plist.tagName!=='plist')throw Error('not <plist>');
-		var domattrs=plist.attributes;
-		plist=plist.children;
-		if(plist.length!==1)throw Error('number of children in <plist> is not 1');
-		plist=plist[0];
-		if(plist.tagName!=='dict')throw Error('not <dict>');
-		if(plist.attributes.length)throw Error('<dict> has attributes');
-		var i=0,len=domattrs.length,a,attrs=[];
+		if(plist.tagName!=='plist'){
+			console.error('root:',plist);
+			throw Error('root tag name isn\'t <plist> but <'+plist.tagName+'>');
+		}
+		var domattrs=plist.attributes,a=plist.children;
+		if(a.length!==1){
+			console.error('<plist>:',plist);
+			throw Error('number of children in <plist> is not 1 but '+a.length);
+		}
+		a=a[0];
+		if(a.tagName!=='dict'){
+			console.error('<plist>:',plist);
+			throw Error('<plist>\'s child is not <dict> but <'+a.tagName+'>');
+		}
+		if(a.attributes.length){
+			console.error('<dict>:',a);
+			throw Error('<dict> has attributes');
+		}
+		var i=0,len=domattrs.length,attrs=[];
 		while(len>i){
-			a=domattrs[i++];
-			attrs.push(a.name,a.value);
+			plist=domattrs[i++];
+			attrs.push(plist.name,plist.value);
 		}
 		load_cc_data({
 			'attrs':attrs,
-			'dict':cc_parse_dict(plist.children)
+			'dict':cc_parse_dict(a.children)
 		});
 	}catch(error){
 		say_error('xml parse',error);
