@@ -256,19 +256,36 @@ function cc_load_gzip_file_reader_onload(){
 		say_error('xor 11+base64 decode',error);
 		return;
 	}
+	pos=say_error.bind(null,'ungzip');
 	try{
 		str=new DecompressionStream('gzip');
 		ch=str.writable.getWriter();
 		ch.write(cc);
 		ch.close();
-		new Response(str.readable).text().then(cc_load_xml_string,say_error.bind(null,'ungzip (text)'));
+		ch=str.readable.pipeThrough(new TextDecoderStream('utf-8',{'fatal':true})).getReader();
+		str='';
+		ch.read().then(function ondata(d){
+			if(d.done)cc_load_xml_string(str);
+			else try{
+				str+=d.value;
+				ch.read().then(ondata,pos);
+			}catch(error){
+				pos(error);
+			}
+		},pos);
 	}catch(error){
-		say_error('ungzip',error);
+		pos(error);
 	}
 }
 
 function cc_load_xml_file_reader_onload(){
-	cc_load_xml_string(this.result);
+	try{
+		var s=decodeURIComponent(escape(this.result));
+	}catch(error){
+		say_error('bad UTF-8',error);
+		return;
+	}
+	cc_load_xml_string(s);
 }
 
 function cc_load_gzip(file){
@@ -426,7 +443,7 @@ function cc_load_xml(file){
 		var fr=new FileReader();
 		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_xml_file_reader_onload,onceel);
-		fr.readAsText(file);
+		fr.readAsBinaryString(file);
 	}catch(error){
 		say_error('FileReader',error);
 	}

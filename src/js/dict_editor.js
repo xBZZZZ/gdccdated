@@ -229,9 +229,16 @@ function xml_ie_filereader_onerror(){
 
 function xml_ie_filereader_onload(){
 	try{
+		var g=decodeURIComponent(escape(this.result));
+	}catch(error){
+		xml_ie_show_error('bad UTF-8');
+		console.error('original error:',error);
+		return;
+	}
+	try{
 		var d=document.implementation.createDocument(null,'d',null).documentElement;
-		d.innerHTML=this.result;
-		var g=current_gui();
+		d.innerHTML=g;
+		g=current_gui();
 		g.new_items=cc_parse_dict(d.children);
 		d=cre('li');
 		d.style.backgroundColor='var(--Good)';
@@ -263,7 +270,7 @@ function xml_ie_import(){
 		g=new FileReader();
 		g.addEventListener('error',xml_ie_filereader_onerror,onceel);
 		g.addEventListener('load',xml_ie_filereader_onload,onceel);
-		g.readAsText(f);
+		g.readAsBinaryString(f);
 	}catch(error){
 		xml_ie_show_error(error);
 	}
