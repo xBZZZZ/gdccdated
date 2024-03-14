@@ -250,23 +250,17 @@ details[open]>summary{
 	padding-bottom:0;
 }
 .tdi{
-	padding:0;
 	height:25px;
+	padding:0;
 }
 .tdf{
 	width:25px;
 	height:25px;
-	position:relative;
 	padding:0;
 }
 .tdf>input{
 	margin:0;
 	display:block;
-	position:absolute;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
 	width:25px;
 	height:25px;
 	padding:0;

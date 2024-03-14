@@ -548,11 +548,11 @@ function push_search(){
 <input style="margin:0 1px;height:25px;padding:0;" type="button" value="back"/>\
 <label class="btn" style="margin:0;display:flex;height:25px;padding:0;">\
 <input style="margin:auto 0 auto auto;width:18px;height:18px;" checked="" type="checkbox"/>\
-<span style="margin:auto auto auto 0;">\
+<span style="margin:auto auto auto 0;white-space:pre;">\
  <strong>0</strong> results\
 </span>\
 </label>\
-<input style="margin:0 1px;height:25px;padding:0;" type="button" value="search"/>\
+<input style="margin:0 1px;height:25px;padding:0;white-space:pre;" type="button" value="search"/>\
 </div>\
 <table style="border-spacing:1px;width:100%;">\
 <thead>\
@@ -567,7 +567,7 @@ function push_search(){
 <tbody>\
 <tr>\
 <td class="tdf"><input type="button" value="-"/></td>\
-<td class="tdi"><input type="checkbox"/></td>\
+<td class="tdf"><input type="checkbox"/></td>\
 <td class="tdi"><input type="text"/></td>\
 <td class="tdi"><input type="text"/></td>\
 <td class="tdi"><select>\
@@ -589,7 +589,7 @@ function push_search(){
 	i[3].addEventListener('click',search_plus_onclick,passiveel);
 	g.tr_template=(i=g.tbody=g.querySelector('tbody')).firstChild.cloneNode(true);
 	i.addEventListener('click',search_tbody_onclick,passiveel);
-	g.results_count=g.firstChild.querySelector('strong');
+	g.results_count=g.firstChild.querySelector('strong').firstChild;
 	g.cc_dict=current_gui().cc_dict;
 	g.ul=(g.ul_container=g.lastChild).firstChild;
 	push_gui(g,true);
@@ -631,7 +631,7 @@ function search_onclick(){
 			results_ul.textContent='';
 			results_ul.appendChild(frag);
 		}
-		g.results_count.textContent=results_count;
+		g.results_count.data=results_count;
 	}catch(error){
 		say_error('search',error);
 	}

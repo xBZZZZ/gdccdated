@@ -882,6 +882,7 @@ function string_editor(do_after,start_text){
 		hopen('label').className='hbox btn';
 			hopen('input').type='checkbox';
 			hstyle('margin','auto 0');
+			hstyle('flex-shrink','0');
 			tbd.push(g.use_gzip=hclose('input'));
 			hopen('span').textContent='use gzip';
 			hstyle('margin','auto 0');
