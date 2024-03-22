@@ -543,11 +543,11 @@ var structures={
 				'is_dict_wrong':is_wrong_type.bind(null,'s','k4'),
 				'makehtml':function(){
 					var b=this.edit_btn=cre('input');
-					this.tbd.push(b);
 					b.id=this.labelfor;
 					b.type='button';
 					b.value='edit in object editor';
 					if(this.level_data_item=lookup('k4',this.d)){
+						this.tbd.push(b);
 						b.chobj=this;
 						b.onclick=this.edit_onclick;
 					}else{
