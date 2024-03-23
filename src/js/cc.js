@@ -262,13 +262,24 @@ function cc_load_gzip_file_reader_onload(){
 		ch=str.writable.getWriter();
 		ch.write(cc);
 		ch.close();
-		ch=str.readable.pipeThrough(new TextDecoderStream('utf-8',{'fatal':true})).getReader();
-		str='';
+		ch=str.readable.getReader();
+		cc=[];
 		ch.read().then(function ondata(d){
-			if(d.done)cc_load_xml_string(str);
-			else try{
-				str+=d.value;
-				ch.read().then(ondata,pos);
+			try{
+				if(d.done){
+					if(cc.length===1)buf=cc[0];
+					else{
+						var i=cc.length,j=0,buf;
+						while(i)j+=cc[--i].length;
+						buf=new Uint8Array(j);
+						i=cc.length;
+						while(i)buf.set(cc[--i],j-=cc[i].length);
+					}
+					utf8to16(cc_load_xml_string,loading_modal_abort,buf,'',0);
+				}else{
+					cc.push(d.value);
+					ch.read().then(ondata,pos);
+				}
 			}catch(error){
 				pos(error);
 			}
@@ -279,13 +290,11 @@ function cc_load_gzip_file_reader_onload(){
 }
 
 function cc_load_xml_file_reader_onload(){
-	try{
-		var s=decodeURIComponent(escape(this.result));
-	}catch(error){
-		say_error('bad UTF-8',error);
-		return;
-	}
-	cc_load_xml_string(s);
+	utf8to16(cc_load_xml_string,loading_modal_abort,new Uint8Array(this.result),'',0);
+}
+
+function loading_modal_abort(){
+	current_gui().error_tag.textContent='bad UTF-8 (aborted)';
 }
 
 function cc_load_gzip(file){
@@ -361,10 +370,7 @@ function cc_load_aes_file_reader_onload(){
 			if(!decryptedbuf)throw Error('padding = 0');
 			var m=i---decryptedbuf;
 			while(i>m)if(decryptedbuf!==decrypted[--i])throw Error('padding bytes not all equal');
-			cc_load_xml_string(new TextDecoder('utf-8',{
-				'fatal':true,
-				'ignoreBOM':false
-			}).decode(decrypted.subarray(0,m)));
+			utf8to16(cc_load_xml_string,loading_modal_abort,decrypted.subarray(0,m),'',0);
 		}).catch(say_error.bind(null,'AES-ECB 256 decrypt'));
 	}catch(error){
 		say_error('AES-ECB 256 decrypt',error);
@@ -443,7 +449,7 @@ function cc_load_xml(file){
 		var fr=new FileReader();
 		fr.addEventListener('error',file_reader_onerror,onceel);
 		fr.addEventListener('load',cc_load_xml_file_reader_onload,onceel);
-		fr.readAsBinaryString(file);
+		fr.readAsArrayBuffer(file);
 	}catch(error){
 		say_error('FileReader',error);
 	}

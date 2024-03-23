@@ -620,11 +620,13 @@ hr{
 .growc>*{
 	flex-grow:1;
 }
-a.thiccb{
-	padding:10px;
+a.btn{
 	color:var(--Link);
 	text-decoration:underline;
 	white-space:pre-wrap;
+}
+a.thiccb{
+	padding:10px;
 }
 input.thiccb{
 	padding:10px;

@@ -2,7 +2,7 @@
 set -o errexit -o pipefail
 export LC_ALL=C
 rootfiles=(s js big_favicon.png favicon.ico css.css tiles.png help.png index.html index_multifile.xhtml)
-jsfiles=(cc.js dict_editor.js structures.js obj_editor.js cselect.js guimgr.js main_gui.js console_helpers.js)
+jsfiles=(cc.js utf8to16.js dict_editor.js structures.js obj_editor.js cselect.js guimgr.js main_gui.js console_helpers.js)
 
 d=$(dirname -- "$0")
 cd -- "$d"

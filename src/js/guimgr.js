@@ -449,15 +449,13 @@ function AdvFileLoader(raw,out){
 AdvFileLoader.prototype.handleEvent=function(e){
 	switch(e.type){
 		case 'load':
-			if(this.raw)e=e.target.result;
-			else try{
-				e=decodeURIComponent(escape(e.target.result));
-			}catch(error){
-				say_error('bad UTF-8',error);
+			if(this.raw){
+				this.out.setvalchg(e.target.result);
+				set_loading(false);
 				return;
 			}
-			this.out.setvalchg(e);
-			set_loading(false);
+			var r=this.out;
+			utf8to16(AdvFileLoader.utf8to16_callback.bind(this.out),Function.prototype,new Uint8Array(e.target.result),'',0);
 			return;
 		case 'error':
 			say_error('FileReader',e.target.error);
@@ -466,13 +464,18 @@ AdvFileLoader.prototype.handleEvent=function(e){
 			if(e=e.target.files[0]){
 				set_loading(true);
 				try{
-					var r=new FileReader();
+					r=new FileReader();
 					r.addEventListener('load',this,onceel);
 					r.addEventListener('error',this,onceel);
-					r.readAsBinaryString(e);
+					r[this.raw?'readAsBinaryString':'readAsArrayBuffer'](e);
 				}catch(error){
 					say_error('FileReader',error);
 				}
 			}
 	}
+};
+
+AdvFileLoader.utf8to16_callback=function(str){
+	this.setvalchg(str);
+	set_loading(false);
 };

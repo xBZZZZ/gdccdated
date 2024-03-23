@@ -216,10 +216,10 @@ function xml_ie_back(){
 
 function xml_ie_show_error(e){
 	console.error(e);
-	var li=cre('li'),g=current_gui();
+	var li=cre('li');
 	li.style.backgroundColor='var(--Bad)';
 	li.textContent=e;
-	g.status.appendChild(li);
+	current_gui().status.appendChild(li);
 	set_loading(false);
 }
 
@@ -228,13 +228,10 @@ function xml_ie_filereader_onerror(){
 }
 
 function xml_ie_filereader_onload(){
-	try{
-		var g=decodeURIComponent(escape(this.result));
-	}catch(error){
-		xml_ie_show_error('bad UTF-8');
-		console.error('original error:',error);
-		return;
-	}
+	utf8to16(xml_ie_utf8to16_callback,xml_ie_utf8to16_abort,new Uint8Array(this.result),'',0);
+}
+
+function xml_ie_utf8to16_callback(g){
 	try{
 		var d=document.implementation.createDocument(null,'d',null).documentElement;
 		d.innerHTML=g;
@@ -248,6 +245,13 @@ function xml_ie_filereader_onload(){
 	}catch(error){
 		xml_ie_show_error(error);
 	}
+}
+
+function xml_ie_utf8to16_abort(){
+	var li=cre('li');
+	li.style.backgroundColor='var(--Bad)';
+	li.textContent='bad UTF-8 (aborted)';
+	current_gui().status.appendChild(li);
 }
 
 function xml_ie_import(){
@@ -270,7 +274,7 @@ function xml_ie_import(){
 		g=new FileReader();
 		g.addEventListener('error',xml_ie_filereader_onerror,onceel);
 		g.addEventListener('load',xml_ie_filereader_onload,onceel);
-		g.readAsBinaryString(f);
+		g.readAsArrayBuffer(f);
 	}catch(error){
 		xml_ie_show_error(error);
 	}
